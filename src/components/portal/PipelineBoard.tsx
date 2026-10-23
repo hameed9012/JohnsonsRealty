@@ -82,7 +82,7 @@ export function PipelineBoard({ deals }: { deals: BoardDeal[] }) {
               <ol className="board-list">
                 {items.map((d) => (
                   <li key={d.id} draggable={d.canManage} onDragStart={() => setDrag(d.id)} onDragEnd={() => setDrag(null)} className={cx(drag === d.id && 'board-dragging')}>
-                    <Link href={`/portal/deals/${d.id}`} className="board-card">
+                    <Link href={`/portal/deals/${d.id}`} className="board-card" aria-label={`${d.address}${d.client ? `, ${d.client}` : ''}`}>
                       <PipelineCard status={d.status} address={d.address} value={d.value} client={d.client} due={d.due} agent={d.agent} />
                     </Link>
                     {d.canManage && d.stage !== 'closed' ? (

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { ArchiveClientButton } from '@/components/portal/ArchiveClientButton';
 import { Button } from '@/components/ui/Button';
 import { ConfidentialPanel } from '@/components/ui/documents';
+import { DOC_STATUS, type DocStatus } from '@/forms/status';
 import { Breadcrumbs, DataSheet, DataTable } from '@/components/ui/layout';
 import { LocalTime } from '@/components/ui/LocalTime';
 import { StatusPill } from '@/components/ui/StatusStamp';
@@ -157,7 +158,12 @@ export default async function ClientFilePage({ params }: { params: Promise<{ id:
       </section>
 
       <section className="stack">
-        <h2 className="heading-2">Documents</h2>
+        <div className="row" style={{ justifyContent: 'space-between' }}>
+          <h2 className="heading-2">Documents</h2>
+          <Button size="sm" variant="secondary" icon="document" href={`/portal/documents/new?client=${id}`}>
+            New document
+          </Button>
+        </div>
         <DataTable
           caption="Documents"
           rows={f.documents}
@@ -166,7 +172,7 @@ export default async function ClientFilePage({ params }: { params: Promise<{ id:
           columns={[
             { key: 't', header: 'Document', cell: (r) => <Link href={`/portal/documents/${r.id}`}>{FORMS[r.formType as FormType].title}</Link> },
             { key: 'n', header: 'Number', num: true, cell: (r) => r.docNo },
-            { key: 's', header: 'Status', cell: (r) => r.status[0]!.toUpperCase() + r.status.slice(1) },
+            { key: 's', header: 'Status', cell: (r) => <StatusPill status={DOC_STATUS[r.status as DocStatus].s} label={DOC_STATUS[r.status as DocStatus].l} /> },
           ]}
         />
       </section>

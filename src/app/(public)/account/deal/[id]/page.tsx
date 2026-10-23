@@ -10,11 +10,12 @@ import { date } from '@/lib/format';
 import { dealTimeline, stagePill } from '@/lib/deal-stage';
 import { dealForViewer, markThreadRead, STAGE_LABEL } from '@/server/queries/deals';
 import { requireActor } from '@/server/session';
+import { DOC_STATUS } from '@/forms/status';
+import Link from 'next/link';
 
 export const metadata: Metadata = { title: 'My deal', robots: { index: false } };
 
 const SIDE = { buyer: 'You’re buying', seller: 'You’re selling', tenant: 'You’re renting', landlord: 'You’re letting' } as const;
-const DOC_STATUS = { draft: { s: 'draft', l: 'Draft' }, sent: { s: 'pending-review', l: 'Waiting for signatures' }, signed: { s: 'settled', l: 'Signed' } } as const;
 
 export default async function MyDealPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -85,7 +86,9 @@ export default async function MyDealPage({ params }: { params: Promise<{ id: str
                   return (
                     <li key={doc.id}>
                       <div className="stack">
-                        <b className="ui">{doc.title}</b>
+                        <Link href={`/account/documents/${doc.id}`} className="ui">
+                          {doc.title}
+                        </Link>
                         <span className="id muted">
                           Form {doc.formNo} · {doc.docNo}
                         </span>

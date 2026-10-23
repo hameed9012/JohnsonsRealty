@@ -284,6 +284,28 @@ Phase 4 is pushed and merged into `main` (`69b95d4`). On Oct 24 the user asked m
   - A deal falling through could put the listing back on the market while another deal still held it.
   - Optional checkboxes left out of a form (unchecked toggles) failed Zod validation in four schemas. They now use the shared `bool` parser.
 
+### Phase 6 — Documents: built (Oct 24, 2026)
+
+- **Forms as data** (`src/forms/`): the eight forms from `reference/forms-pa.html` are typed `FormDef`s (`defs.ts`) with the same sections, fields, options, tables, notices and standard terms. Everything else is derived from them (`model.ts`):
+  - the Zod schema for `documents.data`: selects only accept their options, and number and date fields are checked;
+  - the editor, the printed copy, the PNG and the client's copy, all from one `DocSheet` component;
+  - computed values, which match the old generator: price and deposit in words, balance due, commission amounts, price-to-profit, and the price split total.
+- **Shared field ids** play the role the old `data-key` did. `seller_name`, `prop_address`, `price` and the rest mean the same on every form, so `fillFrom()` (`fill.ts`, pure and unit-tested) builds one map from the client files, listing, deal, agent and settings, and each form keeps its own keys. Disclosure answers fill the JR-PA-060 table from `listing_disclosures`. A business's price split fills from `listing_business`. Sales, profit and inventory fill only for people who can see the listing's confidential figures. Values that are empty in the file never wipe what was typed. A later receipt, addendum or handover on the same deal picks up the Agreement of Sale number.
+- **Interpretations:**
+  - The old per-form status menus (Offer Submitted, Countered…) become the brief's Draft → Sent → Signed.
+  - The hard-coded agent name on signature lines is now the deal's (or listing's) agent.
+  - Brokerage name, office and Chirper come from settings.
+  - The brokerage commission record on JR-PA-400 is marked internal and left off the client's copy.
+- **Rules** (`server/ops/documents.ts`):
+  - **Who sees what.** Agents see documents they prepared, or that are on their deals, listings or clients. Managers and wide-access agents see all. Clients see a document only once it's shared, on its own read-only page (`/account/documents/[id]`), and get a notification when it is.
+  - **Signatures.** Each party's typed name and date go in `document_signatures`. "Mark as signed" needs every required party; "(if any)" lines and witnesses are optional.
+  - **Locking.** Signed documents are locked, and only the Owner or an Admin can reopen one. Only drafts can be deleted.
+- **Pages:**
+  - `/portal/documents`: index with form and status filters.
+  - `/portal/documents/new`: takes `?deal=`, `?client=` or `?listing=`. From a deal it offers only the forms that fit (home or business) and fills straight away.
+  - `/portal/documents/[id]`: the paper editor. It has the quick area picker (it fills the municipality and ZIP), Fill from client file, typed signatures, Save draft, Mark as sent or signed, Share with the client, Save as image (html-to-image, an 860px sheet at 2×) and Print/PDF (print stylesheet, letter size).
+  - The deal page and client file both have a "New document" button, and the client's deal page links each shared document.
+
 ## 11. Build order
 
 Each phase ends with tests passing, a short summary, and this file updated.
