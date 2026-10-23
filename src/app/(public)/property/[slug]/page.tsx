@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { BookShowing, SaveShare } from '@/components/listing/PropertyActions';
 import { PropertyView } from '@/components/listing/PropertyView';
+import { Button } from '@/components/ui/Button';
 import { Breadcrumbs } from '@/components/ui/layout';
 import { ListingCard } from '@/components/ui/ListingCard';
 import { MARKET_STATUSES, type ListingStatus } from '@/lib/listing-status';
@@ -46,7 +47,16 @@ export default async function PropertyPage({ params }: Props) {
       <PropertyView
         view={v}
         actions={onMarket ? <SaveShare listingId={b.id} saved={saved} signedIn={!!actor} title={v.title} path={path} /> : null}
-        booking={onMarket ? <BookShowing listingId={b.id} signedIn={!!actor} path={path} rent={v.purpose === 'rent'} /> : null}
+        booking={
+          onMarket ? (
+            <>
+              <BookShowing listingId={b.id} signedIn={!!actor} path={path} rent={v.purpose === 'rent'} />
+              <Button variant="ghost" icon="chat" href={`/contact?listing=${v.slug}`}>
+                Ask about this listing
+              </Button>
+            </>
+          ) : null
+        }
         similar={
           similar.length ? (
             <section className="stack" aria-labelledby="similar-h">

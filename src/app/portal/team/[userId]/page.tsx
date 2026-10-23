@@ -2,6 +2,9 @@ import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { AgentProfileForm } from '@/components/portal/AgentProfileForm';
+import { ImageField } from '@/components/ui/ImageField';
+import { clearImage, getImageTarget, setImage } from '@/server/actions/images';
+import { mediaSrc } from '@/server/queries/media';
 import { Breadcrumbs } from '@/components/ui/layout';
 import { db } from '@/db/client';
 import { agentProfiles, users } from '@/db/schema';
@@ -20,6 +23,8 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ u
     db.query.agentProfiles.findFirst({ where: eq(agentProfiles.userId, userId) }),
   ]);
   if (!u || !p) notFound();
+  const photo = await mediaSrc(p.photoId);
+  const slot = { kind: 'agent' as const, userId };
   return (
     <div className="stack-lg">
       {manager ? <Breadcrumbs items={[{ label: 'Team', href: '/portal/team' }, { label: p.publicName }]} /> : null}
@@ -31,6 +36,17 @@ export default async function AgentProfilePage({ params }: { params: Promise<{ u
           {u.robloxUsername ? <> · Roblox <span className="id">{u.robloxUsername}</span></> : null}
           {u.chirperHandle ? <> · Chirper <span className="id">@{u.chirperHandle}</span></> : null}
         </p>
+      </div>
+      <div className="panel">
+        <ImageField
+          label="Agent photo"
+          hint="A square in-game portrait. Shown on the Agents page and listings."
+          ratio="1 / 1"
+          current={photo}
+          getTarget={getImageTarget.bind(null, slot)}
+          save={setImage.bind(null, slot)}
+          clear={clearImage.bind(null, slot)}
+        />
       </div>
       <div className="panel">
         <AgentProfileForm

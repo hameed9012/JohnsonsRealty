@@ -7,6 +7,7 @@ import { seedBase } from './seed-base';
 import {
   agentProfiles,
   areas,
+  careers,
   clientPeople,
   clients,
   listingConfidential,
@@ -14,7 +15,10 @@ import {
   listingReviews,
   listings,
   media,
+  posts,
   priceHistory,
+  saleAgents,
+  sales,
   users,
 } from './schema';
 
@@ -118,7 +122,35 @@ async function main() {
     await db.insert(listingPhotos).values([0, 1, 2].map((i) => ({ listingId: pending!.id, mediaId: i === 0 ? m2!.id : photoIds[i]!, alt: `Example room ${i + 1}`, sortOrder: i, isCover: i === 0 })));
     await db.insert(listingReviews).values({ listingId: pending!.id, round: 1, submittedBy: 'example-client', snapshot: {} });
   }
-  console.log('Dev seed done: Example Owner, Admin, Agent, Client; one live and one pending Example listing.');
+  // Example sales across a few months and areas, for the Sold ledger and charts.
+  if (!(await db.query.listings.findFirst({ where: eq(listings.refNo, 'JR-2000-00010') }))) {
+    const areaRows = await db.query.areas.findMany();
+    const pick = (slug: string) => areaRows.find((a) => a.slug === slug)?.id;
+    const examples = [
+      { n: 10, addr: 'Example Row', area: 'west-downtown', price: 240000, on: '2026-06-12' },
+      { n: 11, addr: 'Example Terrace', area: 'fairview', price: 410000, on: '2026-07-03' },
+      { n: 12, addr: 'Example Hill', area: 'springfield', price: 325000, on: '2026-08-21' },
+      { n: 13, addr: 'Example Park', area: 'north-residential', price: 199000, on: '2026-09-09' },
+    ];
+    for (const [i, x] of examples.entries()) {
+      const ref = `JR-2000-${String(x.n).padStart(5, '0')}`;
+      const [l] = await db
+        .insert(listings)
+        .values({ refNo: ref, slug: `example-${x.n}`, type: 'house', purpose: 'sale', source: 'agent', status: 'sold', addressLine: x.addr, areaId: pick(x.area), price: x.price, beds: 3, baths: 2, listingAgentId: 'example-agent', submittedByUserId: 'example-agent', round: 1, publishedAt: new Date(x.on) })
+        .returning();
+      const [s] = await db.insert(sales).values({ saleNo: 900 + i, listingId: l!.id, price: x.price, soldOn: x.on, createdBy: 'example-owner' }).returning();
+      await db.insert(saleAgents).values({ saleId: s!.id, agentId: 'example-agent', side: 'seller' });
+    }
+  }
+  await db
+    .insert(posts)
+    .values({ kind: 'guide', title: 'Example buyer guide', slug: 'example-buyer-guide', excerpt: 'Example guide for local development.', body: '## Example heading\n\nExample paragraph with **bold** and a [link](/buy).\n\n- Example point one\n- Example point two', authorId: 'example-owner', publishedAt: new Date() })
+    .onConflictDoNothing();
+  await db
+    .insert(careers)
+    .values({ title: 'Example agent role', slug: 'example-agent-role', summary: 'Example role for local development.', body: 'Example description.', open: true })
+    .onConflictDoNothing();
+  console.log('Dev seed done: Example Owner, Admin, Agent, Client; Example listings, sales, a guide and a role.');
   process.exit(0);
 }
 

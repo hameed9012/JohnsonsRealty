@@ -34,7 +34,7 @@ const MAX = 10 * 1024 * 1024;
 
 type Pending = { key: string; name: string; progress: number; error?: string };
 
-function dimensions(file: File): Promise<{ width: number; height: number }> {
+export function dimensions(file: File): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
     const img = new window.Image();
     img.onload = () => {
@@ -46,7 +46,7 @@ function dimensions(file: File): Promise<{ width: number; height: number }> {
   });
 }
 
-function send(target: UploadTarget, file: File, onProgress: (p: number) => void): Promise<Record<string, unknown>> {
+export function send(target: UploadTarget, file: File, onProgress: (p: number) => void): Promise<Record<string, unknown>> {
   return new Promise((resolve, reject) => {
     const fd = new FormData();
     for (const [k, v] of Object.entries(target.fields)) fd.append(k, v);
@@ -66,6 +66,24 @@ function send(target: UploadTarget, file: File, onProgress: (p: number) => void)
     xhr.send(fd);
   });
 }
+
+/** Maps a provider's upload response to what the server verifies and stores. */
+export function toUploaded(target: UploadTarget, body: Record<string, unknown>, dims: { width: number; height: number }): Uploaded {
+  return target.provider === 'cloudinary'
+    ? {
+        storageId: String(body.public_id),
+        width: Number(body.width),
+        height: Number(body.height),
+        bytes: Number(body.bytes),
+        format: String(body.format),
+        version: Number(body.version),
+        signature: String(body.signature),
+      }
+    : { storageId: String(body.storageId), width: dims.width, height: dims.height, bytes: Number(body.bytes), format: String(body.format) };
+}
+
+export const ACCEPT = ['image/jpeg', 'image/png', 'image/webp'];
+export const MAX_BYTES = 10 * 1024 * 1024;
 
 /** Drag-and-drop photo uploader with progress, drag-to-reorder (plus keyboard buttons), cover choice, alt text and captions. */
 export function Uploader({ photos, min = 3, getTarget, register, onChange, onRemove, disabled }: UploaderProps) {
@@ -101,18 +119,7 @@ export function Uploader({ photos, min = 3, getTarget, register, onChange, onRem
       try {
         const dims = await dimensions(file);
         const body = await send(t.target, file, (p) => setPending((xs) => xs.map((x) => (x.key === key ? { ...x, progress: p } : x))));
-        const uploaded: Uploaded =
-          t.target.provider === 'cloudinary'
-            ? {
-                storageId: String(body.public_id),
-                width: Number(body.width),
-                height: Number(body.height),
-                bytes: Number(body.bytes),
-                format: String(body.format),
-                version: Number(body.version),
-                signature: String(body.signature),
-              }
-            : { storageId: String(body.storageId), width: dims.width, height: dims.height, bytes: Number(body.bytes), format: String(body.format) };
+        const uploaded = toUploaded(t.target, body, dims);
         const r = await register(uploaded);
         if (!r.ok) {
           fail(r.message ?? 'That photo couldn’t be saved.');
