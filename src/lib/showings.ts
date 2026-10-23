@@ -19,3 +19,8 @@ export function clientCanChange(status: ShowingStatus, at: Date, now = new Date(
 export function isUpcoming(status: ShowingStatus, at: Date, now = new Date()): boolean {
   return (status === 'requested' || status === 'confirmed') && at.getTime() > now.getTime() - 3600_000;
 }
+
+/** Showings at or after this time still count as upcoming (one hour of grace). */
+export function upcomingCutoff(now = new Date()): Date {
+  return new Date(now.getTime() - 3600_000);
+}

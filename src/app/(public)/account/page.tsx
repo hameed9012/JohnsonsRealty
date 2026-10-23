@@ -11,7 +11,7 @@ import { db } from '@/db/client';
 import { listings, savedHomes, showings } from '@/db/schema';
 import { dealTimeline } from '@/lib/deal-stage';
 import { PUBLIC_STATUSES, statusKey, type ListingStatus } from '@/lib/listing-status';
-import { SHOWING_PILL, type ShowingStatus } from '@/lib/showings';
+import { SHOWING_PILL, upcomingCutoff, type ShowingStatus } from '@/lib/showings';
 import { cardsWhere } from '@/server/queries/cards';
 import { myDeals, unreadForUser } from '@/server/queries/deals';
 import { ownerListings } from '@/server/queries/listings';
@@ -29,7 +29,7 @@ export default async function AccountDashboard() {
       .select({ s: showings, address: listings.addressLine, slug: listings.slug })
       .from(showings)
       .innerJoin(listings, eq(listings.id, showings.listingId))
-      .where(and(eq(showings.requestedBy, actor.id), inArray(showings.status, ['requested', 'confirmed']), gte(showings.requestedFor, new Date(Date.now() - 3600_000))))
+      .where(and(eq(showings.requestedBy, actor.id), inArray(showings.status, ['requested', 'confirmed']), gte(showings.requestedFor, upcomingCutoff())))
       .orderBy(asc(showings.requestedFor))
       .limit(3),
     myDeals(actor.id),
