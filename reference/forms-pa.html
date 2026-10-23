@@ -1,0 +1,1499 @@
+<title>Johnson's Realty PA Forms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Mrs+Saint+Delafield&display=swap">
+<style>
+/* Layout: a printed brokerage form on a desk. One document visible at a time, switched by tabs. Deliberately single-theme: paper is paper. */
+:root{
+  --desk:#DCE1DE;
+  --paper:#FFFFFF;
+  --ink:#1C2321;
+  --muted:#5A6662;
+  --rule:#9AA6A2;
+  --hair:#D5DBD8;
+  --tint:#F3F5F4;
+  --brand:#16302A;      /* deep green, header */
+  --brand-2:#1F4038;
+  --band:#1F2B28;       /* section bands */
+  --brass:#B4925A;      /* restrained accent */
+  --brass-soft:#E7DBC4;
+  --ok:#2E6B4F;
+  --warn:#9A6A1C;
+  --void:#8A2F2F;
+  --font-display:"Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+  --font-sig:"Mrs Saint Delafield", "Brush Script MT", cursive;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+body{background:var(--desk);color:var(--ink);font-family:var(--font-body);font-size:14px;padding-inline:16px;padding-block:0 48px}
+
+/* ---------- toolbar ---------- */
+.toolbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin-inline:-16px;padding:10px 16px;background:rgba(220,225,222,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--hair)}
+.toolbar-inner{max-width:860px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.tabs{display:flex;gap:4px;background:#C9D0CC;padding:3px;border-radius:8px;flex-wrap:wrap}
+.tab{border:0;background:transparent;font:600 12.5px/1 var(--font-body);color:var(--muted);padding:8px 12px;border-radius:6px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--paper);color:var(--brand);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.modes{display:flex;gap:0;border:1px solid var(--brand);border-radius:8px;overflow:hidden}
+.mode{border:0;background:var(--paper);color:var(--brand);font:600 12.5px/1 var(--font-body);padding:9px 12px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--brand);color:#F3EFE6}
+.mode:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
+.tabs-wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid #B5BEBA;background:var(--paper);color:var(--ink);font:500 12.5px/1 var(--font-body);padding:8px 11px;border-radius:6px;cursor:pointer}
+.btn:hover{border-color:var(--brand)}
+.btn.primary{background:var(--brand);color:#F3EFE6;border-color:var(--brand)}
+.btn.danger{border-color:var(--void);color:var(--void)}
+.pick{appearance:none;-webkit-appearance:none;border:1px solid var(--brand);background-color:var(--paper);color:var(--brand);font:600 12.5px/1 var(--font-body);padding:8px 28px 8px 11px;border-radius:6px;cursor:pointer;max-width:100%;background-image:linear-gradient(45deg,transparent 50%,var(--brand) 50%),linear-gradient(135deg,var(--brand) 50%,transparent 50%);background-position:calc(100% - 13px) 52%,calc(100% - 9px) 52%;background-size:4px 4px;background-repeat:no-repeat}
+.pick:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.btn:focus-visible,.tab:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--brand);color:#F3EFE6;padding:10px 16px;border-radius:6px;font-size:13px;z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+
+/* ---------- document ---------- */
+.doc{max-width:860px;margin:24px auto 0;background:var(--paper);box-shadow:0 1px 2px rgba(20,35,30,.08),0 10px 30px rgba(20,35,30,.10)}
+.head{background:var(--brand);color:#F1EDE4;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding:18px 24px}
+.brand{display:flex;gap:14px;align-items:center;min-width:0}
+.mark{width:46px;height:46px;flex:none}
+.brand-name{font:800 19px/1.1 var(--font-display);letter-spacing:.12em;text-transform:uppercase}
+.brand-sub{font:500 11px/1.4 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--brass);margin-top:4px}
+.head-contact{text-align:right;font:500 11.5px/1.6 var(--font-mono);color:#D9D3C6}
+.head-contact b{color:var(--brass);font-weight:500}
+.titleband{background:var(--brand-2);text-align:center;padding:14px 20px 12px;border-top:1px solid rgba(255,255,255,.06)}
+.titleband h1{margin:0;font:800 clamp(16px,2.6vw,21px)/1.2 var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--brass);text-wrap:balance}
+.titleband .sub{font:600 11.5px/1.4 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:#E9E4D8;margin-top:5px}
+.titleband .ref{font:italic 400 11px/1.4 var(--font-body);color:#A9B8B2;margin-top:3px}
+.brassrule{height:3px;background:var(--brass)}
+.body{padding:18px 16px 8px}
+@media (min-width:640px){.body{padding:20px 22px 8px}}
+
+.meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 16px;background:var(--tint);border:1px solid var(--hair);padding:10px 14px;margin-bottom:14px;align-items:end}
+.meta .f label{color:var(--ink);font-weight:600}
+
+.sec{margin-top:14px}
+.sec-h{background:var(--band);color:#F4F2EC;font:700 11px/1 var(--font-display);letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sec-h i{font:italic 400 10.5px/1 var(--font-body);letter-spacing:.02em;text-transform:none;color:#B9C4C0}
+.g{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px 16px;padding:12px 2px 4px}
+.c2{grid-column:span 2}.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c9{grid-column:span 9}.c12{grid-column:span 12}
+@media (max-width:640px){
+  .g>*{grid-column:span 12}
+  .g>.half{grid-column:span 6}
+  .meta{grid-template-columns:1fr}
+  .head-contact{text-align:left}
+}
+
+/* fields */
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f label,.lbl{font:600 9.5px/1.3 var(--font-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.f input,.f select,.f textarea,.val{width:100%;border:0;border-bottom:1px solid var(--rule);background:transparent;font:500 14.5px/1.4 var(--font-body);color:var(--ink);padding:3px 1px 4px;border-radius:0;min-height:28px}
+.f textarea{resize:vertical;min-height:58px;border:1px solid var(--hair);padding:6px 8px;background:#FCFDFC}
+.f select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:18px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 9px) 55%,calc(100% - 5px) 55%;background-size:4px 4px;background-repeat:no-repeat}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-bottom-color:var(--brand);background:#F6F9F7}
+.f textarea:focus{border-color:var(--brand)}
+input::placeholder,textarea::placeholder{color:#B4BDBA;font-weight:400}
+.money,.num,.mono{font-family:var(--font-mono)!important;font-variant-numeric:tabular-nums}
+.val{display:flex;align-items:center;color:var(--ink)}
+.val.words{font:italic 400 13.5px/1.4 var(--font-body);color:#33403C}
+.val.strong{font-weight:600}
+input[type="date"],input[type="datetime-local"]{font-family:var(--font-mono)!important;font-size:13.5px!important}
+
+/* yes/no */
+.yn{display:flex;gap:16px;align-items:center;min-height:28px;border-bottom:1px solid transparent}
+.yn label.opt{display:flex;gap:6px;align-items:center;font:500 13px/1 var(--font-body);color:var(--ink);text-transform:none;letter-spacing:0;cursor:pointer}
+input[type="radio"],input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:15px;height:15px;border:1.5px solid #6E7B77;border-radius:2px;background:var(--paper);display:inline-grid;place-content:center;margin:0;cursor:pointer;flex:none}
+input[type="radio"]:checked::after,input[type="checkbox"]:checked::after{content:"";width:8px;height:4px;border-left:2px solid var(--brand);border-bottom:2px solid var(--brand);transform:rotate(-45deg) translate(1px,-1px)}
+input[type="radio"]:focus-visible,input[type="checkbox"]:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+/* notices */
+.notice{border:1px solid var(--rule);padding:10px 12px;margin:12px 0 4px;font-size:12.5px;line-height:1.55;color:#2E3936}
+.notice b{color:var(--ink)}
+.notice.warn{border-color:#C9A46A;background:#FBF7EF}
+
+/* tables */
+.tw{overflow-x:auto;margin-top:8px}
+table.t{width:100%;border-collapse:collapse;min-width:600px}
+table.t th{font:600 9.5px/1.2 var(--font-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 6px;border-bottom:1.5px solid var(--ink)}
+table.t td{padding:5px 6px;border-bottom:1px solid var(--hair);vertical-align:middle}
+table.t td.ck{width:36px;text-align:center}
+table.t td.name{font-weight:500;font-size:13.5px}
+table.t input,table.t select{width:100%;border:0;border-bottom:1px dashed transparent;background:transparent;font:500 13.5px/1.3 var(--font-body);color:var(--ink);padding:4px 2px}
+table.t select{appearance:none;-webkit-appearance:none;cursor:pointer}
+table.t input:focus,table.t select:focus{outline:none;border-bottom-color:var(--brand);background:#F6F9F7}
+table.t tr.off td:not(.ck){opacity:.45}
+table.t textarea.grow{width:100%;border:0;border-bottom:1px dashed transparent;background:transparent;font:500 13.5px/1.4 var(--font-body);color:var(--ink);padding:4px 2px;resize:none;overflow:hidden;min-height:0;field-sizing:content;display:block}
+table.t textarea.grow:focus{outline:none;border-bottom-color:var(--brand);background:#F6F9F7}
+body.shot table.t textarea.grow::placeholder{color:transparent}
+
+/* terms */
+.terms{columns:2 280px;column-gap:26px;font-size:11.5px;line-height:1.55;color:#36423E;padding:12px 2px 2px;margin:0;counter-reset:t;list-style:none}
+.terms li{break-inside:avoid;margin-bottom:8px;padding-left:22px;position:relative}
+.terms li::before{counter-increment:t;content:counter(t) ".";position:absolute;left:0;font:600 11px/1.55 var(--font-mono);color:var(--brand)}
+.terms b{color:var(--ink)}
+
+/* signatures */
+.sigs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 30px;padding:16px 2px 6px}
+@media (max-width:640px){.sigs{grid-template-columns:1fr}}
+.sig{display:flex;flex-direction:column;gap:4px;min-width:0}
+.sig input.sigline{border:0;border-bottom:1px solid var(--ink);background:transparent;font:400 34px/1.1 var(--font-sig);color:#1B2E5A;padding:4px 2px 0;min-height:48px;width:100%}
+.sig input.sigline::placeholder{font:400 13px/1 var(--font-body);color:#B4BDBA}
+.sig input.sigline:focus{outline:none;background:#F6F9F7}
+.sig-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.sig-meta .lbl{font-size:9.5px}
+.signed{display:flex;gap:6px;align-items:center;font:500 11.5px/1 var(--font-body);color:var(--ok);cursor:pointer}
+.sig-date{display:flex;gap:8px;align-items:center}
+.sig-date input{border:0;border-bottom:1px solid var(--rule);font:400 12.5px var(--font-mono);background:transparent;color:var(--ink);padding:2px}
+.accept{background:var(--tint);border-left:3px solid var(--brass);padding:10px 12px;font-size:12.5px;line-height:1.5;margin-top:14px}
+
+/* status pill */
+.status-pill{display:inline-flex}
+select.pill{border:1px solid var(--rule)!important;border-radius:999px!important;padding:4px 24px 4px 10px!important;font:600 11.5px/1.3 var(--font-body)!important;letter-spacing:.06em;text-transform:uppercase;width:auto!important;min-height:0!important;background-color:var(--paper)!important}
+select.pill[data-tone="ok"]{color:var(--ok);border-color:var(--ok)!important}
+select.pill[data-tone="warn"]{color:var(--warn);border-color:var(--warn)!important}
+select.pill[data-tone="void"]{color:var(--void);border-color:var(--void)!important}
+
+.foot{text-align:center;font:400 10.5px/1.5 var(--font-mono);color:#7D8985;padding:14px 16px 16px;border-top:1px solid var(--hair);margin-top:14px}
+.foot .k{color:var(--brand)}
+
+/* screenshot mode */
+body.shot .toolbar{display:none}
+body.shot input::placeholder,body.shot textarea::placeholder{color:transparent}
+body.shot .f textarea{resize:none}
+body.shot input::-webkit-calendar-picker-indicator{display:none}
+body.shot .doc{margin-top:16px}
+.exit-shot{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;opacity:.35}
+.exit-shot:hover{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+
+<div class="toolbar" id="toolbar">
+  <div class="toolbar-inner">
+    <div class="tabs-wrap">
+    <div class="modes" role="group" aria-label="Kind of sale"><button class="mode" type="button" data-mode="home" aria-pressed="true">Homes</button><button class="mode" type="button" data-mode="biz" aria-pressed="false">Businesses</button></div>
+    <div class="tabs" role="tablist" aria-label="Forms">
+      <button class="tab" role="tab" data-doc="listing" aria-selected="false" id="tab-listing">Listing</button>
+      <button class="tab" role="tab" data-doc="spds" aria-selected="false" id="tab-spds">Disclosure</button>
+      <button class="tab" role="tab" data-doc="aos" aria-selected="true" id="tab-aos">Agreement</button>
+      <button class="tab" role="tab" data-doc="blisting" aria-selected="false" id="tab-blisting" hidden>Business Listing</button>
+      <button class="tab" role="tab" data-doc="bsale" aria-selected="false" id="tab-bsale" hidden>Business Sale</button>
+      <button class="tab" role="tab" data-doc="deposit" aria-selected="false" id="tab-deposit">Earnest Money</button>
+      <button class="tab" role="tab" data-doc="addendum" aria-selected="false" id="tab-addendum">Addendum</button>
+      <button class="tab" role="tab" data-doc="settle" aria-selected="false" id="tab-settle">Settlement</button>
+    </div>
+    </div>
+    <div class="actions">
+      <select class="pick" id="seller-pick" aria-label="Fill in a seller from the Seller Files">
+        <option value="">Fill in seller…</option>
+        <optgroup label="Current listings">
+          <option value="porter">Elaine Porter · 7063 Franklin Court</option>
+          <option value="kowalski">Ray Kowalski · the bungalow</option>
+          <option value="raman">Priya &amp; Daniel Raman · 601 Cardinal Court (4 bed)</option>
+          <option value="castellano">Anthony &amp; Renée Castellano · 601 Cardinal Court (6 bed)</option>
+        </optgroup>
+        <optgroup label="Business sellers">
+          <option value="dee">Dee Marchetti (Dee’s Diner)</option>
+          <option value="raj">Raj Malhotra (Corner Mart &amp; Fuel)</option>
+          <option value="kendra">Kendra Boyd (Boyd &amp; Co.)</option>
+          <option value="frank">Frank Delgado (Delgado Auto Repair)</option>
+        </optgroup>
+        <optgroup label="Spare sellers (seller details only)">
+          <option value="brennan">Estate of Harold Brennan</option>
+          <option value="whitaker">Jordan &amp; Alexis Whitaker</option>
+        </optgroup>
+      </select>
+      <button class="btn" id="btn-sample" type="button">Load sample</button>
+      <button class="btn" id="btn-newno" type="button">New form numbers</button>
+      <button class="btn danger" id="btn-clear" type="button">Clear all</button>
+      <button class="btn primary" id="btn-save" type="button" hidden>Save as image</button>
+      <button class="btn" id="btn-shot" type="button">Screenshot mode</button>
+    </div>
+  </div>
+</div>
+<button class="btn exit-shot" id="btn-exit" type="button" hidden>Exit screenshot mode</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ================= LISTING CONTRACT ================= -->
+<article class="doc" id="doc-listing" data-doc="listing" hidden>
+  <header class="head">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" fill="none" stroke="#B4925A" stroke-width="1.5"/><path d="M10 23 L24 11 L38 23" fill="none" stroke="#F1EDE4" stroke-width="2.2"/><circle cx="20" cy="30" r="4.2" fill="none" stroke="#B4925A" stroke-width="2"/><path d="M24.2 30 H35 M31 30 v3.5 M34 30 v2.5" fill="none" stroke="#B4925A" stroke-width="2"/></svg>
+      <div><div class="brand-name">Johnson’s Realty</div><div class="brand-sub">Brokerage · Pennsylvania</div></div>
+    </div>
+    <div class="head-contact">Buy • Sell • Rent<br><b>Contact</b> IbrahimKhurram407<br><b>Chirper</b> @KeysWithJohnson</div>
+  </header>
+  <div class="titleband">
+    <h1>Exclusive Right to Sell Listing Contract</h1>
+    <div class="sub">Commonwealth of Pennsylvania · Residential</div>
+    <div class="ref">Form JR-PA-050 · Between the Seller and Johnson’s Realty Brokerage</div>
+  </div>
+  <div class="brassrule"></div>
+
+  <div class="body">
+    <div class="meta">
+      <div class="f"><label for="lc-no">Contract No.</label><input id="lc-no" class="mono" placeholder="LC-2026-00000"></div>
+      <div class="f"><label for="lc-status">Status</label><span class="status-pill"><select id="lc-status" class="pill"><option data-tone="">Draft</option><option data-tone="ok">Active</option><option data-tone="warn">Under Contract</option><option data-tone="ok">Settled</option><option data-tone="void">Expired</option><option data-tone="void">Withdrawn</option></select></span></div>
+      <div class="f"><label for="lc-date">Date Signed</label><input id="lc-date" type="date"></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">1 · Seller(s) <i>Everyone on the deed signs</i></div>
+      <div class="g">
+        <div class="f c8"><label for="lc-seller">Seller(s)</label><input id="lc-seller" data-key="seller_name" placeholder="Full legal name(s)"></div>
+        <div class="f c4"><label for="lc-seller-c">Seller Contact</label><input id="lc-seller-c" data-key="seller_contact" placeholder="In-game username"></div>
+        <div class="f c8"><label for="lc-seller-addr">Seller Mailing Address</label><input id="lc-seller-addr" data-key="seller_addr" placeholder="Where the seller can be reached"></div>
+        <div class="f c4"><label for="lc-vesting">How Title Is Held</label><input id="lc-vesting" data-key="seller_vesting" placeholder="e.g. Sole owner"></div>
+        <div class="f c12"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="lc-cn">Seller received the Consumer Notice at the first meeting with the agent</label></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">2 · Property <i>Dauphin County</i></div>
+      <div class="g">
+        <div class="f c6"><label for="lc-addr">Street Address</label><input id="lc-addr" data-key="prop_address" placeholder="e.g. 8095 Pine Hollow Road"></div>
+        <div class="f c6"><label for="lc-area">Town / Area</label><select id="lc-area" data-key="prop_area">
+          <option value="">Choose the area on the map…</option>
+          <optgroup label="Harrisburg"><option value="hbg-west">Harrisburg · West downtown</option><option value="hbg-east">Harrisburg · East downtown</option><option value="hbg-north">Harrisburg · North residential</option></optgroup>
+          <optgroup label="Swatara Township"><option value="swatara">Swatara Township · Springfield (northeast)</option></optgroup>
+          <optgroup label="Susquehanna Township"><option value="susq">Susquehanna Township · Fairview (northwest)</option></optgroup>
+        </select></div>
+        <div class="f c5"><label for="lc-city">City / Borough / Township</label><input id="lc-city" data-key="prop_city" placeholder="Filled from Town / Area"></div>
+        <div class="f c2 half"><label for="lc-state">State</label><input id="lc-state" value="PA"></div>
+        <div class="f c3 half"><label for="lc-county">County</label><input id="lc-county" data-key="prop_county" value="Dauphin"></div>
+        <div class="f c2"><label for="lc-zip">ZIP Code</label><input id="lc-zip" data-key="prop_zip" class="mono" inputmode="numeric" placeholder="17101"></div>
+        <div class="f c4"><label for="lc-parcel">Tax Parcel ID</label><input id="lc-parcel" data-key="parcel" class="mono" placeholder="e.g. 62-809-095"></div>
+        <div class="f c4"><label for="lc-ptype">Property Type</label><select id="lc-ptype" data-key="prop_type"><option>Single-family detached</option><option>Twin / semi-detached</option><option>Rowhome / townhouse</option><option>Condominium</option><option>Bungalow</option></select></div>
+        <div class="f c4"><label for="lc-year">Year Built</label><input id="lc-year" data-key="prop_year" class="num" inputmode="numeric" placeholder="1998"></div>
+        <div class="f c2 half"><label for="lc-beds">Bedrooms</label><input id="lc-beds" data-key="prop_beds" class="num" inputmode="numeric" placeholder="3"></div>
+        <div class="f c2 half"><label for="lc-baths">Bathrooms</label><input id="lc-baths" data-key="prop_baths" class="num" inputmode="numeric" placeholder="2"></div>
+        <div class="f c8"><label for="lc-park">Parking / Garage</label><input id="lc-park" data-key="prop_park" placeholder="e.g. Two-car attached garage"></div>
+        <div class="f c12"><label for="lc-legal">Description of Property</label><input id="lc-legal" data-key="prop_legal" placeholder="e.g. Two-storey detached dwelling with rear yard"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">3 · Listing Price &amp; Term <i>U.S. dollars</i></div>
+      <div class="g">
+        <div class="f c4"><label for="lc-price">Listing Price</label><input id="lc-price" data-key="price" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c8"><label>Listing Price in Words</label><div class="val words" data-out="price_words">—</div></div>
+        <div class="f c4"><label for="lc-start">Listing Starts</label><input id="lc-start" type="date"></div>
+        <div class="f c4"><label for="lc-end">Listing Ends</label><input id="lc-end" type="date"></div>
+        <div class="f c4"><label for="lc-occ">Occupancy</label><select id="lc-occ" data-key="occupancy"><option>Owner-occupied</option><option>Vacant</option><option>Tenant-occupied</option></select></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">4 · Commission <i>Paid by the Seller at settlement</i></div>
+      <div class="g">
+        <div class="f c3 half"><label for="lc-comm">Total Commission (%)</label><input id="lc-comm" data-key="comm_total" class="num" inputmode="decimal" value="5"></div>
+        <div class="f c3 half"><label for="lc-side">Listing Brokerage Share (%)</label><input id="lc-side" data-key="comm_side" class="num" inputmode="decimal" value="2.5"></div>
+        <div class="f c3 half"><label for="lc-coop">Offered to Buyer’s Broker (%)</label><input id="lc-coop" class="num" inputmode="decimal" value="2.5"></div>
+        <div class="f c3 half"><label>Total at Listing Price</label><div class="val strong mono" data-out="comm_total_amt">$0.00</div></div>
+      </div>
+      <div class="notice"><b>COMMISSION:</b> Commission is earned only if the property is sold during the listing term, or within 90 days after it ends to a buyer introduced during the term. It is paid from the Seller’s proceeds at settlement. No commission is owed if the property does not sell.</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">5 · Property Facts</div>
+      <div class="g">
+        <div class="f c4"><label for="lc-taxes">Annual Property Taxes</label><input id="lc-taxes" data-key="taxes" placeholder="e.g. About $6,200 per year"></div>
+        <div class="f c4"><label for="lc-hoa">HOA / Community Fees</label><input id="lc-hoa" data-key="hoa" placeholder="e.g. None"></div>
+        <div class="f c4"><label for="lc-mortgage">Existing Mortgage Lender</label><input id="lc-mortgage" data-key="mortgage" placeholder="e.g. None"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">6 · Marketing &amp; Showings</div>
+      <div class="g">
+        <div class="f c4"><span class="lbl">Yard Sign</span><div class="yn"><label class="opt"><input type="radio" name="lc-sign" value="Yes" id="lc-sign-y">Yes</label><label class="opt"><input type="radio" name="lc-sign" value="No" id="lc-sign-n">No</label></div></div>
+        <div class="f c4"><span class="lbl">Photos &amp; Online Listing</span><div class="yn"><label class="opt"><input type="radio" name="lc-photo" value="Yes" id="lc-photo-y">Yes</label><label class="opt"><input type="radio" name="lc-photo" value="No" id="lc-photo-n">No</label></div></div>
+        <div class="f c4"><span class="lbl">Lockbox</span><div class="yn"><label class="opt"><input type="radio" name="lc-lock" value="Yes" id="lc-lock-y">Yes</label><label class="opt"><input type="radio" name="lc-lock" value="No" id="lc-lock-n">No</label></div></div>
+        <div class="f c12"><label for="lc-show">Showing Instructions</label><textarea id="lc-show" data-key="show_notes" placeholder="e.g. 24 hours’ notice. Seller leaves during showings."></textarea></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">7 · Terms</div>
+      <ol class="terms">
+        <li><b>Exclusive right.</b> The Seller gives Johnson’s Realty the exclusive right to sell the property during the listing term, whoever finds the buyer.</li>
+        <li><b>Authority.</b> The Seller confirms they own the property, or have the legal authority to sell it, and that everyone whose signature is needed has signed.</li>
+        <li><b>Disclosure.</b> The Seller will complete a Seller’s Property Disclosure Statement and tell the brokerage about any material defect they know of.</li>
+        <li><b>Offers.</b> The brokerage will present every written offer to the Seller promptly. The Seller decides whether to accept, reject or counter.</li>
+        <li><b>Deposits.</b> Earnest money received by the brokerage is held in its escrow account until settlement or termination.</li>
+        <li><b>Showings and access.</b> The Seller will allow showings as set out in Section 6 and keep the property in show-ready condition.</li>
+        <li><b>Ending early.</b> This contract may be ended before the listing term only by written agreement of both parties.</li>
+        <li><b>Professional advice.</b> Johnson’s Realty does not provide legal, tax or financial advice. The Seller is encouraged to consult qualified professionals.</li>
+      </ol>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">8 · Signatures</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="lc-sig-s1" placeholder="Type name to sign" aria-label="Seller signature"><div class="sig-meta"><span class="lbl">Seller</span><span class="sig-date"><input type="date" id="lc-sig-s1-d" aria-label="Date signed, Seller"></span></div></div>
+        <div class="sig"><input class="sigline" id="lc-sig-s2" placeholder="Type name to sign" aria-label="Second Seller (if any) signature"><div class="sig-meta"><span class="lbl">Second Seller (if any)</span><span class="sig-date"><input type="date" id="lc-sig-s2-d" aria-label="Date signed, Second Seller (if any)"></span></div></div>
+        <div class="sig"><input class="sigline" id="lc-sig-a" data-key="agent_sig" placeholder="Type name to sign" aria-label="Hameed Johnson, Real Estate Agent signature"><div class="sig-meta"><span class="lbl">Hameed Johnson, Real Estate Agent</span><span class="sig-date"><input type="date" id="lc-sig-a-d" aria-label="Date signed, Hameed Johnson, Real Estate Agent"></span></div></div>
+      </div>
+    </section>
+  </div>
+  <div class="foot">Johnson’s Realty Brokerage · Contract No. <span class="k" data-mirror-id="lc-no">—</span> · Form JR-PA-050</div>
+</article>
+
+<!-- ================= SELLER'S PROPERTY DISCLOSURE STATEMENT ================= -->
+<article class="doc" id="doc-spds" data-doc="spds" hidden>
+  <header class="head">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" fill="none" stroke="#B4925A" stroke-width="1.5"/><path d="M10 23 L24 11 L38 23" fill="none" stroke="#F1EDE4" stroke-width="2.2"/><circle cx="20" cy="30" r="4.2" fill="none" stroke="#B4925A" stroke-width="2"/><path d="M24.2 30 H35 M31 30 v3.5 M34 30 v2.5" fill="none" stroke="#B4925A" stroke-width="2"/></svg>
+      <div><div class="brand-name">Johnson’s Realty</div><div class="brand-sub">Brokerage · Pennsylvania</div></div>
+    </div>
+    <div class="head-contact">Buy • Sell • Rent<br><b>Contact</b> IbrahimKhurram407<br><b>Chirper</b> @KeysWithJohnson</div>
+  </header>
+  <div class="titleband">
+    <h1>Seller’s Property Disclosure Statement</h1>
+    <div class="sub">Completed by the Seller · Residential Property</div>
+    <div class="ref">Form JR-PA-060 · Given to buyers before they sign an Agreement of Sale</div>
+  </div>
+  <div class="brassrule"></div>
+
+  <div class="body">
+    <div class="meta">
+      <div class="f"><label for="spds-no">Statement No.</label><input id="spds-no" class="mono" placeholder="SPDS-2026-00000"></div>
+      <div class="f"><label for="spds-status">Status</label><span class="status-pill"><select id="spds-status" class="pill"><option data-tone="">Draft</option><option data-tone="ok">Completed</option><option data-tone="warn">Updated</option><option data-tone="ok">Received by Buyer</option></select></span></div>
+      <div class="f"><label for="spds-date">Date Completed</label><input id="spds-date" type="date"></div>
+    </div>
+    <div class="notice"><b>NOTICE TO BUYERS:</b> This statement describes the property as the Seller knows it. It is not a warranty and does not replace a professional home inspection. The Seller must tell the Buyer if anything changes before settlement.</div>
+
+    <section class="sec">
+      <div class="sec-h">1 · Seller &amp; Property</div>
+      <div class="g">
+        <div class="f c8"><label for="spds-seller">Seller(s)</label><input id="spds-seller" data-key="seller_name" placeholder="Full legal name(s)"></div>
+        <div class="f c4"><label for="spds-capacity">Seller Is</label><select id="spds-capacity"><option>The owner</option><option>Executor of an estate</option><option>Trustee</option></select></div>
+        <div class="f c6"><label for="spds-addr">Property Address</label><input id="spds-addr" data-key="prop_address" placeholder="Street address"></div>
+        <div class="f c4"><label for="spds-city">City / Borough / Township</label><input id="spds-city" data-key="prop_city" placeholder="Municipality"></div>
+        <div class="f c2"><label for="spds-zip">ZIP</label><input id="spds-zip" data-key="prop_zip" class="mono" inputmode="numeric" placeholder="17101"></div>
+        <div class="f c3 half"><label for="spds-year">Year Built</label><input id="spds-year" data-key="prop_year" class="num" inputmode="numeric" placeholder="1998"></div>
+        <div class="f c5"><label for="spds-since">Owned Since</label><input id="spds-since" placeholder="e.g. June 2000"></div>
+        <div class="f c4"><label for="spds-occ">Occupancy</label><select id="spds-occ" data-key="occupancy"><option>Owner-occupied</option><option>Vacant</option><option>Tenant-occupied</option></select></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">2 · Condition of the Property <i>Known problem? Answer every line</i></div>
+      <div class="tw">
+        <table class="t" id="spds-table">
+          <thead><tr><th>Item</th><th>Known problem?</th><th>Details</th></tr></thead>
+          <tbody>
+<tr><td class="name">Roof</td><td style="width:120px"><select id="spds-r1-a" aria-label="Roof: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r1-d" placeholder="Age, type, repairs" aria-label="Roof: details"></textarea></td></tr>
+<tr><td class="name">Basement and water leakage</td><td style="width:120px"><select id="spds-r2-a" aria-label="Basement and water leakage: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r2-d" placeholder="Age, type, repairs" aria-label="Basement and water leakage: details"></textarea></td></tr>
+<tr><td class="name">Foundation and structure</td><td style="width:120px"><select id="spds-r3-a" aria-label="Foundation and structure: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r3-d" placeholder="Age, type, repairs" aria-label="Foundation and structure: details"></textarea></td></tr>
+<tr><td class="name">Heating system</td><td style="width:120px"><select id="spds-r4-a" aria-label="Heating system: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r4-d" placeholder="Age, type, repairs" aria-label="Heating system: details"></textarea></td></tr>
+<tr><td class="name">Air conditioning</td><td style="width:120px"><select id="spds-r5-a" aria-label="Air conditioning: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r5-d" placeholder="Age, type, repairs" aria-label="Air conditioning: details"></textarea></td></tr>
+<tr><td class="name">Water heater</td><td style="width:120px"><select id="spds-r6-a" aria-label="Water heater: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r6-d" placeholder="Age, type, repairs" aria-label="Water heater: details"></textarea></td></tr>
+<tr><td class="name">Plumbing</td><td style="width:120px"><select id="spds-r7-a" aria-label="Plumbing: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r7-d" placeholder="Age, type, repairs" aria-label="Plumbing: details"></textarea></td></tr>
+<tr><td class="name">Electrical system</td><td style="width:120px"><select id="spds-r8-a" aria-label="Electrical system: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r8-d" placeholder="Age, type, repairs" aria-label="Electrical system: details"></textarea></td></tr>
+<tr><td class="name">Water supply and sewer</td><td style="width:120px"><select id="spds-r9-a" aria-label="Water supply and sewer: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r9-d" placeholder="Age, type, repairs" aria-label="Water supply and sewer: details"></textarea></td></tr>
+<tr><td class="name">Wood-destroying insects (termites)</td><td style="width:120px"><select id="spds-r10-a" aria-label="Wood-destroying insects (termites): known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r10-d" placeholder="Age, type, repairs" aria-label="Wood-destroying insects (termites): details"></textarea></td></tr>
+<tr><td class="name">Radon</td><td style="width:120px"><select id="spds-r11-a" aria-label="Radon: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r11-d" placeholder="Age, type, repairs" aria-label="Radon: details"></textarea></td></tr>
+<tr><td class="name">Lead-based paint (homes built before 1978)</td><td style="width:120px"><select id="spds-r12-a" aria-label="Lead-based paint (homes built before 1978): known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r12-d" placeholder="Age, type, repairs" aria-label="Lead-based paint (homes built before 1978): details"></textarea></td></tr>
+<tr><td class="name">Fuel or oil tanks</td><td style="width:120px"><select id="spds-r13-a" aria-label="Fuel or oil tanks: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r13-d" placeholder="Age, type, repairs" aria-label="Fuel or oil tanks: details"></textarea></td></tr>
+<tr><td class="name">Mold</td><td style="width:120px"><select id="spds-r14-a" aria-label="Mold: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r14-d" placeholder="Age, type, repairs" aria-label="Mold: details"></textarea></td></tr>
+<tr><td class="name">Pool or spa</td><td style="width:120px"><select id="spds-r15-a" aria-label="Pool or spa: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r15-d" placeholder="Age, type, repairs" aria-label="Pool or spa: details"></textarea></td></tr>
+<tr><td class="name">Windows, doors and garage doors</td><td style="width:120px"><select id="spds-r16-a" aria-label="Windows, doors and garage doors: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r16-d" placeholder="Age, type, repairs" aria-label="Windows, doors and garage doors: details"></textarea></td></tr>
+<tr><td class="name">Included appliances</td><td style="width:120px"><select id="spds-r17-a" aria-label="Included appliances: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r17-d" placeholder="Age, type, repairs" aria-label="Included appliances: details"></textarea></td></tr>
+<tr><td class="name">HOA or planned community</td><td style="width:120px"><select id="spds-r18-a" aria-label="HOA or planned community: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r18-d" placeholder="Age, type, repairs" aria-label="HOA or planned community: details"></textarea></td></tr>
+<tr><td class="name">Liens, code violations or legal actions</td><td style="width:120px"><select id="spds-r19-a" aria-label="Liens, code violations or legal actions: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r19-d" placeholder="Age, type, repairs" aria-label="Liens, code violations or legal actions: details"></textarea></td></tr>
+<tr><td class="name">Flooding or drainage</td><td style="width:120px"><select id="spds-r20-a" aria-label="Flooding or drainage: known problem?"><option value=""></option><option>Yes</option><option>No</option><option>Unknown</option><option>N/A</option></select></td><td><textarea class="grow" rows="1" id="spds-r20-d" placeholder="Age, type, repairs" aria-label="Flooding or drainage: details"></textarea></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">3 · Anything Else the Buyer Should Know</div>
+      <div class="g"><div class="f c12"><textarea id="spds-notes" aria-label="Other disclosures" placeholder="e.g. Repairs, insurance claims, neighbourhood issues"></textarea></div></div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">4 · Signatures</div>
+      <div class="accept"><b>Seller.</b> The information above is true and complete to the best of my knowledge on the date signed.</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="spds-sig-s" placeholder="Type name to sign" aria-label="Seller signature"><div class="sig-meta"><span class="lbl">Seller</span><span class="sig-date"><input type="date" id="spds-sig-s-d" aria-label="Date signed, Seller"></span></div></div>
+        <div class="sig"><input class="sigline" id="spds-sig-s2" placeholder="Type name to sign" aria-label="Second Seller (if any) signature"><div class="sig-meta"><span class="lbl">Second Seller (if any)</span><span class="sig-date"><input type="date" id="spds-sig-s2-d" aria-label="Date signed, Second Seller (if any)"></span></div></div>
+      </div>
+      <div class="accept"><b>Buyer.</b> I received this statement before signing an Agreement of Sale. I understand it is not a warranty or a substitute for an inspection.</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="spds-sig-b" placeholder="Type name to sign" aria-label="Buyer signature"><div class="sig-meta"><span class="lbl">Buyer</span><span class="sig-date"><input type="date" id="spds-sig-b-d" aria-label="Date signed, Buyer"></span></div></div>
+        <div class="sig"><input class="sigline" id="spds-sig-a" data-key="agent_sig" placeholder="Type name to sign" aria-label="Hameed Johnson, Real Estate Agent signature"><div class="sig-meta"><span class="lbl">Hameed Johnson, Real Estate Agent</span><span class="sig-date"><input type="date" id="spds-sig-a-d" aria-label="Date signed, Hameed Johnson, Real Estate Agent"></span></div></div>
+      </div>
+    </section>
+  </div>
+  <div class="foot">Johnson’s Realty Brokerage · Statement No. <span class="k" data-mirror-id="spds-no">—</span> · Form JR-PA-060</div>
+</article>
+
+<!-- ================= RESIDENTIAL AGREEMENT OF SALE ================= -->
+<article class="doc" id="doc-aos" data-doc="aos">
+  <header class="head">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" fill="none" stroke="#B4925A" stroke-width="1.5"/><path d="M10 23 L24 11 L38 23" fill="none" stroke="#F1EDE4" stroke-width="2.2"/><circle cx="20" cy="30" r="4.2" fill="none" stroke="#B4925A" stroke-width="2"/><path d="M24.2 30 H35 M31 30 v3.5 M34 30 v2.5" fill="none" stroke="#B4925A" stroke-width="2"/></svg>
+      <div><div class="brand-name">Johnson’s Realty</div><div class="brand-sub">Brokerage · Pennsylvania</div></div>
+    </div>
+    <div class="head-contact">Buy • Sell • Rent<br><b>Contact</b> IbrahimKhurram407<br><b>Chirper</b> @KeysWithJohnson</div>
+  </header>
+  <div class="titleband">
+    <h1>Residential Agreement of Sale</h1>
+    <div class="sub">Commonwealth of Pennsylvania · Residential Resale</div>
+    <div class="ref">Form JR-PA-100 · Prepared by Johnson’s Realty Brokerage</div>
+  </div>
+  <div class="brassrule"></div>
+
+  <div class="body">
+    <div class="meta">
+      <div class="f"><label for="aos-no">Agreement No.</label><input id="aos-no" data-key="agreement_no" class="mono" placeholder="AOS-2026-00000"></div>
+      <div class="f"><label for="aos-status">Status</label>
+        <span class="status-pill"><select id="aos-status" class="pill">
+          <option data-tone="">Draft</option><option data-tone="warn">Offer Submitted</option><option data-tone="warn">Countered</option><option data-tone="warn">Under Contract, Contingent</option><option data-tone="ok">All Contingencies Cleared</option><option data-tone="ok">Settled</option><option data-tone="void">Terminated</option>
+        </select></span></div>
+      <div class="f"><label for="aos-date">Date of Agreement</label><input id="aos-date" type="date"></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">1 · Parties <i>Full legal names as they will appear on the deed</i></div>
+      <div class="g">
+        <div class="f c8"><label for="aos-buyer">Buyer(s)</label><input id="aos-buyer" data-key="buyer_name" placeholder="e.g. Marcus Hale"></div>
+        <div class="f c4"><label for="aos-buyer-c">Buyer Contact</label><input id="aos-buyer-c" data-key="buyer_contact" placeholder="In-game username"></div>
+        <div class="f c8"><label for="aos-buyer-addr">Buyer Mailing Address</label><input id="aos-buyer-addr" placeholder="Street, City, State, ZIP"></div>
+        <div class="f c4"><label for="aos-buyer-type">Buyer Type</label><select id="aos-buyer-type"><option>Individual</option><option>Joint purchasers</option><option>LLC / company</option></select></div>
+        <div class="f c8"><label for="aos-seller">Seller(s)</label><input id="aos-seller" data-key="seller_name" placeholder="e.g. Elaine Porter"></div>
+        <div class="f c4"><label for="aos-seller-c">Seller Contact</label><input id="aos-seller-c" data-key="seller_contact" placeholder="In-game username"></div>
+        <div class="f c12"><label for="aos-seller-addr">Seller Mailing Address</label><input id="aos-seller-addr" data-key="seller_addr" placeholder="Where the seller can be reached after settlement"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">2 · Property <i>Dauphin County</i></div>
+      <div class="g">
+        <div class="f c6"><label for="aos-addr">Street Address</label><input id="aos-addr" data-key="prop_address" placeholder="e.g. 601 Cardinal Court, Whispering Pines"></div>
+        <div class="f c6"><label for="aos-area">Town / Area</label><select id="aos-area" data-key="prop_area">
+          <option value="">Choose the area on the map…</option>
+          <optgroup label="Harrisburg">
+            <option value="hbg-west">Harrisburg · West downtown</option>
+            <option value="hbg-east">Harrisburg · East downtown</option>
+            <option value="hbg-north">Harrisburg · North residential</option>
+          </optgroup>
+          <optgroup label="Swatara Township">
+            <option value="swatara">Swatara Township · Springfield (northeast)</option>
+          </optgroup>
+          <optgroup label="Susquehanna Township">
+            <option value="susq">Susquehanna Township · Fairview (northwest)</option>
+          </optgroup>
+        </select></div>
+        <div class="f c5"><label for="aos-city">City / Borough / Township</label><input id="aos-city" data-key="prop_city" placeholder="Filled from Town / Area"></div>
+        <div class="f c2 half"><label for="aos-state">State</label><input id="aos-state" value="PA"></div>
+        <div class="f c3 half"><label for="aos-county">County</label><input id="aos-county" data-key="prop_county" value="Dauphin"></div>
+        <div class="f c2"><label for="aos-zip">ZIP Code</label><input id="aos-zip" data-key="prop_zip" class="mono" inputmode="numeric" placeholder="17101"></div>
+        <div class="f c4"><label for="aos-parcel">Tax Parcel ID</label><input id="aos-parcel" data-key="parcel" class="mono" placeholder="e.g. 63-018-061"></div>
+        <div class="f c4"><label for="aos-ptype">Property Type</label><select id="aos-ptype" data-key="prop_type"><option>Single-family detached</option><option>Twin / semi-detached</option><option>Rowhome / townhouse</option><option>Condominium</option><option>Bungalow</option></select></div>
+        <div class="f c4"><label for="aos-park">Parking / Garage</label><input id="aos-park" data-key="prop_park" placeholder="e.g. Two-car attached garage"></div>
+        <div class="f c2 half"><label for="aos-beds">Bedrooms</label><input id="aos-beds" data-key="prop_beds" class="num" inputmode="numeric" placeholder="3"></div>
+        <div class="f c2 half"><label for="aos-baths">Bathrooms</label><input id="aos-baths" data-key="prop_baths" class="num" inputmode="numeric" placeholder="2"></div>
+        <div class="f c2 half"><label for="aos-year">Year Built</label><input id="aos-year" data-key="prop_year" class="num" inputmode="numeric" placeholder="1998"></div>
+        <div class="f c6"><label for="aos-zoning">Zoning Classification</label><input id="aos-zoning" data-key="prop_zoning" placeholder="e.g. R-1 Residential"></div>
+        <div class="f c12"><label for="aos-legal">Description of Property</label><input id="aos-legal" data-key="prop_legal" placeholder="e.g. Two-storey detached dwelling with rear yard"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">3 · Purchase Price, Deposit &amp; Financing <i>U.S. dollars</i></div>
+      <div class="g">
+        <div class="f c4"><label for="aos-price">Purchase Price</label><input id="aos-price" data-key="price" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c8"><label>Purchase Price in Words</label><div class="val words" data-out="price_words">—</div></div>
+        <div class="f c4"><label for="aos-dep">Earnest Money Deposit</label><input id="aos-dep" data-key="deposit" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c4"><label for="aos-dep-method">Deposit Method</label><select id="aos-dep-method" data-key="deposit_method"><option>Cashier’s check</option><option>Certified check</option><option>Wire transfer</option><option>Electronic funds transfer</option></select></div>
+        <div class="f c4"><label for="aos-dep-due">Deposit Due</label><select id="aos-dep-due"><option>Within 5 days of acceptance</option><option>Within 24 hours of acceptance</option><option>With this offer</option></select></div>
+        <div class="f c8"><label>Deposit in Words</label><div class="val words" data-out="deposit_words">—</div></div>
+        <div class="f c4"><label>Balance Due at Settlement</label><div class="val strong mono" data-out="balance">$0.00</div></div>
+        <div class="f c4"><label for="aos-fin">Financing</label><select id="aos-fin"><option>Conventional mortgage</option><option>FHA mortgage</option><option>VA mortgage</option><option>USDA mortgage</option><option>Cash (no financing)</option></select></div>
+        <div class="f c4"><label for="aos-loan">Mortgage Amount</label><input id="aos-loan" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c4"><label for="aos-lender">Lender</label><input id="aos-lender" placeholder="Bank or mortgage company"></div>
+      </div>
+      <div class="notice"><b>DEPOSIT:</b> The earnest money deposit is held in escrow by Johnson’s Realty Brokerage, without interest, until settlement or termination of this Agreement. It is credited toward the Purchase Price at settlement. The balance, subject to prorations and adjustments, is payable at settlement.</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">4 · Contingencies <i>Tick each contingency that applies to this offer</i></div>
+      <div class="tw">
+        <table class="t" id="aos-conds">
+          <thead><tr><th>Incl.</th><th>Contingency</th><th>For Benefit Of</th><th>Deadline</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="ck"><input type="checkbox" id="c1-on" aria-label="Include mortgage contingency"></td><td class="name">Buyer obtaining a written mortgage commitment</td><td><select id="c1-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="c1-date"></td><td><select id="c1-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="c2-on" aria-label="Include home inspection contingency"></td><td class="name">Home inspection satisfactory to the Buyer</td><td><select id="c2-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="c2-date"></td><td><select id="c2-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="c3-on" aria-label="Include appraisal contingency"></td><td class="name">Property appraising at or above the Purchase Price</td><td><select id="c3-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="c3-date"></td><td><select id="c3-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="c4-on" aria-label="Include termite inspection contingency"></td><td class="name">Wood-destroying insect (termite) inspection</td><td><select id="c4-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="c4-date"></td><td><select id="c4-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="c5-on" aria-label="Include radon testing contingency"></td><td class="name">Radon testing</td><td><select id="c5-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="c5-date"></td><td><select id="c5-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="c6-on" aria-label="Include sale of buyer's property contingency"></td><td class="name">Sale and settlement of the Buyer’s existing property</td><td><select id="c6-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="c6-date"></td><td><select id="c6-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="c7-on" aria-label="Include other contingency"></td><td class="name"><input id="c7-name" placeholder="Other contingency (write in)"></td><td><select id="c7-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="c7-date"></td><td><select id="c7-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">5 · Disclosures &amp; Costs</div>
+      <div class="g">
+        <div class="f c6"><span class="lbl">Seller’s Property Disclosure Statement received by Buyer</span>
+          <div class="yn"><label class="opt"><input type="radio" name="aos-spds" value="Yes" id="aos-spds-y">Yes</label><label class="opt"><input type="radio" name="aos-spds" value="No" id="aos-spds-n">No</label></div></div>
+        <div class="f c6"><span class="lbl">Lead-Based Paint Disclosure (homes built before 1978)</span>
+          <div class="yn"><label class="opt"><input type="radio" name="aos-lead" value="Provided" id="aos-lead-y">Provided</label><label class="opt"><input type="radio" name="aos-lead" value="N/A" id="aos-lead-na">Not applicable</label></div></div>
+        <div class="f c6"><label for="aos-rtt">Realty Transfer Tax</label><select id="aos-rtt"><option>Split equally between Buyer and Seller</option><option>Paid by Buyer</option><option>Paid by Seller</option></select></div>
+        <div class="f c6"><span class="lbl">Home Warranty Included</span>
+          <div class="yn"><label class="opt"><input type="radio" name="aos-hw" value="Yes" id="aos-hw-y">Yes</label><label class="opt"><input type="radio" name="aos-hw" value="No" id="aos-hw-n">No</label></div></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">6 · Personal Property, Fixtures &amp; Leased Items</div>
+      <div class="g">
+        <div class="f c6"><label for="aos-chattels">Personal Property Included</label><textarea id="aos-chattels" placeholder="e.g. Refrigerator, range, dishwasher, washer, dryer, all window treatments"></textarea></div>
+        <div class="f c6"><label for="aos-fixtures">Fixtures Excluded</label><textarea id="aos-fixtures" placeholder="e.g. Dining room chandelier, wall-mounted television"></textarea></div>
+        <div class="f c12"><label for="aos-rentals">Leased Items Assumed by Buyer</label><input id="aos-rentals" placeholder="e.g. Water heater (leased), solar panels, or None"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">7 · Offer Expiration, Settlement &amp; Possession</div>
+      <div class="g">
+        <div class="f c6"><label for="aos-irrev">Offer Expires</label><input id="aos-irrev" type="datetime-local"></div>
+        <div class="f c6"><label for="aos-close">Settlement Date</label><input id="aos-close" type="date" data-key="settle_date"></div>
+        <div class="f c6"><label for="aos-poss">Possession</label><select id="aos-poss"><option>At settlement, by delivery of deed and keys</option><option>Subject to existing lease</option></select></div>
+        <div class="f c6"><span class="lbl">Pre-Settlement Walk-Through</span>
+          <div class="yn"><label class="opt"><input type="radio" name="aos-walk" value="Yes" id="aos-walk-y">Permitted</label><label class="opt"><input type="radio" name="aos-walk" value="No" id="aos-walk-n">Waived by Buyer</label></div></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">8 · Brokers &amp; Commission</div>
+      <div class="g">
+        <div class="f c6"><label for="aos-lbrk">Listing Broker</label><input id="aos-lbrk" placeholder="Brokerage name"></div>
+        <div class="f c6"><label for="aos-lagent">Listing Agent</label><input id="aos-lagent" placeholder="Agent name"></div>
+        <div class="f c6"><label for="aos-cbrk">Buyer’s Broker</label><input id="aos-cbrk" placeholder="Brokerage name"></div>
+        <div class="f c6"><label for="aos-cagent">Buyer’s Agent</label><input id="aos-cagent" placeholder="Agent name"></div>
+        <div class="f c6"><label for="aos-role">Johnson’s Realty Represents</label><select id="aos-role"><option>The Buyer</option><option>The Seller</option><option>Both parties (dual agency, with written consent)</option><option>Neither party (transaction licensee)</option></select></div>
+        <div class="f c3 half"><label for="aos-comm">Total Commission (%)</label><input id="aos-comm" data-key="comm_total" class="num" inputmode="decimal" value="5"></div>
+        <div class="f c3 half"><label for="aos-comm-by">Payable By</label><select id="aos-comm-by"><option>Seller</option><option>Buyer</option><option>Split as agreed</option></select></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">9 · Settlement &amp; Title</div>
+      <div class="g">
+        <div class="f c12"><label for="aos-title-co">Title / Settlement Company</label><input id="aos-title-co" data-key="settle_co" placeholder="e.g. Keystone Abstract &amp; Title Co."></div>
+        <div class="f c6"><label for="aos-blaw">Buyer’s Attorney (optional)</label><input id="aos-blaw" data-key="buyer_lawyer" placeholder="Name, firm"></div>
+        <div class="f c6"><label for="aos-slaw">Seller’s Attorney (optional)</label><input id="aos-slaw" data-key="seller_lawyer" placeholder="Name, firm"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">10 · Standard Terms</div>
+      <ol class="terms">
+        <li><b>Deposit.</b> The Buyer shall pay the earnest money deposit as set out in Section 3. If it is not paid when due, the Seller may terminate this Agreement in writing.</li>
+        <li><b>Contingencies.</b> Each contingency is for the benefit of the party named and may be waived in writing by that party before its deadline. If a contingency is not satisfied or waived by its deadline, either party may terminate this Agreement in writing, and the deposit is returned to the Buyer.</li>
+        <li><b>Title.</b> The Seller shall convey good and marketable title by deed, free of liens and encumbrances except those agreed to in writing. The Buyer may obtain title insurance at the Buyer’s expense.</li>
+        <li><b>Prorations.</b> Real estate taxes, municipal charges, utilities and similar items are prorated to the settlement date.</li>
+        <li><b>Condition of property.</b> The Seller shall keep the property in its present condition until settlement, normal wear and tear excepted, including all included personal property.</li>
+        <li><b>Risk of loss.</b> The Seller bears the risk of loss from fire or other casualty until settlement and shall keep the property insured until then.</li>
+        <li><b>Time.</b> Time is of the essence. Dates in this Agreement may be changed only in writing, signed by both Buyer and Seller.</li>
+        <li><b>Entire agreement.</b> This Agreement, with any attached addenda, is the entire agreement between the parties. Electronic signatures and copies are binding.</li>
+        <li><b>Professional advice.</b> Johnson’s Realty does not provide legal, tax, financing, title or inspection advice. The parties are encouraged to consult qualified professionals before signing.</li>
+      </ol>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">11 · Signatures <i>Offer and acceptance</i></div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="aos-sig-b" placeholder="Type name to sign" aria-label="Buyer signature">
+          <div class="sig-meta"><span class="lbl">Signature of Buyer</span><span class="sig-date"><input type="date" id="aos-sig-b-d" aria-label="Date signed by buyer"></span></div></div>
+        <div class="sig"><input class="sigline" id="aos-sig-w" placeholder="Type name to sign" aria-label="Witness signature">
+          <div class="sig-meta"><span class="lbl">Witness</span><span class="sig-date"><input type="date" id="aos-sig-w-d" aria-label="Date signed by witness"></span></div></div>
+      </div>
+      <div class="accept"><b>Acceptance.</b> The Seller accepts the above offer and agrees to pay commission to the broker(s) named in Section 8, as stated.</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="aos-sig-s" placeholder="Type name to sign" aria-label="Seller signature">
+          <div class="sig-meta"><span class="lbl">Signature of Seller</span><span class="sig-date"><input type="date" id="aos-sig-s-d" aria-label="Date signed by seller"></span></div></div>
+        <div class="sig"><input class="sigline" id="aos-sig-a" data-key="agent_sig" placeholder="Type name to sign" aria-label="Agent signature">
+          <div class="sig-meta"><span class="lbl">Hameed Johnson, Real Estate Agent</span><span class="sig-date"><input type="date" id="aos-sig-a-d" aria-label="Date signed by agent"></span></div></div>
+      </div>
+      <div class="g">
+        <div class="f c6"><label for="aos-accepted">Date &amp; Time of Acceptance</label><input id="aos-accepted" type="datetime-local"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">12 · Agent’s Notes</div>
+      <div class="g"><div class="f c12"><textarea id="aos-notes" aria-label="Agent's notes" placeholder="e.g. Buyer viewed the property on 14 October. Offer presented to the Seller the same day."></textarea></div></div>
+    </section>
+  </div>
+  <div class="foot">Johnson’s Realty Brokerage · Pennsylvania · Agreement No. <span class="k" data-mirror="agreement_no">—</span> · Form JR-PA-100</div>
+</article>
+
+<!-- ================= BUSINESS LISTING CONTRACT ================= -->
+<article class="doc" id="doc-blisting" data-doc="blisting" hidden>
+  <header class="head">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" fill="none" stroke="#B4925A" stroke-width="1.5"/><path d="M10 23 L24 11 L38 23" fill="none" stroke="#F1EDE4" stroke-width="2.2"/><circle cx="20" cy="30" r="4.2" fill="none" stroke="#B4925A" stroke-width="2"/><path d="M24.2 30 H35 M31 30 v3.5 M34 30 v2.5" fill="none" stroke="#B4925A" stroke-width="2"/></svg>
+      <div><div class="brand-name">Johnson’s Realty</div><div class="brand-sub">Brokerage · Pennsylvania · Commercial &amp; Business</div></div>
+    </div>
+    <div class="head-contact">Buy • Sell • Rent<br><b>Contact</b> IbrahimKhurram407<br><b>Chirper</b> @KeysWithJohnson</div>
+  </header>
+  <div class="titleband">
+    <h1>Business Listing Contract</h1>
+    <div class="sub">Exclusive Right to Sell · Business and Commercial Property</div>
+    <div class="ref">Form JR-PA-200 · Between the business owner and Johnson’s Realty Brokerage</div>
+  </div>
+  <div class="brassrule"></div>
+
+  <div class="body">
+    <div class="meta">
+      <div class="f"><label for="bl-no">Contract No.</label><input id="bl-no" class="mono" placeholder="BL-2026-00000"></div>
+      <div class="f"><label for="bl-status">Status</label><span class="status-pill"><select id="bl-status" class="pill"><option data-tone="">Draft</option><option data-tone="ok">Active</option><option data-tone="warn">Under Contract</option><option data-tone="ok">Sold</option><option data-tone="void">Expired</option><option data-tone="void">Withdrawn</option></select></span></div>
+      <div class="f"><label for="bl-date">Date Signed</label><input id="bl-date" type="date"></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">1 · Owner <i>The person or company selling</i></div>
+      <div class="g">
+        <div class="f c8"><label for="bl-seller">Owner(s)</label><input id="bl-seller" data-key="seller_name" placeholder="Full legal name(s)"></div>
+        <div class="f c4"><label for="bl-seller-c">Owner Contact</label><input id="bl-seller-c" data-key="seller_contact" placeholder="In-game username"></div>
+        <div class="f c8"><label for="bl-entity">Legal Business Entity</label><input id="bl-entity" data-key="biz_entity" placeholder="e.g. Dee’s Diner LLC"></div>
+        <div class="f c4"><label for="bl-signer">Signing As</label><input id="bl-signer" data-key="biz_signer" placeholder="e.g. Sole member"></div>
+        <div class="f c12"><label for="bl-seller-addr">Owner Mailing Address</label><input id="bl-seller-addr" data-key="seller_addr" placeholder="Where the owner can be reached"></div>
+        <div class="f c12"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="bl-cn">Owner received the Consumer Notice at the first meeting with the agent</label></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">2 · Business <i>Dauphin County</i></div>
+      <div class="g">
+        <div class="f c6"><label for="bl-name">Business Name</label><input id="bl-name" data-key="biz_name" placeholder="e.g. Dee’s Diner"></div>
+        <div class="f c6"><label for="bl-type">Type of Business</label><select id="bl-type" data-key="biz_type"><option>Restaurant / diner</option><option>Café / coffee shop</option><option>Convenience store &amp; fuel</option><option>Retail shop</option><option>Auto repair garage</option><option>Car dealership</option><option>Bar / nightlife</option><option>Salon / barbershop</option><option>Gym / fitness</option><option>Office / professional</option><option>Other</option></select></div>
+        <div class="f c6"><label for="bl-addr">Street Address</label><input id="bl-addr" data-key="prop_address" placeholder="Street address"></div>
+        <div class="f c6"><label for="bl-area">Town / Area</label><select id="bl-area" data-key="prop_area">
+          <option value="">Choose the area on the map…</option>
+          <optgroup label="Harrisburg"><option value="hbg-west">Harrisburg · West downtown</option><option value="hbg-east">Harrisburg · East downtown</option><option value="hbg-north">Harrisburg · North residential</option></optgroup>
+          <optgroup label="Swatara Township"><option value="swatara">Swatara Township · Springfield (northeast)</option></optgroup>
+          <optgroup label="Susquehanna Township"><option value="susq">Susquehanna Township · Fairview (northwest)</option></optgroup>
+        </select></div>
+        <div class="f c5"><label for="bl-city">City / Borough / Township</label><input id="bl-city" data-key="prop_city" placeholder="Filled from Town / Area"></div>
+        <div class="f c2 half"><label for="bl-state">State</label><input id="bl-state" value="PA"></div>
+        <div class="f c3 half"><label for="bl-county">County</label><input id="bl-county" data-key="prop_county" value="Dauphin"></div>
+        <div class="f c2"><label for="bl-zip">ZIP Code</label><input id="bl-zip" data-key="prop_zip" class="mono" inputmode="numeric" placeholder="17101"></div>
+        <div class="f c3 half"><label for="bl-years">Years Operating</label><input id="bl-years" data-key="biz_years" class="num" inputmode="numeric" placeholder="12"></div>
+        <div class="f c3 half"><label for="bl-emp">Employees</label><input id="bl-emp" data-key="biz_emp" class="num" inputmode="numeric" placeholder="6"></div>
+        <div class="f c6"><label for="bl-hours">Opening Hours</label><input id="bl-hours" data-key="biz_hours" placeholder="e.g. Daily, 6 am to 3 pm"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">3 · Premises</div>
+      <div class="g">
+        <div class="f c6"><label for="bl-re">What Is Being Sold</label><select id="bl-re" data-key="biz_re"><option>Business and building (owner-owned)</option><option>Business only (leased premises)</option></select></div>
+        <div class="f c3 half"><label for="bl-sqft">Building Size</label><input id="bl-sqft" data-key="biz_sqft" placeholder="e.g. 2,400 sq ft"></div>
+        <div class="f c3 half"><label for="bl-parcel">Tax Parcel ID</label><input id="bl-parcel" data-key="parcel" class="mono" placeholder="If owned"></div>
+        <div class="f c4"><label for="bl-rent">Monthly Rent (if leased)</label><input id="bl-rent" data-key="biz_rent" placeholder="e.g. $3,200"></div>
+        <div class="f c4"><label for="bl-lease-end">Lease Ends</label><input id="bl-lease-end" data-key="biz_lease_end" placeholder="e.g. Dec 2029"></div>
+        <div class="f c4"><label for="bl-landlord">Landlord</label><input id="bl-landlord" data-key="biz_landlord" placeholder="If leased"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">4 · Price &amp; Financials <i>Figures supplied by the owner</i></div>
+      <div class="g">
+        <div class="f c4"><label for="bl-price">Asking Price</label><input id="bl-price" data-key="price" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c8"><label>Asking Price in Words</label><div class="val words" data-out="price_words">—</div></div>
+        <div class="f c4"><label for="bl-sales">Yearly Sales</label><input id="bl-sales" data-key="biz_sales" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c4"><label for="bl-profit">Yearly Owner Profit</label><input id="bl-profit" data-key="biz_profit" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c4"><label>Price to Profit</label><div class="val mono" data-out="biz_multiple">—</div></div>
+        <div class="f c4"><label for="bl-inv">Inventory Value (at cost)</label><input id="bl-inv" data-key="biz_inv" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c8"><label for="bl-sf">Owner Will Finance Part of the Price</label><select id="bl-sf" data-key="biz_sf"><option>No</option><option>Yes, up to 15% of the price</option><option>Yes, up to 20% of the price</option><option>Yes, up to 25% of the price</option></select></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">5 · What the Sale Includes</div>
+      <div class="g">
+        <div class="f c6"><label for="bl-incl">Included</label><textarea id="bl-incl" data-key="biz_included" placeholder="e.g. All equipment, furniture, business name, recipes, phone number, website and social pages"></textarea></div>
+        <div class="f c6"><label for="bl-excl">Excluded</label><textarea id="bl-excl" data-key="biz_excluded" placeholder="e.g. Owner’s personal items, cash on hand, bank accounts"></textarea></div>
+        <div class="f c12"><label for="bl-lic">Licenses &amp; Permits</label><textarea id="bl-lic" data-key="biz_licenses" placeholder="e.g. Health permit (buyer must get a new one), liquor licence transfer"></textarea></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">6 · Commission</div>
+      <div class="g">
+        <div class="f c3 half"><label for="bl-comm">Commission (%)</label><input id="bl-comm" data-key="comm_total" class="num" inputmode="decimal" value="10"></div>
+        <div class="f c3 half"><label for="bl-side">Johnson’s Realty Share (%)</label><input id="bl-side" data-key="comm_side" class="num" inputmode="decimal" value="10"></div>
+        <div class="f c6"><label>Commission at Asking Price</label><div class="val strong mono" data-out="comm_total_amt">$0.00</div></div>
+      </div>
+      <div class="notice"><b>COMMISSION:</b> Business sales usually carry a higher commission than home sales, because they take more work to market and close. It is paid from the owner’s proceeds at settlement, and shared with the buyer’s broker if there is one. No commission is owed if the business does not sell.</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">7 · Confidentiality &amp; Showings</div>
+      <div class="g">
+        <div class="f c12"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="bl-conf">Keep the sale confidential: staff and customers are not told, and buyers sign a confidentiality agreement before seeing the financial records</label></div>
+        <div class="f c12"><label for="bl-show">Showing Instructions</label><textarea id="bl-show" data-key="show_notes" placeholder="e.g. After closing time only. Do not discuss the sale with staff."></textarea></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">8 · Terms</div>
+      <ol class="terms">
+        <li><b>Exclusive right.</b> The owner gives Johnson’s Realty the exclusive right to sell the business during the listing term, whoever finds the buyer.</li>
+        <li><b>Authority.</b> The owner confirms they own the business and its assets, or are authorised to sell them for the company named above.</li>
+        <li><b>Financial information.</b> The owner supplies the sales and profit figures. Johnson’s Realty passes them on but does not audit or guarantee them.</li>
+        <li><b>Confidentiality.</b> If ticked in Section 7, the brokerage will share the business’s name and financial records only with buyers who have signed a confidentiality agreement.</li>
+        <li><b>Licenses.</b> Some licenses and permits cannot be transferred, and a buyer may need to apply for new ones. The owner will help the buyer through that process.</li>
+        <li><b>Running the business.</b> The owner will keep running the business normally until settlement.</li>
+        <li><b>Ending early.</b> This contract may be ended before the listing term only by written agreement of both parties.</li>
+        <li><b>Professional advice.</b> Johnson’s Realty does not provide legal, tax or accounting advice. The owner is encouraged to consult an attorney and an accountant.</li>
+      </ol>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">9 · Signatures</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="bl-sig-s1" placeholder="Type name to sign" aria-label="Owner signature"><div class="sig-meta"><span class="lbl">Owner</span><span class="sig-date"><input type="date" id="bl-sig-s1-d" aria-label="Date signed, Owner"></span></div></div>
+        <div class="sig"><input class="sigline" id="bl-sig-s2" placeholder="Type name to sign" aria-label="Second Owner (if any) signature"><div class="sig-meta"><span class="lbl">Second Owner (if any)</span><span class="sig-date"><input type="date" id="bl-sig-s2-d" aria-label="Date signed, Second Owner (if any)"></span></div></div>
+        <div class="sig"><input class="sigline" id="bl-sig-a" data-key="agent_sig" placeholder="Type name to sign" aria-label="Hameed Johnson, Real Estate Agent signature"><div class="sig-meta"><span class="lbl">Hameed Johnson, Real Estate Agent</span><span class="sig-date"><input type="date" id="bl-sig-a-d" aria-label="Date signed, Hameed Johnson, Real Estate Agent"></span></div></div>
+      </div>
+    </section>
+  </div>
+  <div class="foot">Johnson’s Realty Brokerage · Contract No. <span class="k" data-mirror-id="bl-no">—</span> · Form JR-PA-200</div>
+</article>
+
+<!-- ================= BUSINESS SALE AGREEMENT ================= -->
+<article class="doc" id="doc-bsale" data-doc="bsale" hidden>
+  <header class="head">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" fill="none" stroke="#B4925A" stroke-width="1.5"/><path d="M10 23 L24 11 L38 23" fill="none" stroke="#F1EDE4" stroke-width="2.2"/><circle cx="20" cy="30" r="4.2" fill="none" stroke="#B4925A" stroke-width="2"/><path d="M24.2 30 H35 M31 30 v3.5 M34 30 v2.5" fill="none" stroke="#B4925A" stroke-width="2"/></svg>
+      <div><div class="brand-name">Johnson’s Realty</div><div class="brand-sub">Brokerage · Pennsylvania · Commercial &amp; Business</div></div>
+    </div>
+    <div class="head-contact">Buy • Sell • Rent<br><b>Contact</b> IbrahimKhurram407<br><b>Chirper</b> @KeysWithJohnson</div>
+  </header>
+  <div class="titleband">
+    <h1>Business Sale Agreement</h1>
+    <div class="sub">Sale of Business Assets · Commonwealth of Pennsylvania</div>
+    <div class="ref">Form JR-PA-220 · Prepared by Johnson’s Realty Brokerage</div>
+  </div>
+  <div class="brassrule"></div>
+
+  <div class="body">
+    <div class="meta">
+      <div class="f"><label for="bs-no">Agreement No.</label><input id="bs-no" data-key="agreement_no" class="mono" placeholder="AOS-2026-00000"></div>
+      <div class="f"><label for="bs-status">Status</label><span class="status-pill"><select id="bs-status" class="pill"><option data-tone="">Draft</option><option data-tone="warn">Offer Submitted</option><option data-tone="warn">Countered</option><option data-tone="warn">Under Contract, Contingent</option><option data-tone="ok">All Contingencies Cleared</option><option data-tone="ok">Settled</option><option data-tone="void">Terminated</option></select></span></div>
+      <div class="f"><label for="bs-date">Date of Agreement</label><input id="bs-date" type="date"></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">1 · Parties</div>
+      <div class="g">
+        <div class="f c8"><label for="bs-buyer">Buyer(s)</label><input id="bs-buyer" data-key="buyer_name" placeholder="Full legal name"></div>
+        <div class="f c4"><label for="bs-buyer-c">Buyer Contact</label><input id="bs-buyer-c" data-key="buyer_contact" placeholder="In-game username"></div>
+        <div class="f c6"><label for="bs-buyer-as">Buyer Is Buying As</label><select id="bs-buyer-as"><option>An individual</option><option>A new company (LLC) being formed</option><option>An existing company</option></select></div>
+        <div class="f c6"><label for="bs-buyer-entity">Buyer’s Company Name (if any)</label><input id="bs-buyer-entity" placeholder="e.g. Hale Hospitality LLC"></div>
+        <div class="f c8"><label for="bs-seller">Seller(s)</label><input id="bs-seller" data-key="seller_name" placeholder="Full legal name(s)"></div>
+        <div class="f c4"><label for="bs-seller-c">Seller Contact</label><input id="bs-seller-c" data-key="seller_contact" placeholder="In-game username"></div>
+        <div class="f c12"><label for="bs-entity">Selling Company</label><input id="bs-entity" data-key="biz_entity" placeholder="e.g. Dee’s Diner LLC"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">2 · Business Being Sold</div>
+      <div class="g">
+        <div class="f c6"><label for="bs-name">Business Name</label><input id="bs-name" data-key="biz_name" placeholder="Trading name"></div>
+        <div class="f c6"><label for="bs-type">Type of Business</label><select id="bs-type" data-key="biz_type"><option>Restaurant / diner</option><option>Café / coffee shop</option><option>Convenience store &amp; fuel</option><option>Retail shop</option><option>Auto repair garage</option><option>Car dealership</option><option>Bar / nightlife</option><option>Salon / barbershop</option><option>Gym / fitness</option><option>Office / professional</option><option>Other</option></select></div>
+        <div class="f c6"><label for="bs-addr">Street Address</label><input id="bs-addr" data-key="prop_address" placeholder="Street address"></div>
+        <div class="f c4"><label for="bs-city">City / Borough / Township</label><input id="bs-city" data-key="prop_city" placeholder="Municipality"></div>
+        <div class="f c2"><label for="bs-zip">ZIP</label><input id="bs-zip" data-key="prop_zip" class="mono" inputmode="numeric" placeholder="17101"></div>
+        <div class="f c6"><label for="bs-re">What Is Being Sold</label><select id="bs-re" data-key="biz_re"><option>Business and building (owner-owned)</option><option>Business only (leased premises)</option></select></div>
+        <div class="f c6"><label for="bs-landlord">Landlord (if leased)</label><input id="bs-landlord" data-key="biz_landlord" placeholder="Landlord name"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">3 · Price, Deposit &amp; Payment <i>U.S. dollars</i></div>
+      <div class="g">
+        <div class="f c4"><label for="bs-price">Purchase Price</label><input id="bs-price" data-key="price" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c8"><label>Purchase Price in Words</label><div class="val words" data-out="price_words">—</div></div>
+      </div>
+      <div class="tw">
+        <table class="t" id="bs-alloc">
+          <thead><tr><th>How the Price Is Split</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Building and land (if included)</td><td><input id="bs-a-re" class="money" inputmode="decimal" placeholder="$0.00"></td></tr>
+            <tr><td class="name">Equipment, furniture and fixtures</td><td><input id="bs-a-eq" class="money" inputmode="decimal" placeholder="$0.00"></td></tr>
+            <tr><td class="name">Inventory (counted the day before settlement)</td><td><input id="bs-a-inv" class="money" inputmode="decimal" placeholder="$0.00"></td></tr>
+            <tr><td class="name">Goodwill, business name and customer base</td><td><input id="bs-a-gw" class="money" inputmode="decimal" placeholder="$0.00"></td></tr>
+            <tr><td class="name"><b>Total</b> <span class="lbl" data-out="alloc_note" style="margin-left:6px"></span></td><td><div class="val strong mono" data-out="alloc_total">$0.00</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="g">
+        <div class="f c4"><label for="bs-dep">Earnest Money Deposit</label><input id="bs-dep" data-key="deposit" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c4"><label for="bs-dep-method">Deposit Method</label><select id="bs-dep-method" data-key="deposit_method"><option>Cashier’s check</option><option>Certified check</option><option>Wire transfer</option><option>Electronic funds transfer</option></select></div>
+        <div class="f c4"><label for="bs-fin">Buyer Financing</label><select id="bs-fin"><option>Bank loan</option><option>SBA loan</option><option>Cash (no financing)</option></select></div>
+        <div class="f c4"><label for="bs-sf">Seller-Financed Amount</label><input id="bs-sf" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c4"><label for="bs-sf-term">Seller Note Term</label><input id="bs-sf-term" placeholder="e.g. 5 years, monthly payments"></div>
+        <div class="f c4"><label for="bs-sf-rate">Seller Note Interest</label><input id="bs-sf-rate" placeholder="e.g. 7% per year"></div>
+        <div class="f c12"><label>Balance Due at Settlement</label><div class="val strong mono" data-out="biz_balance">$0.00</div></div>
+      </div>
+      <div class="notice"><b>PAYMENT:</b> The deposit is held in escrow by Johnson’s Realty Brokerage. At settlement the Buyer pays the price, less the deposit and any amount the Seller is financing. A seller-financed amount is repaid under a separate promissory note signed at settlement.</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">4 · Included &amp; Excluded</div>
+      <div class="g">
+        <div class="f c6"><label for="bs-incl">Included</label><textarea id="bs-incl" data-key="biz_included" placeholder="Equipment, name, phone number, website, recipes"></textarea></div>
+        <div class="f c6"><label for="bs-excl">Excluded</label><textarea id="bs-excl" data-key="biz_excluded" placeholder="Cash, bank accounts, personal items"></textarea></div>
+        <div class="f c12"><label for="bs-lic">Licenses &amp; Permits</label><textarea id="bs-lic" data-key="biz_licenses" placeholder="Which transfer, and which the Buyer must apply for"></textarea></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">5 · Contingencies <i>Tick each contingency that applies</i></div>
+      <div class="tw">
+        <table class="t" id="bs-conds">
+          <thead><tr><th>Incl.</th><th>Contingency</th><th>For Benefit Of</th><th>Deadline</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="ck"><input type="checkbox" id="bc1-on" aria-label="Include contingency bc1"></td><td class="name">Buyer’s review of the financial records and tax returns</td><td><select id="bc1-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="bc1-date"></td><td><select id="bc1-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="bc2-on" aria-label="Include contingency bc2"></td><td class="name">Buyer obtaining financing</td><td><select id="bc2-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="bc2-date"></td><td><select id="bc2-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="bc3-on" aria-label="Include contingency bc3"></td><td class="name">Landlord approving the transfer of the lease</td><td><select id="bc3-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="bc3-date"></td><td><select id="bc3-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="bc4-on" aria-label="Include contingency bc4"></td><td class="name">Buyer obtaining the licenses and permits needed to operate</td><td><select id="bc4-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="bc4-date"></td><td><select id="bc4-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="bc5-on" aria-label="Include contingency bc5"></td><td class="name">Inspection of the building and equipment</td><td><select id="bc5-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="bc5-date"></td><td><select id="bc5-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="bc6-on" aria-label="Include contingency bc6"></td><td class="name">Environmental review of the site</td><td><select id="bc6-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="bc6-date"></td><td><select id="bc6-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="bc7-on" aria-label="Include contingency bc7"></td><td class="name"><input id="bc7-name" placeholder="Other contingency (write in)"></td><td><select id="bc7-who"><option>Buyer</option><option>Seller</option></select></td><td><input type="date" id="bc7-date"></td><td><select id="bc7-st"><option>Pending</option><option>Satisfied</option><option>Waived</option><option>Not met</option></select></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">6 · Handover</div>
+      <div class="g">
+        <div class="f c4"><label for="bs-train">Seller Training Period</label><input id="bs-train" placeholder="e.g. 30 days, 20 hours a week"></div>
+        <div class="f c4"><label for="bs-nc-miles">Non-Compete Distance</label><input id="bs-nc-miles" placeholder="e.g. 10 miles"></div>
+        <div class="f c4"><label for="bs-nc-years">Non-Compete Length</label><input id="bs-nc-years" placeholder="e.g. 5 years"></div>
+        <div class="f c6"><label for="bs-staff">Employees</label><select id="bs-staff"><option>Buyer may offer jobs to current staff</option><option>Buyer will keep all current staff</option><option>Seller ends all employment at settlement</option></select></div>
+        <div class="f c6"><label for="bs-gift">Gift Cards &amp; Customer Deposits</label><input id="bs-gift" placeholder="e.g. Seller credits the Buyer for unused gift cards"></div>
+      </div>
+      <div class="notice"><b>NON-COMPETE:</b> The Seller agrees not to open or work for a competing business within the distance and time above, so the goodwill the Buyer pays for stays with the business.</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">7 · Settlement</div>
+      <div class="g">
+        <div class="f c4"><label for="bs-close">Settlement Date</label><input id="bs-close" type="date" data-key="settle_date"></div>
+        <div class="f c8"><label for="bs-title-co">Settlement Agent / Title Company</label><input id="bs-title-co" data-key="settle_co" placeholder="Company name"></div>
+        <div class="f c6"><label for="bs-blaw">Buyer’s Attorney</label><input id="bs-blaw" data-key="buyer_lawyer" placeholder="Name, firm"></div>
+        <div class="f c6"><label for="bs-slaw">Seller’s Attorney</label><input id="bs-slaw" data-key="seller_lawyer" placeholder="Name, firm"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">8 · Standard Terms</div>
+      <ol class="terms">
+        <li><b>Asset sale.</b> The Buyer buys the assets listed above, not the Seller’s company. Debts and obligations from before settlement stay with the Seller unless this Agreement says otherwise.</li>
+        <li><b>Financial statements.</b> The Seller confirms that the sales and profit figures given to the Buyer are accurate to the best of their knowledge.</li>
+        <li><b>Running the business.</b> Until settlement, the Seller will run the business normally, keep stock at usual levels and not sell major equipment.</li>
+        <li><b>Tax clearance.</b> The Seller will obtain a bulk sale clearance certificate from the Pennsylvania Department of Revenue before settlement, so the Buyer does not take on the Seller’s unpaid state taxes.</li>
+        <li><b>Prorations.</b> Rent, utilities, property taxes and similar charges are split to the settlement date. Inventory is counted together the day before settlement and the price adjusted to the count.</li>
+        <li><b>Risk of loss.</b> The Seller bears the risk of loss or damage until settlement and will keep the business insured until then.</li>
+        <li><b>Time.</b> Time is of the essence. Dates may be changed only in writing signed by both parties.</li>
+        <li><b>Entire agreement.</b> This Agreement, with any attached schedules, is the entire agreement between the parties. Electronic signatures and copies are binding.</li>
+        <li><b>Professional advice.</b> Johnson’s Realty does not provide legal, tax or accounting advice. Both parties are encouraged to consult an attorney and an accountant before signing.</li>
+      </ol>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">9 · Signatures</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="bs-sig-b" placeholder="Type name to sign" aria-label="Buyer signature"><div class="sig-meta"><span class="lbl">Buyer</span><span class="sig-date"><input type="date" id="bs-sig-b-d" aria-label="Date signed, Buyer"></span></div></div>
+        <div class="sig"><input class="sigline" id="bs-sig-s" placeholder="Type name to sign" aria-label="Seller signature"><div class="sig-meta"><span class="lbl">Seller</span><span class="sig-date"><input type="date" id="bs-sig-s-d" aria-label="Date signed, Seller"></span></div></div>
+        <div class="sig"><input class="sigline" id="bs-sig-a" data-key="agent_sig" placeholder="Type name to sign" aria-label="Hameed Johnson, Real Estate Agent signature"><div class="sig-meta"><span class="lbl">Hameed Johnson, Real Estate Agent</span><span class="sig-date"><input type="date" id="bs-sig-a-d" aria-label="Date signed, Hameed Johnson, Real Estate Agent"></span></div></div>
+      </div>
+    </section>
+  </div>
+  <div class="foot">Johnson’s Realty Brokerage · Agreement No. <span class="k" data-mirror="agreement_no">—</span> · Form JR-PA-220</div>
+</article>
+
+<!-- ================= EARNEST MONEY RECEIPT ================= -->
+<article class="doc" id="doc-deposit" data-doc="deposit" hidden>
+  <header class="head">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" fill="none" stroke="#B4925A" stroke-width="1.5"/><path d="M10 23 L24 11 L38 23" fill="none" stroke="#F1EDE4" stroke-width="2.2"/><circle cx="20" cy="30" r="4.2" fill="none" stroke="#B4925A" stroke-width="2"/><path d="M24.2 30 H35 M31 30 v3.5 M34 30 v2.5" fill="none" stroke="#B4925A" stroke-width="2"/></svg>
+      <div><div class="brand-name">Johnson’s Realty</div><div class="brand-sub">Brokerage · Pennsylvania</div></div>
+    </div>
+    <div class="head-contact">Buy • Sell • Rent<br><b>Contact</b> IbrahimKhurram407<br><b>Chirper</b> @KeysWithJohnson</div>
+  </header>
+  <div class="titleband">
+    <h1>Earnest Money Receipt</h1>
+    <div class="sub">Funds Received in Escrow</div>
+    <div class="ref">Form JR-PA-210 · Issued under Residential Agreement of Sale</div>
+  </div>
+  <div class="brassrule"></div>
+
+  <div class="body">
+    <div class="meta">
+      <div class="f"><label for="em-no">Receipt No.</label><input id="em-no" class="mono" placeholder="EM-2026-00000"></div>
+      <div class="f"><label for="em-status">Status</label>
+        <span class="status-pill"><select id="em-status" class="pill"><option data-tone="warn">Received</option><option data-tone="ok">Deposited to Escrow</option><option data-tone="ok">Applied at Settlement</option><option data-tone="void">Returned to Buyer</option></select></span></div>
+      <div class="f"><label for="em-when">Date &amp; Time Received</label><input id="em-when" type="datetime-local"></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">Received From</div>
+      <div class="g">
+        <div class="f c8"><label for="em-payer">Payer (Buyer)</label><input id="em-payer" data-key="buyer_name" placeholder="Full legal name"></div>
+        <div class="f c4"><label for="em-payer-c">Payer Contact</label><input id="em-payer-c" data-key="buyer_contact" placeholder="In-game username"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Regarding</div>
+      <div class="g">
+        <div class="f c4"><label for="em-aos">Agreement of Sale No.</label><input id="em-aos" data-key="agreement_no" class="mono" placeholder="AOS-2026-00000"></div>
+        <div class="f c5"><label for="em-addr">Property Address</label><input id="em-addr" data-key="prop_address" placeholder="Street address"></div>
+        <div class="f c3"><label for="em-city">City / Borough / Township</label><input id="em-city" data-key="prop_city" placeholder="Municipality"></div>
+        <div class="f c8"><label for="em-seller">Seller(s)</label><input id="em-seller" data-key="seller_name" placeholder="Full legal name"></div>
+        <div class="f c4"><label>Purchase Price</label><div class="val mono" data-out="price_fmt">$0.00</div></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Amount Received <i>U.S. dollars</i></div>
+      <div class="g">
+        <div class="f c4"><label for="em-amt">Amount</label><input id="em-amt" data-key="deposit" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c8"><label>Amount in Words</label><div class="val words" data-out="deposit_words">—</div></div>
+        <div class="f c4"><label for="em-method">Method of Payment</label><select id="em-method" data-key="deposit_method"><option>Cashier’s check</option><option>Certified check</option><option>Wire transfer</option><option>Electronic funds transfer</option></select></div>
+        <div class="f c4"><label for="em-ref">Check / Reference No.</label><input id="em-ref" class="mono" placeholder="e.g. 004418"></div>
+        <div class="f c4"><label for="em-bank">Drawn On (Bank)</label><input id="em-bank" placeholder="Bank name"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Held In Escrow</div>
+      <div class="g">
+        <div class="f c8"><label>Escrow Account</label><div class="val">Johnson’s Realty Brokerage · Real Estate Escrow Account</div></div>
+        <div class="f c4"><label for="em-ledger">Escrow Ledger Ref.</label><input id="em-ledger" class="mono" placeholder="ESC-0000"></div>
+      </div>
+      <div class="notice"><b>NOTICE:</b> These funds are held in escrow by Johnson’s Realty Brokerage under the Agreement of Sale referenced above and will be credited toward the Purchase Price at settlement. If the Agreement is terminated, the funds are released only as the Agreement provides, with the written agreement of both Buyer and Seller, or by court order.</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Signatures</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="em-sig-a" data-key="agent_sig" placeholder="Type name to sign" aria-label="Received by signature">
+          <div class="sig-meta"><span class="lbl">Received By · Hameed Johnson, Real Estate Agent</span><span class="sig-date"><input type="date" id="em-sig-a-d" aria-label="Date received"></span></div></div>
+        <div class="sig"><input class="sigline" id="em-sig-p" placeholder="Type name to sign" aria-label="Payer signature">
+          <div class="sig-meta"><span class="lbl">Acknowledged By Payer</span><span class="sig-date"><input type="date" id="em-sig-p-d" aria-label="Date acknowledged"></span></div></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Agent’s Notes</div>
+      <div class="g"><div class="f c12"><textarea id="em-notes" aria-label="Deposit notes" placeholder="e.g. Cashier’s check received in person at the Johnson’s Realty office."></textarea></div></div>
+    </section>
+  </div>
+  <div class="foot">Johnson’s Realty Brokerage · Receipt No. <span class="k" data-mirror-id="em-no">—</span> · Agreement No. <span class="k" data-mirror="agreement_no">—</span> · Form JR-PA-210</div>
+</article>
+
+<!-- ================= CHANGE / ADDENDUM ================= -->
+<article class="doc" id="doc-addendum" data-doc="addendum" hidden>
+  <header class="head">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" fill="none" stroke="#B4925A" stroke-width="1.5"/><path d="M10 23 L24 11 L38 23" fill="none" stroke="#F1EDE4" stroke-width="2.2"/><circle cx="20" cy="30" r="4.2" fill="none" stroke="#B4925A" stroke-width="2"/><path d="M24.2 30 H35 M31 30 v3.5 M34 30 v2.5" fill="none" stroke="#B4925A" stroke-width="2"/></svg>
+      <div><div class="brand-name">Johnson’s Realty</div><div class="brand-sub">Brokerage · Pennsylvania</div></div>
+    </div>
+    <div class="head-contact">Buy • Sell • Rent<br><b>Contact</b> IbrahimKhurram407<br><b>Chirper</b> @KeysWithJohnson</div>
+  </header>
+  <div class="titleband">
+    <h1>Change to Agreement of Sale</h1>
+    <div class="sub">Addendum · Counteroffer · Amendment</div>
+    <div class="ref">Form JR-PA-110 · Changes the Agreement of Sale named below</div>
+  </div>
+  <div class="brassrule"></div>
+
+  <div class="body">
+    <div class="meta">
+      <div class="f"><label for="ad-no">Addendum No.</label><input id="ad-no" class="mono" placeholder="ADD-2026-00000"></div>
+      <div class="f"><label for="ad-status">Status</label><span class="status-pill"><select id="ad-status" class="pill"><option data-tone="warn">Proposed</option><option data-tone="ok">Accepted</option><option data-tone="void">Rejected</option><option data-tone="void">Withdrawn</option></select></span></div>
+      <div class="f"><label for="ad-date">Date</label><input id="ad-date" type="date"></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">1 · Agreement Being Changed</div>
+      <div class="g">
+        <div class="f c4"><label for="ad-aos">Agreement of Sale No.</label><input id="ad-aos" data-key="agreement_no" class="mono" placeholder="AOS-2026-00000"></div>
+        <div class="f c8"><label for="ad-addr">Property Address</label><input id="ad-addr" data-key="prop_address" placeholder="Street address"></div>
+        <div class="f c6"><label for="ad-buyer">Buyer(s)</label><input id="ad-buyer" data-key="buyer_name" placeholder="Full legal name"></div>
+        <div class="f c6"><label for="ad-seller">Seller(s)</label><input id="ad-seller" data-key="seller_name" placeholder="Full legal name"></div>
+        <div class="f c6"><label for="ad-type">Type of Change</label><select id="ad-type"><option>Counteroffer</option><option>Price change</option><option>Repair credit</option><option>Repairs by the Seller</option><option>Settlement date change</option><option>Contingency deadline extension</option><option>Other</option></select></div>
+        <div class="f c6"><label for="ad-from">Proposed By</label><select id="ad-from"><option>Seller</option><option>Buyer</option></select></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">2 · Changes <i>Fill in only the lines that change</i></div>
+      <div class="tw">
+        <table class="t" id="ad-table">
+          <thead><tr><th>Term</th><th>Currently</th><th>Change To</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Purchase Price</td><td><div class="val mono" data-out="price_fmt">$0.00</div></td><td><input id="ad-price" class="money" inputmode="decimal" placeholder="$0.00"></td></tr>
+            <tr><td class="name">Earnest Money</td><td><div class="val mono" data-out="deposit_fmt">$0.00</div></td><td><input id="ad-dep" class="money" inputmode="decimal" placeholder="$0.00"></td></tr>
+            <tr><td class="name">Settlement Date</td><td><div class="val mono" data-out="settle_fmt">—</div></td><td><input id="ad-settle" type="date"></td></tr>
+            <tr><td class="name">Seller Credit at Settlement</td><td><div class="val mono">$0.00</div></td><td><input id="ad-credit" class="money" inputmode="decimal" placeholder="$0.00"></td></tr>
+            <tr><td class="name"><input id="ad-cont" placeholder="Contingency deadline (e.g. Inspection)"></td><td><input id="ad-cont-old" type="date" aria-label="Current contingency deadline"></td><td><input id="ad-cont-new" type="date" aria-label="New contingency deadline"></td></tr>
+            <tr><td class="name"><input id="ad-other" placeholder="Other term (write in)"></td><td><input id="ad-other-old" placeholder="Currently" aria-label="Other term, currently"></td><td><input id="ad-other-new" placeholder="Change to" aria-label="Other term, change to"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="g"><div class="f c12"><label for="ad-details">Details</label><textarea id="ad-details" placeholder="e.g. Seller will credit the Buyer $3,000 at settlement for the water heater found in the inspection."></textarea></div></div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">3 · Response</div>
+      <div class="g"><div class="f c6"><label for="ad-deadline">Respond By</label><input id="ad-deadline" type="datetime-local"></div></div>
+      <div class="notice"><b>NOTICE:</b> Every other term of the Agreement of Sale stays the same. This change takes effect only when signed by both Buyer and Seller. If it is not accepted by the time above, it expires.</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">4 · Signatures</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="ad-sig-b" placeholder="Type name to sign" aria-label="Buyer signature"><div class="sig-meta"><span class="lbl">Buyer</span><span class="sig-date"><input type="date" id="ad-sig-b-d" aria-label="Date signed, Buyer"></span></div></div>
+        <div class="sig"><input class="sigline" id="ad-sig-s" placeholder="Type name to sign" aria-label="Seller signature"><div class="sig-meta"><span class="lbl">Seller</span><span class="sig-date"><input type="date" id="ad-sig-s-d" aria-label="Date signed, Seller"></span></div></div>
+        <div class="sig"><input class="sigline" id="ad-sig-a" data-key="agent_sig" placeholder="Type name to sign" aria-label="Hameed Johnson, Real Estate Agent signature"><div class="sig-meta"><span class="lbl">Hameed Johnson, Real Estate Agent</span><span class="sig-date"><input type="date" id="ad-sig-a-d" aria-label="Date signed, Hameed Johnson, Real Estate Agent"></span></div></div>
+      </div>
+    </section>
+  </div>
+  <div class="foot">Johnson’s Realty Brokerage · Addendum No. <span class="k" data-mirror-id="ad-no">—</span> · Agreement No. <span class="k" data-mirror="agreement_no">—</span> · Form JR-PA-110</div>
+</article>
+
+<!-- ================= SETTLEMENT & KEY HANDOVER ================= -->
+<article class="doc" id="doc-settle" data-doc="settle" hidden>
+  <header class="head">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" fill="none" stroke="#B4925A" stroke-width="1.5"/><path d="M10 23 L24 11 L38 23" fill="none" stroke="#F1EDE4" stroke-width="2.2"/><circle cx="20" cy="30" r="4.2" fill="none" stroke="#B4925A" stroke-width="2"/><path d="M24.2 30 H35 M31 30 v3.5 M34 30 v2.5" fill="none" stroke="#B4925A" stroke-width="2"/></svg>
+      <div><div class="brand-name">Johnson’s Realty</div><div class="brand-sub">Brokerage · Pennsylvania</div></div>
+    </div>
+    <div class="head-contact">Buy • Sell • Rent<br><b>Contact</b> IbrahimKhurram407<br><b>Chirper</b> @KeysWithJohnson</div>
+  </header>
+  <div class="titleband">
+    <h1>Settlement &amp; Key Handover</h1>
+    <div class="sub">Confirmation of Settlement</div>
+    <div class="ref">Form JR-PA-400 · Walk-through, keys and brokerage record</div>
+  </div>
+  <div class="brassrule"></div>
+
+  <div class="body">
+    <div class="meta">
+      <div class="f"><label for="sk-no">Confirmation No.</label><input id="sk-no" class="mono" placeholder="SKH-2026-00000"></div>
+      <div class="f"><label for="sk-status">Status</label>
+        <span class="status-pill"><select id="sk-status" class="pill"><option data-tone="warn">Scheduled</option><option data-tone="ok">Settled</option><option data-tone="void">Delayed</option></select></span></div>
+      <div class="f"><label for="sk-date">Settlement Date</label><input id="sk-date" type="date" data-key="settle_date"></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">Transaction</div>
+      <div class="g">
+        <div class="f c4"><label for="sk-aos">Agreement of Sale No.</label><input id="sk-aos" data-key="agreement_no" class="mono" placeholder="AOS-2026-00000"></div>
+        <div class="f c5"><label for="sk-addr">Property Address</label><input id="sk-addr" data-key="prop_address" placeholder="Street address"></div>
+        <div class="f c3"><label for="sk-zip">ZIP Code</label><input id="sk-zip" data-key="prop_zip" class="mono" inputmode="numeric" placeholder="17110"></div>
+        <div class="f c6"><label for="sk-buyer">Buyer(s)</label><input id="sk-buyer" data-key="buyer_name" placeholder="Full legal name"></div>
+        <div class="f c6"><label for="sk-seller">Seller(s)</label><input id="sk-seller" data-key="seller_name" placeholder="Full legal name"></div>
+        <div class="f c4"><label for="sk-price">Final Purchase Price</label><input id="sk-price" data-key="price" class="money" inputmode="decimal" placeholder="$0.00"></div>
+        <div class="f c8"><label for="sk-title-co">Title / Settlement Company</label><input id="sk-title-co" data-key="settle_co" placeholder="Company name"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Pre-Settlement Walk-Through</div>
+      <div class="g">
+        <div class="f c4"><span class="lbl">Walk-Through Completed</span>
+          <div class="yn"><label class="opt"><input type="radio" name="sk-walk" value="Yes" id="sk-walk-y">Yes</label><label class="opt"><input type="radio" name="sk-walk" value="No" id="sk-walk-n">No</label></div></div>
+        <div class="f c4"><label for="sk-walk-d">Walk-Through Date</label><input id="sk-walk-d" type="date"></div>
+        <div class="f c4"><span class="lbl">Condition as Agreed</span>
+          <div class="yn"><label class="opt"><input type="radio" name="sk-cond" value="Yes" id="sk-cond-y">Yes</label><label class="opt"><input type="radio" name="sk-cond" value="No" id="sk-cond-n">No</label></div></div>
+        <div class="f c12"><label for="sk-walk-notes">Walk-Through Observations</label><textarea id="sk-walk-notes" placeholder="e.g. All included appliances present. No new damage observed."></textarea></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Keys &amp; Access <i>Tick each item as it is handed over</i></div>
+      <div class="tw">
+        <table class="t" id="sk-keys">
+          <thead><tr><th>Given</th><th>Item</th><th style="width:70px">Qty</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="ck"><input type="checkbox" id="k1-on" aria-label="Front door keys handed over"></td><td class="name">Front door keys</td><td><input id="k1-q" class="num" inputmode="numeric" placeholder="2"></td><td><input id="k1-n" placeholder="Notes"></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="k2-on" aria-label="Rear or side door keys handed over"></td><td class="name">Rear / side door keys</td><td><input id="k2-q" class="num" inputmode="numeric" placeholder="1"></td><td><input id="k2-n" placeholder="Notes"></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="k3-on" aria-label="Garage door remotes handed over"></td><td class="name">Garage door remote(s)</td><td><input id="k3-q" class="num" inputmode="numeric" placeholder="1"></td><td><input id="k3-n" placeholder="Notes"></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="k4-on" aria-label="Community gate fob handed over"></td><td class="name">Community gate fob / access card</td><td><input id="k4-q" class="num" inputmode="numeric" placeholder="—"></td><td><input id="k4-n" placeholder="Gated communities only"></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="k5-on" aria-label="Mailbox key handed over"></td><td class="name">Mailbox key</td><td><input id="k5-q" class="num" inputmode="numeric" placeholder="1"></td><td><input id="k5-n" placeholder="Notes"></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="k6-on" aria-label="Alarm code provided"></td><td class="name">Alarm system code</td><td><input id="k6-q" class="num" placeholder="—"></td><td><input id="k6-n" placeholder="Provided in person, not written here"></td></tr>
+            <tr><td class="ck"><input type="checkbox" id="k7-on" aria-label="Other item handed over"></td><td class="name"><input id="k7-name" placeholder="Other item (write in)"></td><td><input id="k7-q" class="num" inputmode="numeric" placeholder="—"></td><td><input id="k7-n" placeholder="Notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Utilities &amp; Services <i>Transferred to the Buyer from the settlement date</i></div>
+      <div class="g">
+        <div class="f c4 half"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="u1">Electric</label></div>
+        <div class="f c4 half"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="u2">Gas</label></div>
+        <div class="f c4 half"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="u3">Water and sewer</label></div>
+        <div class="f c4 half"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="u4">Trash collection</label></div>
+        <div class="f c4 half"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="u5">Internet</label></div>
+        <div class="f c4 half"><label class="opt yn" style="text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);gap:8px"><input type="checkbox" id="u6">Homeowner’s insurance in effect</label></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Brokerage Record <i>Internal: commission on this transaction</i></div>
+      <div class="g">
+        <div class="f c3 half"><label>Sale Price</label><div class="val mono" data-out="price_fmt">$0.00</div></div>
+        <div class="f c3 half"><label for="sk-comm">Total Commission (%)</label><input id="sk-comm" data-key="comm_total" class="num" inputmode="decimal" value="5"></div>
+        <div class="f c6"><label>Total Commission</label><div class="val mono" data-out="comm_total_amt">$0.00</div></div>
+        <div class="f c3 half"><label for="sk-side">Johnson’s Realty Share (%)</label><input id="sk-side" data-key="comm_side" class="num" inputmode="decimal" value="2.5"></div>
+        <div class="f c3 half"><label for="sk-side-of">Representing</label><select id="sk-side-of"><option>Buyer</option><option>Seller</option><option>Both</option></select></div>
+        <div class="f c6"><label>Commission Earned</label><div class="val strong mono" data-out="comm_side_amt">$0.00</div></div>
+      </div>
+      <div class="notice"><b>NOTICE:</b> Ownership passes when the signed deed is delivered at settlement. The title company then records the deed with the county Recorder of Deeds. Keys are released once the settlement agent confirms that settlement is complete. Johnson’s Realty coordinates the handover but does not handle title, recording, mortgage funds or legal documents.</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Signatures</div>
+      <div class="sigs">
+        <div class="sig"><input class="sigline" id="sk-sig-b" placeholder="Type name to sign" aria-label="Buyer signature">
+          <div class="sig-meta"><span class="lbl">Keys Received By · Buyer</span><span class="sig-date"><input type="date" id="sk-sig-b-d" aria-label="Date keys received"></span></div></div>
+        <div class="sig"><input class="sigline" id="sk-sig-a" data-key="agent_sig" placeholder="Type name to sign" aria-label="Agent signature">
+          <div class="sig-meta"><span class="lbl">Hameed Johnson, Real Estate Agent</span><span class="sig-date"><input type="date" id="sk-sig-a-d" aria-label="Date signed by agent"></span></div></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">Agent’s Notes</div>
+      <div class="g"><div class="f c12"><textarea id="sk-notes" aria-label="Settlement notes" placeholder="e.g. Keys handed over at the property after the title company confirmed settlement."></textarea></div></div>
+    </section>
+  </div>
+  <div class="foot">Johnson’s Realty Brokerage · Confirmation No. <span class="k" data-mirror-id="sk-no">—</span> · Agreement No. <span class="k" data-mirror="agreement_no">—</span> · Form JR-PA-400</div>
+</article>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  const P = 'jrpa1:';
+  const store = {
+    get(k){ try { return localStorage.getItem(P+k); } catch(e){ return null; } },
+    set(k,v){ try { localStorage.setItem(P+k, v); } catch(e){} },
+    clear(){ try { Object.keys(localStorage).filter(k=>k.startsWith(P)).forEach(k=>localStorage.removeItem(k)); } catch(e){} }
+  };
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const fields = $$('.doc input, .doc select, .doc textarea');
+  const keyOf = el => el.type === 'radio' ? 'r:' + el.name : (el.dataset.key || el.id);
+  const defaults = new Map(fields.map(el => [el, el.type==='checkbox'||el.type==='radio' ? el.checked : el.value]));
+
+  /* ---------- money + words ---------- */
+  const parse = v => { const n = Number(String(v||'').replace(/[^0-9.]/g,'')); return isFinite(n) ? n : 0; };
+  const fmt = n => '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const ONES = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const TENS = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function chunk(x){ let s=[]; if(x>=100){ s.push(ONES[Math.floor(x/100)]+' Hundred'); x%=100; }
+    if(x>=20){ s.push(TENS[Math.floor(x/10)] + (x%10 ? '-'+ONES[x%10] : '')); } else if(x>0){ s.push(ONES[x]); } return s.join(' '); }
+  function words(n){ if(n===0) return 'Zero'; const sc=['','Thousand','Million','Billion']; const out=[]; let i=0;
+    while(n>0 && i<sc.length){ const c=n%1000; if(c) out.unshift(chunk(c)+(sc[i]?' '+sc[i]:'')); n=Math.floor(n/1000); i++; } return out.join(' '); }
+  function moneyWords(v){ if(!v) return '—'; const d=Math.floor(v+1e-9); const c=Math.round((v-d)*100); return words(d)+' and '+String(c).padStart(2,'0')+'/100 Dollars'; }
+
+  function valueOfKey(k){ const el = fields.find(f => (f.dataset.key||f.id)===k); return el ? el.value : ''; }
+  function growAll(){ $$('.doc textarea').forEach(t => { if(!t.offsetParent) return; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }); }
+  function calc(){
+    const price = parse(valueOfKey('price')), dep = parse(valueOfKey('deposit'));
+    const rate = parse(valueOfKey('comm_total')), side = parse(valueOfKey('comm_side'));
+    const allocSum = ['bs-a-re','bs-a-eq','bs-a-inv','bs-a-gw'].reduce((a,k) => a + parse(valueOfKey(k)), 0);
+    const out = {
+      price_words: moneyWords(price), deposit_words: moneyWords(dep),
+      balance: fmt(Math.max(price-dep,0)), price_fmt: fmt(price),
+      comm_total_amt: fmt(price*rate/100), comm_side_amt: fmt(price*side/100), deposit_fmt: fmt(dep),
+      biz_multiple: (() => { const pr = parse(valueOfKey('biz_profit')); return pr && price ? (price/pr).toFixed(1)+' × yearly profit' : '—'; })(),
+      alloc_total: fmt(allocSum), alloc_note: allocSum ? (Math.abs(allocSum-price) < 1 ? '· matches the price' : '· differs from the price by '+fmt(Math.abs(allocSum-price))) : '',
+      biz_balance: fmt(Math.max(price - dep - parse(valueOfKey('bs-sf')), 0)),
+      settle_fmt: (() => { const d = valueOfKey('settle_date'); return d ? new Date(d+'T00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; })()
+    };
+    $$('[data-out]').forEach(el => { el.textContent = out[el.dataset.out]; });
+    $$('[data-mirror]').forEach(el => { el.textContent = valueOfKey(el.dataset.mirror) || '—'; });
+    $$('[data-mirror-id]').forEach(el => { el.textContent = (document.getElementById(el.dataset.mirrorId)||{}).value || '—'; });
+    growAll();
+    $$('select.pill').forEach(s => { s.dataset.tone = s.selectedOptions[0] ? (s.selectedOptions[0].dataset.tone||'') : ''; });
+    $$('table.t tbody tr').forEach(tr => { const cb = tr.querySelector('td.ck input'); if(cb) tr.classList.toggle('off', !cb.checked); });
+  }
+
+  /* ---------- load / save / sync ---------- */
+  function setEl(el, v){
+    if(el.type==='checkbox') el.checked = v==='1';
+    else if(el.type==='radio') el.checked = el.value===v;
+    else el.value = v;
+  }
+  function load(){
+    fields.forEach(el => { const v = store.get(keyOf(el)); if(v!==null) setEl(el, v); });
+  }
+  function save(el){
+    const k = keyOf(el);
+    const v = el.type==='checkbox' ? (el.checked?'1':'0') : el.value;
+    store.set(k, v);
+    if(el.dataset.key){ fields.forEach(o => { if(o!==el && o.dataset.key===el.dataset.key) setEl(o, v); }); }
+  }
+  fields.forEach(el => {
+    el.addEventListener('input', () => { save(el); calc(); });
+    el.addEventListener('change', () => { save(el); calc(); });
+  });
+  $$('.money').forEach(el => el.addEventListener('blur', () => { if(el.value.trim()!==''){ el.value = fmt(parse(el.value)); save(el); calc(); } }));
+
+  /* ---------- numbers & dates ---------- */
+  const yr = new Date().getFullYear();
+  const rnd = () => String(Math.floor(10000 + Math.random()*90000));
+  const today = () => { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+  function assignNumbers(force){
+    [['aos-no','AOS'],['em-no','EM'],['sk-no','SKH'],['lc-no','LC'],['spds-no','SPDS'],['ad-no','ADD'],['bl-no','BL']].forEach(([id,p]) => {
+      const el = document.getElementById(id);
+      if(force || !el.value){ el.value = p+'-'+yr+'-'+rnd(); save(el); }
+    });
+  }
+  const BANKS = ['Keystone Federal Bank','Capital Region Credit Union','Susquehanna Valley Savings Bank','Penn Harbor Community Bank'];
+  function genRef(){
+    const m = valueOfKey('deposit_method');
+    return /check/i.test(m) ? String(Math.floor(100000 + Math.random()*900000)) : 'TRN-' + rnd() + rnd().slice(0,3);
+  }
+  function fillPayment(force){
+    const ref = $('#em-ref'), led = $('#em-ledger'), bank = $('#em-bank');
+    if(force || !ref.value){ ref.value = genRef(); save(ref); }
+    if(force || !led.value){ led.value = 'ESC-' + yr + '-' + rnd().slice(0,4); save(led); }
+    if(force || !bank.value){ const l = ($('#aos-lender') || {}).value; bank.value = l || BANKS[Math.floor(Math.random()*BANKS.length)]; save(bank); }
+  }
+  fields.filter(f => f.dataset.key==='deposit_method').forEach(f => f.addEventListener('change', () => { const r = $('#em-ref'); r.value = genRef(); save(r); }));
+  function defaultDates(){ ['#aos-date','#lc-date','#spds-date','#ad-date','#bl-date','#bs-date'].forEach(sel => { const el = $(sel); if(el && !el.value){ el.value = today(); save(el); } }); }
+
+  /* ---------- tabs ---------- */
+  function show(doc){
+    $$('.doc').forEach(d => d.hidden = d.dataset.doc!==doc);
+    $$('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.doc===doc))); growAll();
+    try { history.replaceState(null,'','#'+doc); } catch(e){}
+    try { localStorage.setItem(P+'_tab', doc); } catch(e){}
+  }
+  $$('.tab').forEach(t => t.addEventListener('click', () => show(t.dataset.doc)));
+  const MODES = { home:['listing','spds','aos','deposit','addendum','settle'], biz:['blisting','bsale','deposit','addendum','settle'] };
+  let mode = 'home'; try { mode = localStorage.getItem(P+'_mode') || 'home'; } catch(e){}
+  if(!MODES[mode]) mode = 'home';
+  function setMode(m, go){
+    mode = m;
+    $$('.mode').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode===m)));
+    $$('.tab').forEach(t => { t.hidden = !MODES[m].includes(t.dataset.doc); });
+    try { localStorage.setItem(P+'_mode', m); } catch(e){}
+    const cur = (document.querySelector('.tab[aria-selected="true"]')||{dataset:{}}).dataset.doc;
+    if(go) show(go); else if(!MODES[m].includes(cur)) show(MODES[m][0]);
+  }
+  $$('.mode').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+  /* ---------- toast ---------- */
+  let tt; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2600); }
+
+  /* ---------- actions ---------- */
+  const SAMPLE = {
+    buyer_name:'Marcus Hale', buyer_contact:'MarcusHale_22', seller_name:'Elaine Porter', seller_contact:'EPorter88',
+    'aos-buyer-addr':'88 Walnut Street, Harrisburg, PA 17101', prop_address:'214 Linden Lane', prop_city:'Harrisburg',
+    prop_county:'Dauphin', parcel:'62-018-044',
+    prop_type:'Single-family detached',prop_beds:'3',prop_baths:'2',prop_park:'Two-car attached garage',
+    prop_year:'1998',prop_zoning:'R-1 Residential',prop_legal:'Two-storey detached dwelling with rear yard and deck',
+    price:'$385,000.00', deposit:'$19,250.00', deposit_method:'Cashier’s check',
+    'aos-fin':'Conventional mortgage','aos-loan':'$308,000.00','aos-lender':'Keystone Federal Bank',
+    'aos-chattels':'Refrigerator, range, dishwasher, washer, dryer, all window treatments',
+    'aos-fixtures':'None','aos-rentals':'None','aos-rtt':'Split equally between Buyer and Seller',
+    'aos-lbrk':'Johnson’s Realty Brokerage','aos-lagent':'Hameed Johnson','aos-role':'The Seller',
+    settle_co:'Keystone Abstract & Title Co.',
+    'c1-on':'1','c2-on':'1','c3-on':'1','aos-notes':'Sample form. Replace with your client’s details.'
+  };
+  $('#btn-sample').addEventListener('click', () => {
+    Object.entries(SAMPLE).forEach(([k,v]) => {
+      fields.filter(f => (f.dataset.key||f.id)===k).forEach(f => { setEl(f, v); save(f); });
+    });
+    const d = new Date(); d.setDate(d.getDate()+30);
+    const iso = d.toISOString().slice(0,10);
+    fields.filter(f => f.dataset.key==='settle_date').forEach(f => { f.value = iso; save(f); });
+    ['aos-spds-y','aos-lead-na','aos-hw-n','aos-walk-y'].forEach(id => { const r=document.getElementById(id); r.checked=true; save(r); });
+    calc(); toast('Sample loaded. Replace it with your client’s details.');
+  });
+  $('#btn-newno').addEventListener('click', () => { assignNumbers(true); fillPayment(true); calc(); toast('New form numbers issued'); });
+
+  let armed = null;
+  $('#btn-clear').addEventListener('click', e => {
+    const b = e.currentTarget;
+    if(!armed){ b.textContent = 'Tap again to clear'; armed = setTimeout(() => { b.textContent='Clear all'; armed=null; }, 3500); return; }
+    clearTimeout(armed); armed = null; b.textContent = 'Clear all';
+    const tab = (()=>{ try { return localStorage.getItem(P+'_tab'); } catch(e){ return null; } })();
+    store.clear();
+    fields.forEach(el => { const d = defaults.get(el); if(el.type==='checkbox'||el.type==='radio') el.checked = d; else el.value = d; });
+    assignNumbers(true); fillPayment(true); defaultDates(); calc();
+    if(tab){ try { localStorage.setItem(P+'_tab', tab); } catch(e){} }
+    toast('All forms cleared');
+  });
+
+  function shot(on){
+    document.body.classList.toggle('shot', on);
+    $('#btn-exit').hidden = !on;
+    if(on){ document.activeElement && document.activeElement.blur(); window.scrollTo(0,0); toast('Screenshot mode on. Press Esc to exit.'); }
+  }
+  $('#btn-shot').addEventListener('click', () => shot(true));
+  $('#btn-exit').addEventListener('click', () => shot(false));
+  document.addEventListener('keydown', e => { if(e.key==='Escape' && document.body.classList.contains('shot')) shot(false); });
+
+  /* ---------- town / area ---------- */
+  const AREAS = {
+    'hbg-west':  { city:'Harrisburg', zip:'17101' },
+    'hbg-east':  { city:'Harrisburg', zip:'17104' },
+    'hbg-north': { city:'Harrisburg', zip:'17110' },
+    'swatara':   { city:'Swatara Township', zip:'17111' },
+    'susq':      { city:'Susquehanna Township', zip:'17109' }
+  };
+  fields.filter(f => f.dataset.key==='prop_area').forEach(sel => sel.addEventListener('change', e => {
+    const a = AREAS[e.target.value]; if(!a) return;
+    const vals = { prop_city:a.city, prop_zip:a.zip, prop_county:'Dauphin', 'aos-state':'PA' };
+    Object.entries(vals).forEach(([k,v]) => fields.filter(f => (f.dataset.key||f.id)===k).forEach(f => { setEl(f, v); save(f); }));
+    calc(); toast('Set to '+a.city+', Dauphin County, PA '+a.zip);
+  }));
+
+  /* ---------- seller files ---------- */
+  const LISTING = { 'aos-lbrk':'Johnson’s Realty Brokerage', 'aos-lagent':'Hameed Johnson', 'aos-role':'The Seller', comm_total:'5', comm_side:'2.5', 'lc-coop':'2.5', 'aos-rtt':'Split equally between Buyer and Seller', 'aos-poss':'At settlement, by delivery of deed and keys' };
+  const SELLERS = {
+    porter: { name:'Elaine Porter', radios:['aos-lead-na'], f:{
+      seller_name:'Elaine Marie Porter', seller_contact:'EPorter88', seller_addr:'2210 Murray Avenue, Apt 4C, Pittsburgh, PA 15217',
+      prop_address:'7063 Franklin Court', prop_county:'Dauphin',
+      prop_type:'Single-family detached', prop_beds:'3', prop_baths:'2', prop_park:'Single-car garage', prop_year:'1994', prop_zoning:'R-2 Residential',
+      prop_legal:'Single-family detached dwelling with home office, formal dining room and laundry room',
+      price:'$365,000.00', deposit:'$10,000.00', settle_date:'2026-12-12',
+      'aos-chattels':'Refrigerator, range, dishwasher, washer, dryer, all window treatments, garden shed',
+      'aos-fixtures':'Dining room chandelier (Seller will install a standard fixture in its place)', 'aos-rentals':'None',
+      settle_co:'Keystone Abstract & Title Co.', seller_lawyer:'None' } },
+    kowalski: { name:'Ray Kowalski', radios:['aos-lead-y','aos-hw-n'], f:{
+      seller_name:'Raymond Joseph Kowalski', seller_contact:'RayK_Steelton', seller_addr:'c/o Michael Kowalski, 4418 Brookside Drive, Columbus, OH 43221',
+      prop_county:'Dauphin',
+      prop_type:'Bungalow', prop_beds:'1', prop_baths:'1', prop_park:'Detached two-car garage', prop_year:'1956', prop_zoning:'R-1 Residential',
+      prop_legal:'Bungalow with open kitchen and lounge, covered front porch and long private driveway. Sold as-is.',
+      price:'$189,000.00', deposit:'$5,000.00', settle_date:'2026-11-20',
+      'aos-chattels':'Refrigerator, range, washer, garage workbench and shelving', 'aos-fixtures':'None', 'aos-rentals':'None',
+      settle_co:'Capital Area Settlement Services', seller_lawyer:'None' } },
+    raman: { name:'Priya and Daniel Raman', radios:['aos-lead-na','aos-hw-n'], f:{
+      seller_name:'Priya Raman and Daniel James Raman', seller_contact:'PRaman_MD / DanRaman', seller_addr:'75 Kendall Street, Unit 912, Cambridge, MA 02142',
+      prop_address:'601 Cardinal Court, Whispering Pines', prop_county:'Dauphin',
+      prop_type:'Single-family detached', prop_beds:'4', prop_baths:'1', prop_park:'Garage parking for three vehicles', prop_year:'2019', prop_zoning:'R-1 Low Density Residential',
+      prop_legal:'Modern two-storey dwelling in Whispering Pines (gated, HOA $210/month) with in-ground pool, covered cabana and patio',
+      price:'$725,000.00', deposit:'$25,000.00', settle_date:'2026-12-15',
+      'aos-chattels':'Refrigerator, range, dishwasher, washer, dryer, pool equipment and cover, cabana lounge chairs, TV wall mount',
+      'aos-fixtures':'Living room TV and all indoor furniture, unless negotiated', 'aos-rentals':'None (pool heater is owned)',
+      settle_co:'Susquehanna Title & Escrow', seller_lawyer:'Melissa Grant, Grant & Whitfield LLP' } },
+    castellano: { name:'Anthony and Renée Castellano', radios:['aos-lead-na','aos-hw-y'], f:{
+      seller_name:'Anthony Joseph Castellano and Renée Marie Castellano', seller_contact:'ACastellano / ReneeC', seller_addr:'200 North Front Street, Unit 1104, Harrisburg, PA 17101',
+      prop_address:'601 Cardinal Court, Whispering Pines', prop_county:'Dauphin',
+      prop_type:'Single-family detached', prop_beds:'6', prop_baths:'2', prop_park:'Oversized garage, fits three vehicles', prop_year:'2017', prop_zoning:'R-1 Low Density Residential',
+      prop_legal:'Modern two-storey dwelling in Whispering Pines (gated, HOA $210/month) with double-height dining room, upstairs loft and games room, covered front patio and private backyard',
+      price:'$795,000.00', deposit:'$25,000.00', settle_date:'2027-01-15',
+      'aos-chattels':'Refrigerator, range, dishwasher, washer, dryer, pool table in the games room, patio chairs',
+      'aos-fixtures':'Framed artwork and the living room TV', 'aos-rentals':'None',
+      settle_co:'Keystone Abstract & Title Co.', seller_lawyer:'Daniel Okafor, Okafor Law Group' } },
+    brennan: { name:'the Brennan estate', spare:true, radios:['aos-hw-n'], f:{
+      seller_name:'Margaret Brennan-Cole, Executor of the Estate of Harold T. Brennan', seller_contact:'MBrennanCole', seller_addr:'48 Willow Bend Court, Lancaster, PA 17601',
+      'aos-chattels':'All appliances. Furniture may stay at the Buyer’s request.', 'aos-fixtures':'None', 'aos-rentals':'None known',
+      settle_co:'Red Rose Title Agency', seller_lawyer:'Thomas Albright, Albright & Rhee Law (estate attorney)' } },
+    whitaker: { name:'the Whitakers', spare:true, radios:['aos-hw-y'], f:{
+      seller_name:'Jordan Michael Whitaker and Alexis Renee Whitaker', seller_contact:'JWhitaker_HVAC / AlexisW', seller_addr:'Same as the property until settlement',
+      'aos-chattels':'All appliances and window treatments', 'aos-fixtures':'Backyard swing set and TV mounts', 'aos-rentals':'None',
+      settle_co:'Keystone Abstract & Title Co.', seller_lawyer:'None' } }
+  };
+  const EXTRA = {"porter": {"f": {"seller_vesting": "Sole owner (surviving spouse)", "occupancy": "Owner-occupied", "taxes": "About $6,200 per year", "hoa": "None", "mortgage": "None (paid off 2022)", "show_notes": "24 hours’ notice. Lockbox on the front door. Seller leaves during showings. Her cat, Biscuit, stays in the laundry room.", "lc-start": "2026-10-14", "lc-end": "2027-04-14", "spds-capacity": "The owner", "spds-since": "June 2000", "spds-notes": "Seller will put up a standard light fixture in place of the dining room chandelier, which she is keeping."}, "radios": ["lc-sign-y", "lc-photo-y", "lc-lock-y"], "cn": true, "spds": {"r1": ["No", "Asphalt shingle, replaced 2017"], "r2": ["Yes", "Water after heavy rain in 2021. Sump pump installed 2021, dry since."], "r3": ["No", ""], "r4": ["No", "Natural gas forced air, installed 2019"], "r5": ["No", "Central air, installed 2019"], "r6": ["No", "50-gallon gas, installed 2014"], "r7": ["No", "Copper and PEX"], "r8": ["No", "200-amp service"], "r9": ["No", "Public water and public sewer"], "r10": ["No", "No known infestation"], "r11": ["Unknown", "Never tested"], "r12": ["N/A", "Built 1994"], "r13": ["No", ""], "r14": ["No", ""], "r15": ["N/A", "No pool"], "r16": ["No", ""], "r17": ["No", "All included appliances in working order"], "r18": ["N/A", "No HOA"], "r19": ["No", ""], "r20": ["No", ""]}}, "kowalski": {"f": {"seller_vesting": "Sole owner (surviving spouse)", "occupancy": "Owner-occupied", "taxes": "About $3,300 per year", "hoa": "None", "mortgage": "None (paid off 2001)", "show_notes": "Two hours’ notice. No lockbox. Seller lets buyers in and waits on the porch.", "lc-start": "2026-10-14", "lc-end": "2027-01-14", "spds-capacity": "The owner", "spds-since": "April 1981", "spds-notes": "Property is sold as-is. Seller will not make repairs or give credits."}, "radios": ["lc-sign-y", "lc-photo-y", "lc-lock-n"], "cn": true, "spds": {"r1": ["No", "Asphalt shingle, from 2009. Nearing the end of its life."], "r2": ["Yes", "Occasional dampness in the partial basement in spring. No standing water."], "r3": ["No", ""], "r4": ["No", "Oil-fired furnace"], "r5": ["N/A", "No central air. Window units only."], "r6": ["No", "40-gallon electric, installed 2018"], "r7": ["Yes", "Some original galvanized pipe. Part replaced in 2012."], "r8": ["No", "100-amp service"], "r9": ["No", "Public water and public sewer"], "r10": ["Unknown", "Never inspected"], "r11": ["Unknown", "Never tested"], "r12": ["Unknown", "Built 1956. No known lead paint and no reports."], "r13": ["Yes", "Oil tank in the basement, installed 2015. No buried tanks known."], "r14": ["No", ""], "r15": ["N/A", "No pool"], "r16": ["Yes", "Original wood windows. Garage door sticks in cold weather."], "r17": ["No", "Included appliances work"], "r18": ["N/A", "No HOA"], "r19": ["No", ""], "r20": ["No", ""]}}, "raman": {"f": {"seller_vesting": "Married couple, tenants by the entirety", "occupancy": "Owner-occupied", "taxes": "About $11,800 per year", "hoa": "Whispering Pines HOA, $210 per month", "mortgage": "Commonwealth Home Lending", "show_notes": "Four hours’ notice. The family leaves during showings. Agent meets buyers at the community gate.", "lc-start": "2026-10-14", "lc-end": "2027-01-31", "spds-capacity": "The owner", "spds-since": "August 2019 (built new)", "spds-notes": "The home has one bathroom. The HOA resale certificate has been ordered for the buyer."}, "radios": ["lc-sign-n", "lc-photo-y", "lc-lock-n"], "cn": true, "spds": {"r1": ["No", "Flat membrane and shingle, 2019"], "r2": ["N/A", "No basement, slab foundation"], "r3": ["No", ""], "r4": ["No", "Natural gas forced air, two zones, 2019"], "r5": ["No", "Central air, two zones, 2019"], "r6": ["No", "Tankless gas, 2019"], "r7": ["No", "PEX, 2019"], "r8": ["No", "200-amp service"], "r9": ["No", "Public water and public sewer"], "r10": ["No", "No known infestation"], "r11": ["No", "Tested at completion in 2019, below the action level"], "r12": ["N/A", "Built 2019"], "r13": ["No", ""], "r14": ["No", ""], "r15": ["Yes", "In-ground heated pool. Heater replaced 2024. Hairline cosmetic crack in the pool deck."], "r16": ["No", "Community gate reader is sometimes slow (HOA matter)"], "r17": ["No", ""], "r18": ["Yes", "Whispering Pines HOA, $210 per month. Covers gate, roads and snow removal."], "r19": ["No", ""], "r20": ["No", ""]}}, "brennan": {"f": {"seller_vesting": "Estate of Harold T. Brennan (executor signs)", "occupancy": "Vacant", "mortgage": "None", "hoa": "", "taxes": "", "show_notes": "Any time with one hour’s notice. Lockbox on the side door. House is vacant.", "lc-start": "", "lc-end": "", "spds-capacity": "Executor of an estate", "spds-since": "Never occupied (estate sale)", "spds-notes": "Completed by the executor, who never lived in the property. Executors are generally exempt from the full disclosure statement, so answers are to the best of her knowledge only. An inspection is recommended."}, "radios": ["lc-sign-y", "lc-photo-y", "lc-lock-y"], "cn": true, "spds": {"r1": ["Unknown", "Executor has no first-hand knowledge"], "r2": ["Unknown", "Executor has no first-hand knowledge"], "r3": ["Unknown", "Executor has no first-hand knowledge"], "r4": ["Unknown", "Executor has no first-hand knowledge"], "r5": ["Unknown", "Executor has no first-hand knowledge"], "r6": ["Unknown", "Executor has no first-hand knowledge"], "r7": ["Unknown", "Executor has no first-hand knowledge"], "r8": ["Unknown", "Executor has no first-hand knowledge"], "r9": ["Unknown", "Executor has no first-hand knowledge"], "r10": ["Unknown", "Executor has no first-hand knowledge"], "r11": ["Unknown", "Executor has no first-hand knowledge"], "r12": ["Unknown", "No reports available"], "r13": ["Unknown", "Executor has no first-hand knowledge"], "r14": ["Unknown", "Executor has no first-hand knowledge"], "r15": ["Unknown", "Executor has no first-hand knowledge"], "r16": ["Unknown", "Executor has no first-hand knowledge"], "r17": ["Unknown", "Executor has no first-hand knowledge"], "r18": ["Unknown", "Executor has no first-hand knowledge"], "r19": ["Unknown", "Executor has no first-hand knowledge"], "r20": ["Unknown", "Executor has no first-hand knowledge"]}}, "whitaker": {"f": {"seller_vesting": "Married couple, tenants by the entirety", "occupancy": "Owner-occupied", "mortgage": "Capital Region Credit Union", "show_notes": "One hour’s notice, evenings and weekends. Their dog, Maple, is crated in the garage during showings.", "spds-capacity": "The owner", "spds-since": "May 2021", "spds-notes": "Sellers would like to rent back for up to 30 days after settlement at $50 per day."}, "radios": ["lc-sign-y", "lc-photo-y", "lc-lock-y"], "cn": true, "spds": {"r1": ["Yes", "Small leak over the garage repaired in 2025, with a two-year workmanship warranty"], "r2": ["No", ""], "r3": ["No", ""], "r4": ["No", "Serviced every year. Receipts available."], "r5": ["No", "Serviced every year. Receipts available."], "r6": ["No", ""], "r7": ["No", ""], "r8": ["No", ""], "r9": ["No", ""], "r10": ["No", ""], "r11": ["No", ""], "r12": ["", "Fill in: required only if built before 1978"], "r13": ["No", ""], "r14": ["No", ""], "r15": ["N/A", "No pool"], "r16": ["No", "New garage door opener in 2024"], "r17": ["No", ""], "r18": ["", "Fill in if the home is in an HOA"], "r19": ["No", ""], "r20": ["No", ""]}}};
+  EXTRA.castellano = {"f": {"seller_vesting": "Married couple, tenants by the entirety", "occupancy": "Owner-occupied", "taxes": "About $13,500 per year", "hoa": "Whispering Pines HOA, $210 per month", "mortgage": "Keystone Federal Bank", "show_notes": "24 hours’ notice. Owners are usually at their restaurants. Agent meets buyers at the community gate.", "lc-start": "2026-10-20", "lc-end": "2027-04-20", "spds-capacity": "The owner", "spds-since": "September 2017 (built new)", "spds-notes": "Six bedrooms share two full bathrooms. The pool table in the games room stays with the house."}, "radios": ["lc-sign-n", "lc-photo-y", "lc-lock-n"], "cn": true, "spds": {"r1": ["Yes", "Flat membrane, 2017. One section held water after heavy rain; resealed 2024, no leaks since."], "r2": ["N/A", "No basement, slab foundation"], "r3": ["No", "Hairline settling crack in the garage floor, cosmetic"], "r4": ["No", "Natural gas forced air, two zones, 2017"], "r5": ["No", "Central air, two zones. Upstairs compressor replaced 2023."], "r6": ["No", "Two 50-gallon gas tanks, 2017"], "r7": ["No", "PEX, 2017"], "r8": ["No", "200-amp service"], "r9": ["No", "Public water and public sewer"], "r10": ["No", "No known infestation"], "r11": ["No", "Tested at completion in 2017, below the action level"], "r12": ["N/A", "Built 2017"], "r13": ["No", ""], "r14": ["No", ""], "r15": ["N/A", "No pool"], "r16": ["No", ""], "r17": ["No", ""], "r18": ["Yes", "Whispering Pines HOA, $210 per month. Covers gate, roads and snow removal."], "r19": ["No", ""], "r20": ["No", ""]}};
+  SELLERS.dee = {"name": "Dee Marchetti (Dee’s Diner)", "f": {"seller_name": "Dolores Ann Marchetti", "seller_contact": "DeeMarchetti", "seller_addr": "1420 Gulf Breeze Way, Sarasota, FL 34231", "biz_entity": "Dee’s Diner LLC", "biz_signer": "Sole member", "biz_name": "Dee’s Diner", "biz_type": "Restaurant / diner", "biz_years": "31", "biz_emp": "9", "biz_hours": "Daily, 6 am to 3 pm", "biz_re": "Business and building (owner-owned)", "biz_sqft": "About 2,400 sq ft, 60 seats, 20-space lot", "biz_rent": "", "biz_lease_end": "", "biz_landlord": "", "price": "$595,000.00", "biz_sales": "$780,000.00", "biz_profit": "$165,000.00", "biz_inv": "$10,000.00", "biz_sf": "Yes, up to 20% of the price", "biz_included": "All kitchen equipment, tables, chairs and booths, the name and sign, recipes, phone number, website and social pages", "biz_excluded": "Framed family photos and the first dollar the diner earned", "biz_licenses": "Health permit must be reissued to the new owner. No liquor licence.", "comm_total": "8", "comm_side": "8", "deposit": "$20,000.00", "settle_co": "Keystone Abstract & Title Co.", "seller_lawyer": "Carla Benedetti, Benedetti Law", "show_notes": "After 3 pm only, when the diner is closed. Do not discuss the sale with staff.", "bs-a-re": "$300,000.00", "bs-a-eq": "$85,000.00", "bs-a-inv": "$10,000.00", "bs-a-gw": "$200,000.00", "bs-sf-term": "5 years, monthly payments", "bs-sf-rate": "7% per year", "bs-train": "30 days, mornings, all recipes included", "bs-nc-miles": "10 miles", "bs-nc-years": "5 years", "bs-staff": "Buyer may offer jobs to current staff", "bc1-on": "1", "bc2-on": "1", "bc3-on": "0", "bc4-on": "1", "bc5-on": "1", "bc6-on": "0", "bc7-on": "0", "bl-conf": "1"}};
+  SELLERS.raj = {"name": "Raj Malhotra (Corner Mart & Fuel)", "f": {"seller_name": "Rajesh Kumar Malhotra", "seller_contact": "RajMalhotra", "seller_addr": "2280 Linglestown Road, Harrisburg, PA 17110", "biz_entity": "Malhotra Petroleum & Retail LLC", "biz_signer": "Managing member", "biz_name": "Malhotra’s Corner Mart & Fuel", "biz_type": "Convenience store & fuel", "biz_years": "17", "biz_emp": "8", "biz_hours": "Daily, 5 am to 11 pm", "biz_re": "Business and building (owner-owned)", "biz_sqft": "About 3,000 sq ft store on 1.1 acres, 4 pumps", "biz_rent": "", "biz_lease_end": "", "biz_landlord": "", "price": "$1,150,000.00", "biz_sales": "$2,400,000.00", "biz_profit": "$210,000.00", "biz_inv": "$60,000.00", "biz_sf": "No", "biz_included": "Store fixtures, coolers, shelving, point-of-sale system, security cameras, canopy and pumps, the name and sign. Buyer takes over the fuel supply contract (4 years left).", "biz_excluded": "Cash in the registers and safe, owner’s office furniture", "biz_licenses": "Lottery and tobacco licences cannot be transferred; the buyer must apply. Underground tank registration moves to the new owner.", "comm_total": "6", "comm_side": "6", "deposit": "$40,000.00", "settle_co": "Capital Area Settlement Services", "seller_lawyer": "Priya Natarajan, Natarajan & Kessler LLP", "show_notes": "Weekday mornings. Buyers visit as customers first, then meet the owner in the back office. Staff are not to be told.", "bs-a-re": "$750,000.00", "bs-a-eq": "$90,000.00", "bs-a-inv": "$60,000.00", "bs-a-gw": "$250,000.00", "bs-sf": "", "bs-sf-term": "", "bs-sf-rate": "", "bs-train": "2 weeks, including ordering and fuel deliveries", "bs-nc-miles": "5 miles", "bs-nc-years": "5 years", "bs-staff": "Buyer may offer jobs to current staff", "bc1-on": "1", "bc2-on": "1", "bc3-on": "0", "bc4-on": "1", "bc5-on": "1", "bc6-on": "1", "bc7-on": "0", "bl-conf": "1"}};
+  SELLERS.kendra = {"name": "Kendra Boyd (Boyd & Co.)", "f": {"seller_name": "Kendra Michelle Boyd", "seller_contact": "KendraBoyd", "seller_addr": "3105 Selwyn Avenue, Charlotte, NC 28209", "biz_entity": "Boyd & Co. Boutique LLC", "biz_signer": "Sole member", "biz_name": "Boyd & Co.", "biz_type": "Retail shop", "biz_years": "8", "biz_emp": "3", "biz_hours": "Tuesday to Saturday, 10 am to 7 pm", "biz_re": "Business only (leased premises)", "biz_sqft": "About 1,600 sq ft", "parcel": "", "biz_rent": "$3,200 per month", "biz_lease_end": "December 2029", "biz_landlord": "Market Square Properties LLC", "price": "$165,000.00", "biz_sales": "$420,000.00", "biz_profit": "$88,000.00", "biz_inv": "$55,000.00", "biz_sf": "Yes, up to 25% of the price", "biz_included": "Display fixtures, mannequins, point-of-sale system, the name and logo, website and online store, Instagram account (12,000 followers), supplier accounts", "biz_excluded": "Owner’s sewing machine and design sketches", "biz_licenses": "No special licences. Local business registration must be updated. Lease transfer needs the landlord’s approval.", "comm_total": "10", "comm_side": "10", "deposit": "$8,000.00", "settle_co": "Keystone Abstract & Title Co.", "seller_lawyer": "None", "show_notes": "Any open hour. The owner introduces buyers as a friend from the business association.", "bs-a-re": "$0.00", "bs-a-eq": "$25,000.00", "bs-a-inv": "$55,000.00", "bs-a-gw": "$85,000.00", "bs-sf-term": "3 years, monthly payments", "bs-sf-rate": "6% per year", "bs-train": "2 weeks, plus introductions to every supplier", "bs-nc-miles": "25 miles", "bs-nc-years": "3 years", "bs-staff": "Buyer may offer jobs to current staff", "bc1-on": "1", "bc2-on": "0", "bc3-on": "1", "bc4-on": "0", "bc5-on": "0", "bc6-on": "0", "bc7-on": "0", "bl-conf": "0"}};
+  SELLERS.frank = {"name": "Frank Delgado (Delgado Auto Repair)", "f": {"seller_name": "Francisco Delgado", "seller_contact": "FrankDelgado", "seller_addr": "47 Oak Crest Drive, Harrisburg, PA 17112", "biz_entity": "Delgado Automotive Inc.", "biz_signer": "President and sole shareholder", "biz_name": "Delgado Auto Repair", "biz_type": "Auto repair garage", "biz_years": "28", "biz_emp": "4", "biz_hours": "Mon to Fri, 7:30 am to 5:30 pm. Sat, 8 am to noon.", "biz_re": "Business and building (owner-owned)", "biz_sqft": "4-bay garage, about 3,800 sq ft on 0.8 acres", "biz_rent": "", "biz_lease_end": "", "biz_landlord": "", "price": "$690,000.00", "biz_sales": "$890,000.00", "biz_profit": "$190,000.00", "biz_inv": "$15,000.00", "biz_sf": "Yes, up to 15% of the price", "biz_included": "4 vehicle lifts, tyre machine and balancer, diagnostic computers, air compressor, hand and power tools, office furniture, the name and sign, phone number, customer records, fleet contracts", "biz_excluded": "Owner’s personal toolbox and his 1969 project car", "biz_licenses": "State inspection station licence must be applied for by the new owner. Inspector certificates belong to the mechanics.", "comm_total": "8", "comm_side": "8", "deposit": "$25,000.00", "settle_co": "Capital Area Settlement Services", "seller_lawyer": "None", "show_notes": "Saturday afternoons, after the shop closes at noon. The owner will tell his mechanics himself.", "bs-a-re": "$380,000.00", "bs-a-eq": "$120,000.00", "bs-a-inv": "$15,000.00", "bs-a-gw": "$175,000.00", "bs-sf-term": "5 years, monthly payments", "bs-sf-rate": "7% per year", "bs-train": "4 weeks, including fleet customers and suppliers", "bs-nc-miles": "15 miles", "bs-nc-years": "5 years", "bs-staff": "Buyer will keep all current staff", "bc1-on": "1", "bc2-on": "1", "bc3-on": "0", "bc4-on": "1", "bc5-on": "1", "bc6-on": "1", "bc7-on": "0", "bl-conf": "1"}};
+  EXTRA.dee = { mode:'biz', cn:false, radios:[] };
+  EXTRA.raj = { mode:'biz', cn:false, radios:[] };
+  EXTRA.kendra = { mode:'biz', cn:false, radios:[] };
+  EXTRA.frank = { mode:'biz', cn:false, radios:[] };
+  function fillSeller(id){
+    const s = SELLERS[id]; if(!s) return;
+    const x = EXTRA[id] || {};
+    const want = x.mode || 'home';
+    if(want !== mode){
+      const HOME_ONLY = ['prop_address','parcel','prop_area','prop_city','prop_zip','prop_beds','prop_baths','prop_year','prop_legal','prop_park','prop_zoning'];
+      fields.forEach(f => {
+        const k = f.dataset.key || f.id;
+        const clear = want==='home' ? /^(biz_|bs-|bl-conf|bc\d)/.test(k) : HOME_ONLY.includes(k);
+        if(!clear || f.type==='radio') return;
+        if(f.type==='checkbox') f.checked = false; else if(f.tagName==='SELECT') f.selectedIndex = 0; else f.value = '';
+        save(f);
+      });
+    }
+    const all = Object.assign({}, LISTING, s.f, x.f || {});
+    Object.entries(all).forEach(([k,v]) => {
+      fields.filter(f => (f.dataset.key||f.id)===k).forEach(f => { setEl(f, v); save(f); });
+    });
+    (s.radios||[]).concat(x.radios||[]).forEach(rid => { const r = document.getElementById(rid); if(r){ r.checked = true; save(r); } });
+    if(x.cn){ const c = document.getElementById('lc-cn'); if(c){ c.checked = true; save(c); } }
+    if(x.mode==='biz'){ const c = document.getElementById('bl-cn'); if(c){ c.checked = true; save(c); } }
+    if(want !== mode) setMode(want, want==='biz' ? 'blisting' : 'listing');
+    if(x.spds){ Object.entries(x.spds).forEach(([r, v]) => {
+      const A = document.getElementById('spds-'+r+'-a'), D = document.getElementById('spds-'+r+'-d');
+      if(A){ setEl(A, v[0]); save(A); } if(D){ setEl(D, v[1]); save(D); }
+    }); }
+    if(s.spare){
+      const price = parse(valueOfKey('price'));
+      if(price){ fields.filter(f => f.dataset.key==='deposit').forEach(f => { f.value = fmt(Math.round(price*0.03)); save(f); }); }
+    }
+    calc();
+    toast(s.spare ? 'Filled seller details for '+s.name+'. Property details stay as you entered them.' : 'Filled seller and property details for '+s.name+'.');
+  }
+  $('#seller-pick').addEventListener('change', e => { fillSeller(e.target.value); e.target.value = ''; });
+
+  /* ---------- save as image ---------- */
+  const DOC_NAMES = { listing:'listing-contract', spds:'disclosure-statement', aos:'agreement-of-sale', blisting:'business-listing',
+    bsale:'business-sale-agreement', deposit:'earnest-money-receipt', addendum:'addendum', settle:'settlement' };
+  (async () => {
+    const dl = (window.claude && typeof window.claude.use === 'function') ? await window.claude.use('downloads') : null;
+    if(!dl) return;
+    const btn = $('#btn-save'); btn.hidden = false;
+    btn.addEventListener('click', async () => {
+      const doc = document.querySelector('.doc:not([hidden])'); if(!doc) return;
+      if(typeof html2canvas !== 'function'){ toast('Image saving could not load. Use Screenshot mode instead.'); return; }
+      btn.disabled = true; btn.textContent = 'Preparing…';
+      try {
+        if(document.fonts && document.fonts.ready) await document.fonts.ready;
+        const canvas = await html2canvas(doc, { scale: 2, backgroundColor: '#FFFFFF', logging: false,
+          onclone: d => { d.body.classList.add('shot'); d.querySelectorAll('[placeholder]').forEach(e => e.removeAttribute('placeholder')); d.querySelectorAll('select').forEach(x => { x.style.backgroundImage = 'none'; if(!x.value && x.selectedOptions[0]) x.selectedOptions[0].textContent = ''; }); } });
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+        const tag = (valueOfKey(doc.dataset.doc.startsWith('b') ? 'biz_name' : 'prop_address') || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+        await dl.save({ filename: 'johnsons-realty-' + (DOC_NAMES[doc.dataset.doc] || 'form') + (tag ? '-' + tag : '') + '.png', data: blob });
+        toast('Image saved');
+      } catch(e){
+        const c = e && e.code;
+        if(c !== 'declined') toast(c === 'unavailable' || c === 'not_granted' ? 'Saving isn’t available here. Use Screenshot mode instead.' : 'Couldn’t save the image. Please try again.');
+      } finally { btn.disabled = false; btn.textContent = 'Save as image'; }
+    });
+  })();
+
+  /* ---------- boot ---------- */
+  load(); assignNumbers(false); fillPayment(false); defaultDates();
+  fields.forEach(el => { if(el.dataset.key && store.get(el.dataset.key)===null && el.value) store.set(el.dataset.key, el.value); });
+  calc();
+  const fromHash = (location.hash||'').slice(1);
+  let start = ['listing','spds','aos','blisting','bsale','deposit','addendum','settle'].includes(fromHash) ? fromHash : null;
+  if(!start){ try { start = localStorage.getItem(P+'_tab'); } catch(e){} }
+  show(['listing','spds','aos','blisting','bsale','deposit','addendum','settle'].includes(start) ? start : 'aos');
+  { const cur = (document.querySelector('.tab[aria-selected="true"]')||{dataset:{}}).dataset.doc; let m = mode;
+    if(cur && !MODES[m].includes(cur)) m = MODES.biz.includes(cur) ? 'biz' : 'home'; setMode(m); }
+})();
+</script>

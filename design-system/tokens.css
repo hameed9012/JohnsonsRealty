@@ -1,0 +1,147 @@
+/* Johnson's Realty — generated from tokens.json */
+:root, [data-theme="light"] {
+  --green-950: #0e201c;
+  --green-900: #16302a;
+  --green-800: #1f4038;
+  --green-700: #2a5248;
+  --green-300: #9db8af;
+  --green-100: #dce7e3;
+  --brass-700: #7a5f32;
+  --brass-500: #b4925a;
+  --brass-300: #d8c29a;
+  --brass-100: #f4ecdc;
+  --cream: #f1ede4;
+  --paper: #f7f5f0;
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface-sunken: #efede6;
+  --surface-inverse: #16302a;
+  --ink: #1c2321;
+  --ink-muted: #56625e;
+  --ink-subtle: #7c8784;
+  --ink-inverse: #f1ede4;
+  --line: #d5dbd8;
+  --ink-signature: #1b2e5a;
+  --line-strong: #7a8783;
+  --primary: #16302a;
+  --primary-hover: #1f4038;
+  --on-primary: #f1ede4;
+  --accent: #b4925a;
+  --accent-text: #7a5f32;
+  --link: #1f5245;
+  --focus: #7a5f32;
+  --status-available: #1e6b4c;
+  --status-available-soft: #e3f1ea;
+  --status-new: #7a5f32;
+  --status-new-soft: #f4ecdc;
+  --status-offer: #8a5a12;
+  --status-offer-soft: #fbebd0;
+  --status-sold: #16302a;
+  --status-sold-soft: #dce7e3;
+  --status-lease: #1f5c78;
+  --status-lease-soft: #e1eef4;
+  --status-off: #56625e;
+  --status-off-soft: #ecedea;
+  --status-confidential: #8a2f2f;
+  --status-confidential-soft: #f6e3e1;
+  --danger: #a3322a;
+  --danger-soft: #f8e4e1;
+  --on-danger: #ffffff;
+  --success: var(--status-available);
+  --warning: var(--status-offer);
+  --shadow-none: none;
+  --shadow-sheet: 0 1px 2px rgba(20,35,30,0.08), 0 10px 30px rgba(20,35,30,0.10);
+  --shadow-overlay: 0 12px 32px rgba(15,26,23,0.18), 0 2px 6px rgba(15,26,23,0.08);
+}
+[data-theme="dark"] {
+  --bg: #0f1a17;
+  --surface: #15231f;
+  --surface-sunken: #0b1412;
+  --surface-inverse: #f1ede4;
+  --ink: #ece8df;
+  --ink-muted: #a7b3ae;
+  --ink-subtle: #76837e;
+  --ink-inverse: #16302a;
+  --line: #263732;
+  --ink-signature: #b9c9f0;
+  --line-strong: #617d74;
+  --primary: #d8c29a;
+  --primary-hover: #e4d2ad;
+  --on-primary: #16302a;
+  --accent: #c9a86e;
+  --accent-text: #d8c29a;
+  --link: #a9d4c5;
+  --focus: #e4c98f;
+  --status-available: #7fd1a8;
+  --status-available-soft: #12312a;
+  --status-new: #e0c68f;
+  --status-new-soft: #2e2717;
+  --status-offer: #f0b860;
+  --status-offer-soft: #33240c;
+  --status-sold: #f1ede4;
+  --status-sold-soft: #23362f;
+  --status-lease: #8cc4dd;
+  --status-lease-soft: #10283a;
+  --status-off: #a7b3ae;
+  --status-off-soft: #1d2a26;
+  --status-confidential: #f0a3a3;
+  --status-confidential-soft: #3a1717;
+  --danger: #f2998f;
+  --danger-soft: #3a1714;
+  --on-danger: #1c0b09;
+  --success: var(--status-available);
+  --warning: var(--status-offer);
+  --shadow-sheet: 0 1px 2px rgba(0,0,0,0.4), 0 10px 30px rgba(0,0,0,0.45);
+  --shadow-overlay: 0 12px 32px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.4);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --radius-0: 0px;
+  --radius-1: 2px;
+  --radius-2: 4px;
+  --radius-round: 9999px;
+  --content-max: 1240px;
+  --text-max: 680px;
+  --sidebar-width: 248px;
+  --control-height: 44px;
+  --control-height-sm: 36px;
+  --header-height: 72px;
+  --z-header: 50;
+  --z-overlay: 80;
+  --z-toast: 90;
+  --font-display: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+  --font-script: "Mrs Saint Delafield", "Brush Script MT", cursive;
+}
+.display-xl { font-family: var(--font-display); font-size: 72px; line-height: 76px; font-weight: 800; letter-spacing: -0.02em; }
+.display-l { font-family: var(--font-display); font-size: 56px; line-height: 60px; font-weight: 800; letter-spacing: -0.015em; }
+.display-m { font-family: var(--font-display); font-size: 40px; line-height: 46px; font-weight: 800; letter-spacing: -0.01em; }
+.heading-1 { font-family: var(--font-display); font-size: 32px; line-height: 38px; font-weight: 800; }
+.heading-2 { font-family: var(--font-display); font-size: 24px; line-height: 30px; font-weight: 700; }
+.heading-3 { font-family: var(--font-display); font-size: 20px; line-height: 26px; font-weight: 700; }
+.wordmark { font-family: var(--font-display); font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: 0.14em; }
+.label { font-family: var(--font-display); font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.14em; }
+.body-l { font-family: var(--font-sans); font-size: 18px; line-height: 28px; font-weight: 400; }
+.body { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 400; }
+.body-s { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+.ui { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 600; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 500; }
+.price-xl { font-family: var(--font-mono); font-size: 48px; line-height: 52px; font-weight: 500; letter-spacing: -0.02em; }
+.price { font-family: var(--font-mono); font-size: 22px; line-height: 28px; font-weight: 500; }
+.figure { font-family: var(--font-mono); font-size: 16px; line-height: 22px; font-weight: 500; }
+.id { font-family: var(--font-mono); font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: 0.02em; }
+.doc-title { font-family: var(--font-display); font-size: 22px; line-height: 26px; font-weight: 800; letter-spacing: 0.14em; }
+.form-label { font-family: var(--font-sans); font-size: 10px; line-height: 13px; font-weight: 600; letter-spacing: 0.07em; }
+.form-value { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 500; }
+.signature { font-family: var(--font-script); font-size: 34px; line-height: 40px; font-weight: 400; }
