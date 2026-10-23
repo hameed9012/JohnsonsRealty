@@ -85,5 +85,5 @@ test('the Owner publishes a guide and a role, and a client applies', async ({ pa
 
   await page.goto('/portal');
   await page.getByRole('button', { name: /Notifications/ }).click();
-  await expect(page.getByText('Career application')).toBeVisible();
+  await expect(page.getByText('Career application').first()).toBeVisible();
 });

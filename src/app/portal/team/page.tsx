@@ -1,13 +1,14 @@
-import { asc, desc, ilike, inArray, or } from 'drizzle-orm';
+import { and, asc, desc, gt, ilike, inArray, isNull, or } from 'drizzle-orm';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { InviteCreator, RevokeInvite } from '@/components/portal/InviteControls';
 import { ActiveToggle, RoleSelect } from '@/components/portal/TeamControls';
 import { EmptyState } from '@/components/ui/blocks';
 import { DataTable } from '@/components/ui/layout';
 import { StatusPill } from '@/components/ui/StatusStamp';
 import { db } from '@/db/client';
-import { users } from '@/db/schema';
+import { staffInvites, users } from '@/db/schema';
 import { date } from '@/lib/format';
 import { can, type Role } from '@/lib/permissions';
 import { requireStaff } from '@/server/session';
@@ -21,6 +22,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
   if (!can(actor, 'staff.view')) notFound();
   const { q } = await searchParams;
   const staff = await db.select().from(users).where(inArray(users.role, ['owner', 'admin', 'agent'])).orderBy(asc(users.role), asc(users.displayName));
+  const invites = await db.select().from(staffInvites).where(and(isNull(staffInvites.usedAt), isNull(staffInvites.revokedAt), gt(staffInvites.expiresAt, new Date()))).orderBy(desc(staffInvites.createdAt));
   const term = q?.trim();
   const found = term
     ? await db
@@ -67,6 +69,26 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
         <h2 className="heading-2">Staff</h2>
         <DataTable caption="Staff" rows={staff} rowKey={(u) => u.id} columns={columns} />
       </section>
+      {can(actor, 'staff.invite', { role: 'agent' }) ? (
+        <section className="panel stack">
+          <h2 className="panel-title">Invite someone</h2>
+          <p className="body-s muted">A single-use link. Whoever opens it and signs in with Discord joins with that role.</p>
+          <InviteCreator canAdmin={can(actor, 'staff.invite', { role: 'admin' })} />
+          {invites.length ? (
+            <DataTable
+              caption="Open invites"
+              rows={invites}
+              rowKey={(i) => i.id}
+              columns={[
+                { key: 'role', header: 'Role', cell: (i) => (i.role === 'admin' ? 'Admin' : 'Agent') },
+                { key: 'note', header: 'For', cell: (i) => i.note ?? '—' },
+                { key: 'exp', header: 'Expires', num: true, cell: (i) => date(i.expiresAt) },
+                { key: 'x', header: 'Revoke', cell: (i) => (can(actor, 'staff.invite', { role: i.role }) ? <RevokeInvite id={i.id} /> : null) },
+              ]}
+            />
+          ) : null}
+        </section>
+      ) : null}
       <section className="stack">
         <h2 className="heading-2">Find someone</h2>
         <form className="row" role="search" method="get">

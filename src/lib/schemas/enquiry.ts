@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { int, oneOf, text, uuid } from './fields';
+import { bool, int, oneOf, text, uuid } from './fields';
 
 const required = (label: string, max: number, message: string) => text(max, label).refine((v) => v !== null, message);
 
@@ -37,7 +37,7 @@ export const postSchema = z.object({
   slug: text(100, 'The slug').refine((v) => v === null || /^[a-z0-9]+(-[a-z0-9]+)*$/.test(v), 'Use lowercase letters, numbers and hyphens.'),
   excerpt: text(300, 'The summary'),
   body: text(40000, 'The article'),
-  published: z.union([z.string(), z.boolean(), z.null(), z.undefined()]).transform((v) => v === true || v === 'on'),
+  published: bool,
 });
 
 export const careerSchema = z.object({
@@ -45,6 +45,6 @@ export const careerSchema = z.object({
   slug: text(100, 'The slug').refine((v) => v === null || /^[a-z0-9]+(-[a-z0-9]+)*$/.test(v), 'Use lowercase letters, numbers and hyphens.'),
   summary: text(300, 'The summary'),
   body: text(20000, 'The description'),
-  open: z.union([z.string(), z.boolean(), z.null(), z.undefined()]).transform((v) => v === true || v === 'on'),
+  open: bool,
   displayOrder: int('Enter a whole number for the order, like 10.', 0, 10000),
 });

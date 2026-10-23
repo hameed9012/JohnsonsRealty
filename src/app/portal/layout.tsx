@@ -58,7 +58,7 @@ export default async function PortalLayout({ children }: { children: React.React
               { icon: 'document' as const, label: 'Content', href: '/portal/content' },
               { icon: 'activity' as const, label: 'Activity log', href: '/portal/activity' },
             ]
-          : []),
+          : [{ icon: 'user' as const, label: 'My profile', href: `/portal/team/${actor.id}` }]),
         ...(can(actor, 'settings.manage') ? [{ icon: 'settings' as const, label: 'Site settings', href: '/portal/settings' }] : []),
       ],
     },

@@ -254,6 +254,36 @@ Phase 3 is pushed and merged into `main` (`7150ebd`).
 - Deals are created by staff in Phase 5. The message thread and deal query are already shared, so the portal deal page will reuse them.
 - Tests: 107 unit tests (saved-search matching, showing rules, deal timeline, and approval alerts against Postgres). New end-to-end tests: save a home and a search, then get alerted on approval; book, reschedule and cancel a showing; a buyer follows their deal, messages the agent and the agent is notified, while another client gets 404; notification settings persist. The e2e seed now has a live listing with a deal and shared documents, a bookable listing, and a pending listing.
 
+Phase 4 is pushed and merged into `main` (`69b95d4`). On Oct 24 the user asked me to carry on through Phases 5–8 while they were away. Each phase is committed on its own local branch; nothing after Phase 4 is pushed.
+
+### Phase 5 — Portal operations: built (Oct 24, 2026)
+
+- **Ops service layer** (`server/ops/*`), with no Next.js imports and integration-tested on Postgres (`tests/unit/ops.test.ts`):
+  - **Listings**: manual status changes go through the state machine. Sales and leases close only from a deal; review decisions only from the queue. Bulk changes report per-listing failures. Price changes are immediate, set `previous_price` and add a reduced or increased row to price history. Material live edits (description, showing instructions, beds, baths, sq ft) apply straight away for managers. When "live edits need review" is on, an agent's edit becomes a pending `listing_revision`, the public listing stays unchanged, reviewers are notified, and it's approved or declined (with a note) from the review queue.
+  - **Deals**: opening a deal from a listing adds the buyer or tenant and the seller's client file as parties, and adds the buyer or tenant role to the client. Dates, notes and the "shared with client" switch can be edited. Offers are confidential and kept in `deal_confidential`. Stage changes drive the listing status: Under Offer → Under Offer; Under Contract or Settlement → Under Contract; Active or Fell through → back on the market, unless another deal still holds the listing. Parties are notified, and the `deal_stage` webhook posts.
+  - **Record a sale or lease**: takes the next Sale No. and records the sale agents and commission splits (confidential). It marks the listing Sold or Leased, adds a price-history row, closes the deal, marks other open deals on the listing as fallen through, notifies parties, and posts the `sale_recorded` webhook.
+  - **Showings** (staff): confirm (optionally at a new time), mark done, no-show, cancel. Clients with showing updates on are notified.
+  - **Support inbox**: status, assignment (with a notification) and replies. A reply reaches the sender as a notification; internal notes stay with staff.
+  - **Staff invites**: single-use links (only the SHA-256 hash is stored) that expire after 1, 7 or 30 days. Admins can invite agents only, and only the Owner invites Admins. Accepting gives the role and an agent profile and never changes an Owner. Invites can be revoked.
+  - **Client files**: create, edit, archive and restore. Agents own the files they open; managers can reassign. Confidential notes are only written by people who can see them.
+- **Pages**:
+  - **Listings manager**: search, status, source and agent filters; select-all and bulk actions; days on market.
+  - **Listing page**: status, price, live edit, open a deal, its deals and showings, and a link to the seller file.
+  - **Review queue**: now also lists edits to live listings, each with a diff to approve or decline.
+  - **Clients**: index with search and archived toggle. The client file shows the data sheet, people, confidential panel (redacted without access), listings, deals, showings, documents and activity.
+  - **Seller file**: printable, generated from the database. An at-a-glance row (seller, property, asking, lowest they'll take, timeline), then the full sheet. A print stylesheet gives the letter-size version.
+  - **Deal pipeline**: five columns. Cards can be dragged (with a confirmation) or moved with a keyboard-friendly Move menu; dropping on Closed opens the sale form. Fell-through deals are listed separately.
+  - **Deal page**: timeline, dates and sharing, confidential offers, record sale or lease with commission splits, the message thread (the Phase 4 one, reused) and documents.
+  - **Showings**: week calendar and list, with previous/next week.
+  - **Sales** ledger; **Commission** ledger (all splits for managers, an agent's own otherwise; totals by agent and month).
+  - **Team** now has invites (create, copy, revoke) and `/invite/[token]`.
+  - **Activity log**: search, record type, person and date filters, paginated.
+  - **Support inbox**: open, mine, closed and all views; each enquiry shows its payload, assignment, status and conversation.
+  - **Dashboard**: stat tiles, the review queue preview, pipeline counts, upcoming showings and recent activity. Agents get a "My profile" link in the sidebar.
+- Fixes found by the tests:
+  - A deal falling through could put the listing back on the market while another deal still held it.
+  - Optional checkboxes left out of a form (unchecked toggles) failed Zod validation in four schemas. They now use the shared `bool` parser.
+
 ## 11. Build order
 
 Each phase ends with tests passing, a short summary, and this file updated.

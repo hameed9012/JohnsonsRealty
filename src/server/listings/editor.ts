@@ -22,7 +22,7 @@ type ClientRow = typeof clients.$inferSelect & {
 
 const EMPTY_PERSON: PersonValues = { legalName: '', goesBy: '', ageOccupation: '', maritalStatus: '', signs: true, roleLabel: '', discord: '', robloxUsername: '', chirper: '' };
 
-function clientValues(c: ClientRow | null | undefined): ClientValues {
+export function clientValues(c: ClientRow | null | undefined): ClientValues {
   return {
     kind: c?.kind ?? 'person',
     displayName: s(c?.displayName),
@@ -53,7 +53,7 @@ function clientValues(c: ClientRow | null | undefined): ClientValues {
   };
 }
 
-function confValues(c: ClientRow['confidential']): ClientConfValues {
+export function confValues(c: ClientRow['confidential']): ClientConfValues {
   return { motivation: s(c?.motivation), negotiationNotes: s(c?.negotiationNotes), relayLines: s(c?.relayLines), commissionTerms: s(c?.commissionTerms) };
 }
 

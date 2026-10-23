@@ -8,6 +8,8 @@ import { StatusPill } from '@/components/ui/StatusStamp';
 import { money } from '@/lib/format';
 import { can } from '@/lib/permissions';
 import { reviewQueue } from '@/server/queries/review';
+import { pendingRevisions } from '@/server/ops/listings';
+import { db } from '@/db/client';
 import { requireStaff } from '@/server/session';
 import { getSettings } from '@/server/settings';
 
@@ -18,7 +20,7 @@ const WHEN = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', 
 export default async function ReviewQueuePage() {
   const actor = await requireStaff('/portal/review');
   if (!can(actor, 'listing.approve', undefined, await getSettings())) notFound();
-  const rows = await reviewQueue();
+  const [rows, revisions] = await Promise.all([reviewQueue(), pendingRevisions(db)]);
   return (
     <div className="stack-lg">
       <div className="page-head">
@@ -28,6 +30,23 @@ export default async function ReviewQueuePage() {
           <p className="body muted">Oldest first. Nothing goes public until it’s approved here.</p>
         </div>
       </div>
+      {revisions.length ? (
+        <section className="stack" aria-labelledby="rev-h">
+          <h2 id="rev-h" className="heading-2">
+            Edits to live listings
+          </h2>
+          <ul className="saved-list">
+            {revisions.map((r) => (
+              <li key={r.id}>
+                <Link href={`/portal/review/revisions/${r.id}`} className="ui">
+                  {r.listing.addressLine || r.listing.refNo}
+                </Link>
+                <span className="id muted">{Object.keys(r.changes as object).length} fields · {WHEN.format(r.submittedAt)} UTC</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       {rows.length === 0 ? (
         <EmptyState icon="stamp" title="Nothing waiting for review" text="New submissions from agents and property owners appear here, with a notification." />
       ) : (

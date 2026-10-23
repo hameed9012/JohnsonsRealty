@@ -14,7 +14,7 @@ const count = sql<number>`count(*)::int`;
 export async function portalCounts() {
   const { start, end } = todayRange();
   const [[pending], [today], [open]] = await Promise.all([
-    db.select({ n: count }).from(listings).where(eq(listings.status, 'pending_review')),
+    db.select({ n: sql<number>`(select count(*)::int from listings where status = 'pending_review') + (select count(*)::int from listing_revisions where status = 'pending')` }).from(sql`(select 1) as one`),
     db
       .select({ n: count })
       .from(showings)

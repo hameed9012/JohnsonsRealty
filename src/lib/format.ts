@@ -44,3 +44,8 @@ export function time(d: Date | string | null | undefined): string {
 export function saleNo(n: number): string {
   return 'Sale No. ' + String(n).padStart(3, '0');
 }
+
+/** Whole days since a date (days on market). */
+export function daysSince(d: Date, now = new Date()): number {
+  return Math.max(0, Math.floor((now.getTime() - d.getTime()) / 86400000));
+}
