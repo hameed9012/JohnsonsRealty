@@ -240,6 +240,20 @@ Phase 1 and Phase 2 are pushed to GitHub, and `main` is at Phase 2. The Vercel d
 - Not yet: the Buy map view (needs the map pins, Phase 7) and brochure thumbnails in the sold ledger (Phase 7). The listing question routes into the Phase 5 support inbox.
 - Tests: 97 unit tests, plus end-to-end tests for every public page (200 status, heading, no sideways scroll at 375px), URL filters, a valuation request, and content publishing with a career application.
 
+Phase 3 is pushed and merged into `main` (`7150ebd`).
+
+### Phase 4 — Client accounts: built (Oct 24, 2026)
+
+- **Saved homes**: a heart on every listing card that's on the market. It's optimistic, and signed-out visitors go to sign-in and come back. The Saved homes page keeps the order homes were saved in and notes any that are no longer listed.
+- **Saved searches**: "Save this search" on Buy, Rent and Businesses stores the scope and the criteria (`lib/saved-search.ts`) under a plain-words name ("Homes for sale in Fairview · 4+ beds"). Each has an alerts toggle and delete, with up to 25 per account. When a listing is approved, `alertSavedSearches` notifies every matching search inside the same transaction. A town matches its neighbourhoods; the user's own listing, accounts with alerts off, and searches with alerts off are skipped; one alert per person.
+- **My showings**: upcoming and past lists with status pills (Requested, Confirmed, Completed, Cancelled, No show) and times in the viewer's local time (`LocalTime`). Reschedule (back to Requested) and cancel work while the showing is in the future, and both notify the agent, or the property owner for owner listings.
+- **My deal**: the deals a client is party to (with "shared with client" on). Each shows the stage timeline, key dates, the agent card, the documents shared with them, the property, and a message thread with the agent. The thread refreshes every 30 seconds and Ctrl+Enter sends. Messages notify the other side; clients can turn this off, staff always hear. Offer amounts and unshared documents are never loaded for clients. Opening a deal marks it read, and the dashboard shows unread counts.
+- **Dashboard**: the journey timeline (the deal's stages, or save → showing → offer → contract → keys), saved homes, upcoming showings and the client's own listings.
+- **Profile**: notification settings for saved-search matches, showing updates and agent messages.
+- **Notification bell for clients**: the public and account header now has the bell for anyone signed in. Before this, clients had no way to see their alerts; the e2e test caught it.
+- Deals are created by staff in Phase 5. The message thread and deal query are already shared, so the portal deal page will reuse them.
+- Tests: 107 unit tests (saved-search matching, showing rules, deal timeline, and approval alerts against Postgres). New end-to-end tests: save a home and a search, then get alerted on approval; book, reschedule and cancel a showing; a buyer follows their deal, messages the agent and the agent is notified, while another client gets 404; notification settings persist. The e2e seed now has a live listing with a deal and shared documents, a bookable listing, and a pending listing.
+
 ## 11. Build order
 
 Each phase ends with tests passing, a short summary, and this file updated.

@@ -81,7 +81,7 @@ test('agent submits a listing with 3 photos, the Owner approves, and it goes pub
   // --- Agent was notified ---
   await page.goto('/portal');
   await page.getByRole('button', { name: /Notifications/ }).click();
-  await expect(page.getByText('Listing approved')).toBeVisible();
+  await expect(page.getByText('Listing approved').first()).toBeVisible();
 
   await ownerCtx.close();
   await visitorCtx.close();

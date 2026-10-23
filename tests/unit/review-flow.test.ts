@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { DB } from '@/db/client';
 import { seedBase } from '@/db/seed-base';
-import { activityLog, areas, clients, listingReviews, listings, notifications, priceHistory, users } from '@/db/schema';
+import { activityLog, areas, clients, listingReviews, listings, notifications, priceHistory, savedSearches, users } from '@/db/schema';
 import { checklist } from '@/lib/listing-checklist';
 import type { Actor } from '@/lib/permissions';
 import { checklistInput, diffSnapshots, loadBundle } from '@/server/listings/bundle';
@@ -179,6 +179,29 @@ describe('agent submission', () => {
   it('other agents cannot edit someone else’s listing', async () => {
     const l = await createDraft(db, agent, 'agent');
     await expect(saveProperty(db, { id: 'x', role: 'agent', status: 'active' }, l.id, { type: 'house' })).rejects.toThrow('You can’t edit this listing.');
+  });
+});
+
+describe('saved-search alerts on approval', () => {
+  it('notifies matching searches with alerts on, and nobody else', async () => {
+    await db.insert(users).values([
+      { id: 'u-match', role: 'client', displayName: 'Example Match' },
+      { id: 'u-off', role: 'client', displayName: 'Example Off', notificationPrefs: { savedSearchAlerts: false, showingUpdates: true, dealMessages: true } },
+      { id: 'u-miss', role: 'client', displayName: 'Example Miss' },
+    ]);
+    await db.insert(savedSearches).values([
+      { userId: 'u-match', name: 'Fairview 3 beds', params: { scope: 'buy', area: 'susquehanna-township', beds: 3, max: 400000, features: [], owner: 'include', type: null, min: null, baths: null }, alerts: true },
+      { userId: 'u-match', name: 'Duplicate', params: { scope: 'buy', features: [], owner: 'include' }, alerts: true },
+      { userId: 'u-off', name: 'Anything', params: { scope: 'buy', features: [], owner: 'include' }, alerts: true },
+      { userId: 'u-miss', name: 'Rentals', params: { scope: 'rent', features: [], owner: 'include' }, alerts: true },
+      { userId: 'u-miss', name: 'Muted', params: { scope: 'buy', features: [], owner: 'include' }, alerts: false },
+    ]);
+    const l = await readyAgentListing();
+    await submitForReview(db, agent, settings, l.id);
+    await decideReview(db, owner, settings, l.id, { decision: 'approved' });
+    const alerts = await db.select().from(notifications).where(eq(notifications.kind, 'saved-search.match'));
+    expect(alerts.map((a) => a.userId)).toEqual(['u-match']);
+    expect(alerts[0]!.link).toMatch(/^\/property\/example-lane-fairview-/);
   });
 });
 

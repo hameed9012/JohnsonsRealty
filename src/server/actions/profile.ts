@@ -37,3 +37,16 @@ export async function saveProfile(_prev: ActionState, fd: FormData): Promise<Act
   if (firstRun) redirect(safeCallback(fd.get('callbackUrl')));
   return { ok: true, message: 'Profile saved' };
 }
+
+export async function saveNotificationPrefs(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  const actor = await getActor();
+  if (!actor) return { ok: false, message: 'Sign in to continue.' };
+  const prefs = {
+    savedSearchAlerts: fd.get('savedSearchAlerts') === 'on',
+    showingUpdates: fd.get('showingUpdates') === 'on',
+    dealMessages: fd.get('dealMessages') === 'on',
+  };
+  await db.update(users).set({ notificationPrefs: prefs }).where(eq(users.id, actor.id));
+  await audit(db, { actorId: actor.id, action: 'profile.notifications', entity: 'user', entityId: actor.id, summary: 'Updated notification settings', diff: prefs });
+  return { ok: true, message: 'Notification settings saved' };
+}

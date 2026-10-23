@@ -108,7 +108,7 @@ export default async function AreaPage({ params }: Props) {
             </div>
           </div>
           {cards.length ? (
-            <CardGrid cards={cards} />
+            <CardGrid cards={cards} returnTo={`/areas/${area.slug}`} />
           ) : (
             <EmptyState icon="home" title={`Nothing on the market in ${area.name} right now`} text="New listings appear here as soon as they’re approved." />
           )}

@@ -12,6 +12,7 @@ export default async function BuyPage({ searchParams }: { searchParams: Promise<
   const q = parseSearch(await searchParams);
   return (
     <SearchPage
+      scopeKey="buy"
       eyebrow="Buy"
       title="Homes for sale"
       basePath="/buy"

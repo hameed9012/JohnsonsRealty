@@ -12,6 +12,7 @@ export default async function BusinessesPage({ searchParams }: { searchParams: P
   const q = parseSearch(await searchParams);
   return (
     <SearchPage
+      scopeKey="businesses"
       eyebrow="Businesses"
       title="Businesses for sale"
       intro="Some owners list without their business name. You’ll see it once you’ve signed a confidentiality agreement with us."

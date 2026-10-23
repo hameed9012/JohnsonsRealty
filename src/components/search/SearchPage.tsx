@@ -13,8 +13,12 @@ import { TYPE_LABELS, type ListingType } from '@/lib/schemas/listing';
 import { getAreas } from '@/server/queries/areas';
 import { searchCards, type SearchScope } from '@/server/queries/cards';
 import { SearchFilters, SortSelect } from './SearchFilters';
+import { SaveSearchButton } from './SavedSearchControls';
+import type { SavedScope } from '@/lib/saved-search';
+import { getActor } from '@/server/session';
 
 export interface SearchPageProps {
+  scopeKey: SavedScope;
   eyebrow: string;
   title: string;
   intro?: string;
@@ -28,7 +32,8 @@ export interface SearchPageProps {
 }
 
 export async function SearchPage(p: SearchPageProps) {
-  const [allAreas, feats, res] = await Promise.all([
+  const [actor, allAreas, feats, res] = await Promise.all([
+    getActor(),
     getAreas(),
     db.select().from(features).where(eq(features.active, true)).orderBy(asc(features.displayOrder)),
     searchCards(p.scope, p.q),
@@ -67,6 +72,7 @@ export async function SearchPage(p: SearchPageProps) {
               <span className="figure">{count(res.total)}</span> {noun}
             </h2>
             <div className="row">
+              <SaveSearchButton scope={p.scopeKey} query={toQueryString(p.q)} signedIn={!!actor} returnTo={p.basePath + toQueryString(p.q)} />
               <SortSelect q={p.q} basePath={p.basePath} />
               <nav className="view-toggle" aria-label="Layout">
                 <Link href={view('grid')} aria-current={p.q.view === 'grid' ? 'true' : undefined}>
@@ -80,7 +86,7 @@ export async function SearchPage(p: SearchPageProps) {
           </div>
           {res.cards.length ? (
             <>
-              <CardGrid cards={res.cards} layout={p.q.view} priority={3} />
+              <CardGrid cards={res.cards} layout={p.q.view} priority={3} returnTo={p.basePath + toQueryString(p.q)} />
               <Pagination page={p.q.page} pages={res.pages} href={href} />
             </>
           ) : (

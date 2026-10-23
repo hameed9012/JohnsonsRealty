@@ -39,6 +39,7 @@ import {
 import { listingSlug } from '@/lib/slug';
 import { audit } from '@/server/audit';
 import { notifyUsers, reviewerIds } from '@/server/notify';
+import { alertSavedSearches } from './alerts';
 import { checklistInput, loadBundle, snapshotOf, type ListingBundle } from './bundle';
 
 export class ServiceError extends Error {
@@ -571,6 +572,8 @@ export async function decideReview(db: DB, actor: Actor, settings: PermissionSet
     if (agentId && agentId !== actor.id && agentId !== l.submittedByUserId) {
       await notifyUsers(tx, [agentId], { kind: `review.${d.decision}`, ...msg, link: `/portal/listings/${id}` });
     }
+
+    if (d.decision === 'approved') await alertSavedSearches(tx, id);
 
     const bundle = (await loadBundle(tx, id, { confidential: false }))!;
     return { decision: d.decision, status, bundle };

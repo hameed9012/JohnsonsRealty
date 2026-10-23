@@ -59,7 +59,7 @@ export default async function AgentProfile({ params }: Props) {
         <h2 id="agent-listings" className="heading-1">
           {a.name.split(' ')[0]}’s listings
         </h2>
-        {cards.length ? <CardGrid cards={cards} /> : <EmptyState icon="home" title="No listings on the market right now" />}
+        {cards.length ? <CardGrid cards={cards} returnTo={`/agents/${a.slug}`} /> : <EmptyState icon="home" title="No listings on the market right now" />}
       </section>
       {sales.length ? (
         <section className="stack" aria-labelledby="agent-sales">

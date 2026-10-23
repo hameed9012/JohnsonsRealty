@@ -5,15 +5,18 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { NavBar } from '@/components/ui/NavBar';
+import { NotificationBell, type BellData } from '@/components/ui/NotificationBell';
+import { loadBell, markBellRead } from '@/server/actions/notifications';
 import { PUBLIC_LINKS } from './links';
 
 
 export interface SiteHeaderProps {
   signedIn: boolean;
   staff: boolean;
+  bell: BellData | null;
 }
 
-export function SiteHeader({ signedIn, staff }: SiteHeaderProps) {
+export function SiteHeader({ signedIn, staff, bell }: SiteHeaderProps) {
   const pathname = usePathname();
   // The menu remembers the path it was opened on, so navigating closes it.
   const [openedOn, setOpenedOn] = useState<string | null>(null);
@@ -28,9 +31,12 @@ export function SiteHeader({ signedIn, staff }: SiteHeaderProps) {
 
   const links = PUBLIC_LINKS.map((l) => ({ ...l, active: pathname === l.href || pathname.startsWith(l.href + '/') }));
   const account = signedIn ? (
-    <Button variant="ghost" size="sm" href="/account" icon="user" className="jr-nav-account">
-      Account
-    </Button>
+    <>
+      {bell ? <NotificationBell initial={bell} load={loadBell} markAllRead={markBellRead} /> : null}
+      <Button variant="ghost" size="sm" href="/account" icon="user" className="jr-nav-account">
+        Account
+      </Button>
+    </>
   ) : (
     <Button variant="ghost" size="sm" href={`/signin?callbackUrl=${encodeURIComponent(pathname)}`} className="jr-nav-account">
       Sign in

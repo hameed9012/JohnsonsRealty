@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
+import { NotificationPrefsForm } from '@/components/account/NotificationPrefsForm';
 import { ProfileForm } from '@/components/account/ProfileForm';
 import { ClientPanel } from '@/components/ui/layout';
 import { db } from '@/db/client';
@@ -23,6 +24,11 @@ export default async function ProfilePage() {
           submitLabel="Save profile"
         />
       </ClientPanel>
+      {u ? (
+        <ClientPanel title="Notifications">
+          <NotificationPrefsForm prefs={u.notificationPrefs} />
+        </ClientPanel>
+      ) : null}
     </div>
   );
 }

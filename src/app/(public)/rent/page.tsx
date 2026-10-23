@@ -12,6 +12,7 @@ export default async function RentPage({ searchParams }: { searchParams: Promise
   const q = parseSearch(await searchParams);
   return (
     <SearchPage
+      scopeKey="rent"
       eyebrow="Rent"
       title="Homes for rent"
       basePath="/rent"
