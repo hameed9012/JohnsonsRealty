@@ -10,3 +10,11 @@ export async function testDb(): Promise<DB> {
   await migrate(db, { migrationsFolder: 'drizzle' });
   return db as unknown as DB;
 }
+
+/** Empties every table, so one migrated database can serve a whole test file. */
+export async function resetDb(db: DB) {
+  const { sql } = await import('drizzle-orm');
+  const res = (await db.execute(sql`select tablename from pg_tables where schemaname = 'public'`)) as unknown as { rows: { tablename: string }[] };
+  const names = res.rows.map((r) => `"${r.tablename}"`).join(', ');
+  if (names) await db.execute(sql.raw(`truncate ${names} restart identity cascade`));
+}

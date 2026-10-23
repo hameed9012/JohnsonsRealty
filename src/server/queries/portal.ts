@@ -1,7 +1,7 @@
 import 'server-only';
-import { and, gte, inArray, isNull, lt, sql } from 'drizzle-orm';
+import { and, eq, gte, inArray, lt, sql } from 'drizzle-orm';
 import { db } from '@/db/client';
-import { enquiries, listingReviews, listings, sales, showings } from '@/db/schema';
+import { enquiries, listings, sales, showings } from '@/db/schema';
 
 function todayRange(now = new Date()) {
   const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -14,7 +14,7 @@ const count = sql<number>`count(*)::int`;
 export async function portalCounts() {
   const { start, end } = todayRange();
   const [[pending], [today], [open]] = await Promise.all([
-    db.select({ n: count }).from(listingReviews).where(isNull(listingReviews.decision)),
+    db.select({ n: count }).from(listings).where(eq(listings.status, 'pending_review')),
     db
       .select({ n: count })
       .from(showings)

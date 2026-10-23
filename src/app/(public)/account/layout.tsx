@@ -1,7 +1,7 @@
 import { AccountNav } from '@/components/shell/SideNav';
 
 const ITEMS = [
-  { label: 'Dashboard', href: '/account', icon: 'home' as const, exact: true },
+  { label: 'Dashboard', href: '/account', icon: 'home' as const },
   { label: 'Saved homes', href: '/account/saved', icon: 'heart' as const },
   { label: 'Saved searches', href: '/account/searches', icon: 'search' as const },
   { label: 'Showings', href: '/account/showings', icon: 'calendar' as const },

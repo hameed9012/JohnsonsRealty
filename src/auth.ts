@@ -3,7 +3,8 @@ import { and, eq } from 'drizzle-orm';
 import NextAuth, { type DefaultSession } from 'next-auth';
 import Discord from 'next-auth/providers/discord';
 import { getDb } from '@/db/client';
-import { accounts, sessions, users, verificationTokens } from '@/db/schema';
+import { accounts, agentProfiles, sessions, users, verificationTokens } from '@/db/schema';
+import { slugify } from '@/lib/slug';
 import type { Role } from '@/lib/permissions';
 
 declare module 'next-auth' {
@@ -84,5 +85,11 @@ export async function promoteOwnerIfConfigured(userId: string, discordId: string
   const existing = await db.query.users.findFirst({ where: and(eq(users.role, 'owner')), columns: { id: true } });
   if (existing && existing.id !== userId) return false;
   await db.update(users).set({ role: 'owner', status: 'active' }).where(eq(users.id, userId));
+  const u = await db.query.users.findFirst({ where: eq(users.id, userId) });
+  const name = u?.displayName || u?.name || 'Owner';
+  await db
+    .insert(agentProfiles)
+    .values({ userId, publicName: name, slug: slugify(name) || 'owner', title: 'Owner', active: true, displayOrder: 0 })
+    .onConflictDoNothing();
   return true;
 }
