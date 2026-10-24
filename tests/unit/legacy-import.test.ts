@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { DB } from '@/db/client';
 import { seedBase } from '@/db/seed-base';
 import { activityLog, clientPeople, clients, listingDisclosures, listingPhotos, listings, listingTerms, listingConfidential, sales, users, listingBusiness, listingLeaseTerms } from '@/db/schema';
-import { altFromFilename, applyPlan, IMPORT_SUMMARY } from '@/import/legacy/apply';
+import { addKitPhoto, altFromFilename, applyPlan, IMPORT_SUMMARY, photoJobs } from '@/import/legacy/apply';
 import { buildPlan, isoDate, money } from '@/import/legacy/map';
 import { extractConst, parseJsLiteral, parseSellerFiles } from '@/import/legacy/parse';
 import { loadPlan } from '@/import/legacy/source';
@@ -145,6 +145,35 @@ describe('applying the import', () => {
     expect(second.photosAdded).toEqual([{ key: 'hartmann', photos: 20 }]);
     expect((await fresh.query.listings.findFirst({ where: eq(listings.id, h.listing!) }))!.photosHold).toBe(false);
     expect((await applyPlan(fresh, plan, { actorId: 'u-owner', upload })).photosAdded).toEqual([]);
+  });
+
+  it('imports one seller at a time, leaves photos for later, and uploads them one by one', async () => {
+    const fresh = await testDb();
+    await seedBase(fresh);
+    await fresh.insert(users).values({ id: 'u-owner', role: 'owner', displayName: 'Example Owner' });
+    const plan = await loadPlan();
+    const one = await applyPlan(fresh, plan, { actorId: 'u-owner', only: 'hartmann', skipPhotos: true });
+    expect(one.created.map((c) => c.key)).toEqual(['hartmann']);
+    expect(await fresh.$count(clients)).toBe(1);
+    const row = (await fresh.query.listings.findFirst())!;
+    expect(row).toMatchObject({ status: 'active', photosHold: true });
+    expect(await photoJobs(fresh, plan)).toEqual([{ key: 'hartmann', listingId: row.id, total: 20, have: 0 }]);
+    for (let i = 0; i < 3; i++) await addKitPhoto(fresh, plan, 'hartmann', i, { actorId: 'u-owner', upload });
+    expect((await addKitPhoto(fresh, plan, 'hartmann', 2, { actorId: 'u-owner', upload })).added).toBe(false); // safe to repeat
+    expect((await fresh.query.listings.findFirst({ where: eq(listings.id, row.id) }))!.photosHold).toBe(false);
+    expect((await photoJobs(fresh, plan))[0]).toMatchObject({ have: 3, total: 20 });
+  });
+
+  it('an agent starting from a seller file gets a draft, and the same seller can’t be listed twice', async () => {
+    const fresh = await testDb();
+    await seedBase(fresh);
+    await fresh.insert(users).values({ id: 'u-agent', role: 'agent', displayName: 'Example Agent' });
+    const plan = await loadPlan();
+    const r = await applyPlan(fresh, plan, { actorId: 'u-agent', only: 'kowalski', skipPhotos: true, asDraft: true });
+    const row = (await fresh.query.listings.findFirst({ where: eq(listings.id, r.created[0]!.listing!) }))!;
+    expect(row).toMatchObject({ status: 'draft', publishedAt: null, listingAgentId: 'u-agent', photosHold: false, addressLine: '8095 Lakeway Street' });
+    expect((await applyPlan(fresh, plan, { actorId: 'u-agent', only: 'kowalski', skipPhotos: true, asDraft: true })).skipped).toEqual(['kowalski']);
+    expect(await fresh.$count(listings)).toBe(1);
   });
 
   it('refuses a sold listing without a price and date', async () => {

@@ -3,7 +3,7 @@
 // One transaction per seller, so a failure never leaves half a seller behind.
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type { DB, Executor } from '@/db/client';
 import {
   activityLog,
@@ -41,6 +41,12 @@ export interface ApplyOptions {
   upload?: Upload;
   root?: string;
   now?: Date;
+  /** Import only this seller (the import page sends one request per seller). */
+  only?: string;
+  /** Leave the kit photos for a separate step (addKitPhoto), so importing never waits on uploads. */
+  skipPhotos?: boolean;
+  /** An agent starting a listing from a seller file: a draft for them to finish and submit for review. */
+  asDraft?: boolean;
 }
 
 export interface ApplyReport {
@@ -112,7 +118,7 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
   const area = zone?.areaId ? await ex.query.areas.findFirst({ where: eq(areas.id, zone.areaId) }) : undefined;
   const refNo = await nextRef(ex, now);
   const published = l.listedOn ? new Date(`${l.listedOn}T12:00:00Z`) : now;
-  const listed = l.photosDir ? await listPhotos(opts.root, l.photosDir) : { files: [] as string[] };
+  const listed = l.photosDir && !opts.skipPhotos ? await listPhotos(opts.root, l.photosDir) : { files: [] as string[] };
   const files = listed.files;
 
   const [row] = await ex
@@ -123,7 +129,7 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
       type: l.type,
       purpose: l.purpose,
       source: 'agent',
-      status: l.status,
+      status: opts.asDraft ? 'draft' : l.status,
       addressLine: l.addressLine,
       areaId: area?.id ?? null,
       postalCode: l.postalCode,
@@ -142,10 +148,10 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
       listingAgentId: opts.actorId,
       sellerClientId: clientId,
       submittedByUserId: opts.actorId,
-      round: 1,
-      publishedAt: published,
+      round: opts.asDraft ? 0 : 1,
+      publishedAt: opts.asDraft ? null : published,
       // The Owner approved these already; without photos they wait off the public site.
-      photosHold: l.status !== 'sold' && files.length < 3,
+      photosHold: !opts.asDraft && l.status !== 'sold' && files.length < 3,
     })
     .returning({ id: listings.id });
   const id = row!.id;
@@ -157,14 +163,15 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
   if (l.business) await ex.insert(listingBusiness).values({ listingId: id, ...(l.business as object) });
   if (l.disclosures.length) await ex.insert(listingDisclosures).values(l.disclosures.map((d) => ({ listingId: id, ...d })));
   await ex.insert(listingConfidential).values({ listingId: id, ...(l.confidential as object) });
-  if (l.price) await ex.insert(priceHistory).values({ listingId: id, price: l.price, event: 'listed', on: published });
+  if (l.price && !opts.asDraft) await ex.insert(priceHistory).values({ listingId: id, price: l.price, event: 'listed', on: published });
   await log(ex, opts.actorId, 'listing.create', 'listing', id, `${refNo}, ${address}`);
 
-  const { photos, photoError } = listed.error ? { photos: 0, photoError: listed.error } : l.photosDir ? await addPhotos(ex, id, l, files, opts) : { photos: 0, photoError: undefined };
-  if (photos < 3 && l.status !== 'sold') await ex.update(listings).set({ photosHold: true }).where(eq(listings.id, id));
+  const { photos, photoError } =
+    opts.skipPhotos || !l.photosDir ? { photos: 0, photoError: undefined } : listed.error ? { photos: 0, photoError: listed.error } : await addPhotos(ex, id, l, files, opts);
+  if (photos < 3 && l.status !== 'sold' && !opts.asDraft) await ex.update(listings).set({ photosHold: true }).where(eq(listings.id, id));
 
   let saleNo: number | undefined;
-  if (l.status === 'sold') {
+  if (l.status === 'sold' && !opts.asDraft) {
     const price = opts.sale?.price ?? l.sale?.price ?? l.price;
     const soldOn = opts.sale?.soldOn ?? l.sale?.soldOn;
     if (!price || !soldOn) throw new Error(`Enter the sale price and date for ${address}.`);
@@ -212,12 +219,13 @@ async function addPhotos(ex: Executor, listingId: string, l: ListingPlan, files:
 export async function applyPlan(db: DB, plan: LegacyPlan, opts: ApplyOptions): Promise<ApplyReport> {
   const report: ApplyReport = { created: [], skipped: [], failed: [], photosAdded: [] };
   for (const c of plan.clients) {
+    if (opts.only && c.key !== opts.only) continue;
     const l = plan.listings.find((x) => x.key === c.key);
     const existing = await db.query.clients.findFirst({ where: eq(clients.legacyKey, legacyKey(c.key)), columns: { id: true } });
     if (existing) {
       report.skipped.push(c.key);
       // Imported earlier without its photos (an upload failed): try them again.
-      if (l?.photosDir) {
+      if (l?.photosDir && !opts.skipPhotos) {
         const row = await db.query.listings.findFirst({ where: eq(listings.sellerClientId, existing.id), columns: { id: true, status: true } });
         if (row && !(await db.$count(listingPhotos, eq(listingPhotos.listingId, row.id)))) {
           const listed = await listPhotos(opts.root, l.photosDir);
@@ -244,4 +252,71 @@ export async function applyPlan(db: DB, plan: LegacyPlan, opts: ApplyOptions): P
     }
   }
   return report;
+}
+
+// ---- Kit photos, one per request ----
+
+export interface PhotoJob {
+  key: string;
+  listingId: string;
+  total: number;
+  have: number;
+}
+
+/** Imported listings whose kit photos aren't all on the listing yet. */
+export async function photoJobs(db: DB, plan: LegacyPlan, root?: string): Promise<PhotoJob[]> {
+  const jobs: PhotoJob[] = [];
+  for (const l of plan.listings.filter((x) => x.photosDir)) {
+    const c = await db.query.clients.findFirst({ where: eq(clients.legacyKey, legacyKey(l.key)), columns: { id: true } });
+    const row = c ? await db.query.listings.findFirst({ where: eq(listings.sellerClientId, c.id), columns: { id: true } }) : undefined;
+    if (!row) continue;
+    const listed = await listPhotos(root, l.photosDir!);
+    const have = await db.$count(listingPhotos, eq(listingPhotos.listingId, row.id));
+    if (listed.files.length && have < listed.files.length) jobs.push({ key: l.key, listingId: row.id, total: listed.files.length, have });
+  }
+  return jobs;
+}
+
+/**
+ * Uploads one kit photo (by position, 01 = cover) to an imported listing. Safe to repeat: a photo already in
+ * that position is skipped. With 3 photos the listing comes off hold and goes live.
+ */
+export async function addKitPhoto(
+  db: DB,
+  plan: LegacyPlan,
+  key: string,
+  index: number,
+  opts: Pick<ApplyOptions, 'actorId' | 'upload' | 'root'>,
+): Promise<{ added: boolean; released: boolean }> {
+  const l = plan.listings.find((x) => x.key === key && x.photosDir);
+  if (!l) throw new Error('That listing has no photos in the kit.');
+  if (!opts.upload) throw new Error('Photo uploads aren’t set up. Add the Cloudinary keys.');
+  const c = await db.query.clients.findFirst({ where: eq(clients.legacyKey, legacyKey(key)), columns: { id: true } });
+  const row = c ? await db.query.listings.findFirst({ where: eq(listings.sellerClientId, c.id), columns: { id: true, status: true } }) : undefined;
+  if (!row) throw new Error('Import the seller first.');
+  const listed = await listPhotos(opts.root, l.photosDir!);
+  if (listed.error) throw new Error(listed.error);
+  const name = listed.files[index];
+  if (!name) throw new Error('There’s no photo in that position.');
+  const already = await db.query.listingPhotos.findFirst({ where: and(eq(listingPhotos.listingId, row.id), eq(listingPhotos.sortOrder, index)) });
+  let added = false;
+  if (!already) {
+    const buf = await readFile(photosPath(opts.root, l.photosDir!, name));
+    const up = await opts.upload(buf, MIME[path.extname(name).toLowerCase()]!);
+    await db.transaction(async (tx) => {
+      const [m] = await tx
+        .insert(media)
+        .values({ storageId: up.storageId, width: up.width, height: up.height, bytes: up.bytes, format: up.format, uploadedBy: opts.actorId })
+        .returning({ id: media.id });
+      await tx.insert(listingPhotos).values({ listingId: row.id, mediaId: m!.id, alt: altFromFilename(name), sortOrder: index, isCover: index === 0 });
+    });
+    added = true;
+  }
+  const have = await db.$count(listingPhotos, eq(listingPhotos.listingId, row.id));
+  let released = false;
+  if (have >= 3 && row.status !== 'sold') {
+    const r = await db.update(listings).set({ photosHold: false }).where(and(eq(listings.id, row.id), eq(listings.photosHold, true))).returning({ id: listings.id });
+    released = r.length > 0;
+  }
+  return { added, released };
 }

@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { inArray, sql } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { ImportRunner } from '@/components/portal/ImportRunner';
 import { Breadcrumbs } from '@/components/ui/layout';
 import { db } from '@/db/client';
 import { clients, listings } from '@/db/schema';
-import { legacyKey } from '@/import/legacy/apply';
+import { legacyKey, photoJobs } from '@/import/legacy/apply';
 import { FORMS_FILE, loadPlan, SELLER_FILES } from '@/import/legacy/source';
 import { money } from '@/lib/format';
 import { can } from '@/lib/permissions';
@@ -29,17 +29,16 @@ export default async function ImportPage() {
   const imported = new Map(done.map((d) => [d.key!.replace(/^legacy:/, ''), d.id]));
   const made = imported.size
     ? await db
-        .select({ id: listings.id, seller: listings.sellerClientId, photos: sql<number>`(select count(*)::int from listing_photos p where p.listing_id = "listings"."id")` })
+        .select({ id: listings.id, seller: listings.sellerClientId })
         .from(listings)
         .where(inArray(listings.sellerClientId, [...imported.values()]))
     : [];
   const madeOf = (key: string) => made.find((m) => m.seller === imported.get(key));
   const listingOf = (key: string) => madeOf(key)?.id;
-  // A listing imported while photo uploads were failing: Import again adds its photos.
-  const missingPhotos = (key: string) => !!plan.listings.find((l) => l.key === key)?.photosDir && madeOf(key)?.photos === 0;
-  const retryPhotos = plan.listings.some((l) => missingPhotos(l.key));
+  const jobs = await photoJobs(db, plan);
+  const jobOf = (key: string) => jobs.find((j) => j.key === key);
   const sold = plan.listings.find((l) => l.sale);
-  const remaining = plan.clients.filter((c) => !imported.has(c.key)).length;
+  const pending = plan.clients.filter((c) => !imported.has(c.key)).map((c) => ({ key: c.key, label: c.displayName }));
 
   return (
     <div className="stack-lg">
@@ -93,7 +92,7 @@ export default async function ImportPage() {
                         </span>
                       ) : null}
                     </td>
-                    <td data-label="Photos">{missingPhotos(l.key) ? 'Missing: import again' : l.photosDir ? 'From the kit' : l.sale ? 'Not needed' : 'Needs photos'}</td>
+                    <td data-label="Photos">{jobOf(l.key) ? `${jobOf(l.key)!.have} of ${jobOf(l.key)!.total} uploaded` : l.photosDir ? (imported.has(l.key) ? 'Uploaded' : 'From the kit, after import') : l.sale ? 'Not needed' : 'Needs photos'}</td>
                     <td data-label="Imported">{id ? <Link href={`/portal/listings/${id}`}>Open</Link> : imported.has(l.key) ? 'Yes' : 'Not yet'}</td>
                   </tr>
                 );
@@ -138,7 +137,11 @@ export default async function ImportPage() {
         </section>
       ) : null}
 
-      <ImportRunner remaining={remaining} retryPhotos={retryPhotos} sale={sold && !imported.has(sold.key) ? { label: plan.clients.find((c) => c.key === sold.key)!.displayName, price: sold.sale!.price, soldOn: sold.sale!.soldOn } : null} />
+      <ImportRunner
+        pending={pending}
+        photoJobs={jobs.map((j) => ({ ...j, label: plan.listings.find((l) => l.key === j.key)?.addressLine || j.key }))}
+        sale={sold && !imported.has(sold.key) ? { key: sold.key, label: plan.clients.find((c) => c.key === sold.key)!.displayName, price: sold.sale!.price, soldOn: sold.sale!.soldOn } : null}
+      />
     </div>
   );
 }
