@@ -17,6 +17,7 @@ import { actorOrThrow, ForbiddenError } from '@/server/session';
 import { getSettings } from '@/server/settings';
 import { markListingUnavailable, postListing, postReviewPending } from '@/server/discord-posts';
 import { notifyUnplacedPostal } from '@/server/map/notify';
+import { updatePropertyMapMessage } from '@/server/map/discord';
 
 type Result<T = undefined> = NonNullable<ActionState<T>>;
 
@@ -82,8 +83,13 @@ export async function registerPhoto(id: string, uploaded: { storageId: string; w
 export async function savePhotos(id: string, order: { order: string[]; coverId: string | null }, meta: { id: string; alt: string; caption: string | null }[]): Promise<Result> {
   try {
     const actor = await actorOrThrow();
-    await db.transaction((tx) => svc.updatePhotos(tx, actor, id, { order, meta }));
-    return { ok: true, message: 'Photos saved' };
+    const { released } = await db.transaction((tx) => svc.updatePhotos(tx, actor, id, { order, meta }));
+    if (released) {
+      revalidateTag('listings', 'max');
+      revalidatePath(`/portal/listings/${id}`);
+      after(() => updatePropertyMapMessage(db).then(() => undefined));
+    }
+    return { ok: true, message: released ? 'Photos saved. The listing is now on the public site.' : 'Photos saved' };
   } catch (e) {
     return fail(e);
   }

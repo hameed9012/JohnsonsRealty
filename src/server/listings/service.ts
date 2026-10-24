@@ -68,15 +68,27 @@ function parse<T>(schema: { safeParse: (v: unknown) => { success: true; data: T 
   return r.data;
 }
 
-async function getForEdit(ex: Executor, actor: Actor, id: string): Promise<Listing> {
+async function getForEdit(ex: Executor, actor: Actor, id: string, opts: { photos?: boolean } = {}): Promise<Listing> {
   const l = await ex.query.listings.findFirst({ where: eq(listings.id, id) });
   if (!l) throw new ServiceError('That listing doesn’t exist.');
   const manager = actor.role === 'owner' || actor.role === 'admin';
   if (l.status === 'pending_review' && !manager) throw new ServiceError('This listing is waiting for review, so it can’t be edited right now.');
   if (!can(actor, 'listing.edit', subjectOf(l))) throw new ServiceError('You can’t edit this listing.');
   // The wizard edits submissions. Live listings are edited from the listings manager (price history, revisions).
-  if (!WIZARD_STATUSES.includes(l.status)) throw new ServiceError('This listing is live. Edit it from the listings manager.');
+  // Imported listings held for photos are live but take photos here until the hold is released.
+  if (!WIZARD_STATUSES.includes(l.status) && !(opts.photos && l.photosHold)) throw new ServiceError('This listing is live. Edit it from the listings manager.');
   return l;
+}
+
+/** A held listing goes live once it has 3 photos, each with a description. No new review (the Owner approved it). */
+export async function releasePhotoHold(ex: Executor, id: string): Promise<boolean> {
+  const l = await ex.query.listings.findFirst({ where: eq(listings.id, id), columns: { photosHold: true, refNo: true } });
+  if (!l?.photosHold) return false;
+  const rows = await ex.select({ alt: listingPhotos.alt }).from(listingPhotos).where(eq(listingPhotos.listingId, id));
+  if (rows.length < 3 || rows.some((r) => !r.alt.trim())) return false;
+  await ex.update(listings).set({ photosHold: false }).where(eq(listings.id, id));
+  await audit(ex, { actorId: null, action: 'listing.release', entity: 'listing', entityId: id, summary: `${l.refNo} has its photos and is now on the public site` });
+  return true;
 }
 
 /** Fields only staff fill in; property owners never send them. */
@@ -435,7 +447,7 @@ export async function saveOwnerDetails(ex: Executor, actor: Actor, id: string, i
 // ---------- Photos ----------
 
 export async function addPhoto(ex: Executor, actor: Actor, id: string, input: unknown) {
-  await getForEdit(ex, actor, id);
+  await getForEdit(ex, actor, id, { photos: true });
   const f = parse(uploadedSchema, input);
   const [m] = await ex
     .insert(media)
@@ -447,7 +459,7 @@ export async function addPhoto(ex: Executor, actor: Actor, id: string, input: un
 }
 
 export async function updatePhotos(ex: Executor, actor: Actor, id: string, input: { order: unknown; meta: unknown[] }) {
-  const l = await getForEdit(ex, actor, id);
+  const l = await getForEdit(ex, actor, id, { photos: true });
   const o = parse(photoOrderSchema, input.order);
   const meta = input.meta.map((m) => parse(photoMetaSchema, m));
   const rows = await ex.select({ id: listingPhotos.id }).from(listingPhotos).where(eq(listingPhotos.listingId, id));
@@ -461,10 +473,11 @@ export async function updatePhotos(ex: Executor, actor: Actor, id: string, input
       .where(eq(listingPhotos.id, pid));
   }
   await audit(ex, { actorId: actor.id, action: 'listing.photos', entity: 'listing', entityId: id, summary: `Updated photos for ${l.refNo}` });
+  return { released: await releasePhotoHold(ex, id) };
 }
 
 export async function removePhoto(ex: Executor, actor: Actor, id: string, photoId: string): Promise<string | null> {
-  const l = await getForEdit(ex, actor, id);
+  const l = await getForEdit(ex, actor, id, { photos: true });
   const p = await ex.query.listingPhotos.findFirst({ where: and(eq(listingPhotos.id, photoId), eq(listingPhotos.listingId, id)), with: { media: true } });
   if (!p) return null;
   await ex.delete(listingPhotos).where(eq(listingPhotos.id, photoId));

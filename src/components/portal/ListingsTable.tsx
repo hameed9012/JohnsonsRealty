@@ -17,6 +17,7 @@ export interface ListingRow {
   refNo: string;
   status: StatusKey;
   ownerListed: boolean;
+  needsPhotos?: boolean;
   area: string | null;
   agent: string | null;
   price: string;
@@ -110,6 +111,7 @@ export function ListingsTable({ rows }: { rows: ListingRow[] }) {
                   <span className="row">
                     <StatusPill status={r.status} />
                     {r.ownerListed ? <StatusPill status="listed-by-owner" /> : null}
+                    {r.needsPhotos ? <StatusPill status="pending-review" label="Needs photos" /> : null}
                   </span>
                 </td>
                 <td data-label="Area">{r.area ?? '—'}</td>

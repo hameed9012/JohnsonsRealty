@@ -22,7 +22,8 @@
     "seed": "tsx src/db/seed.ts",
     "seed:dev": "tsx src/db/seed-dev.ts",
     "discord:setup": "tsx src/discord/cli.ts setup",
-    "discord:invite": "tsx src/discord/cli.ts invite"
+    "discord:invite": "tsx src/discord/cli.ts invite",
+    "import:legacy": "tsx --conditions=react-server src/import/legacy/cli.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",

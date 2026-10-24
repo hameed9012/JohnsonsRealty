@@ -68,7 +68,7 @@ export async function listingsCommand(ex: Executor, b: BrandContext, i: APIChatI
   const area = opt(i as never, 'area') as string | undefined;
   const type = opt(i as never, 'type') as string | undefined;
   const max = opt(i as never, 'max_price') as number | undefined;
-  const conds = [inArray(listings.status, [...MARKET_STATUSES]), sql`${listings.type} <> 'business' or exists (select 1 from listing_business lb where lb.listing_id = ${listings.id} and lb.name_withheld = false)`];
+  const conds = [inArray(listings.status, [...MARKET_STATUSES]), eq(listings.photosHold, false), sql`${listings.type} <> 'business' or exists (select 1 from listing_business lb where lb.listing_id = ${listings.id} and lb.name_withheld = false)`];
   if (area) conds.push(sql`${listings.areaId} in (select id from ${areas} a where a.slug = ${area} or a.parent_id = (select id from ${areas} p where p.slug = ${area}))`);
   if (type === 'business') conds.push(eq(listings.type, 'business'));
   else if (type === 'land') conds.push(eq(listings.type, 'land'));
@@ -81,7 +81,7 @@ export async function listingsCommand(ex: Executor, b: BrandContext, i: APIChatI
 
 export async function listingCommand(ex: Executor, b: BrandContext, i: APIChatInputApplicationCommandInteraction): Promise<APIInteractionResponse> {
   const ref = String(opt(i as never, 'ref') ?? '').trim().toUpperCase();
-  const [r] = (await ex.select(COLUMNS).from(listings).leftJoin(areas, eq(areas.id, listings.areaId)).leftJoin(agentProfiles, eq(agentProfiles.userId, listings.listingAgentId)).where(and(eq(listings.refNo, ref), inArray(listings.status, [...PUBLIC_STATUSES]))).limit(1)) as Row[];
+  const [r] = (await ex.select(COLUMNS).from(listings).leftJoin(areas, eq(areas.id, listings.areaId)).leftJoin(agentProfiles, eq(agentProfiles.userId, listings.listingAgentId)).where(and(eq(listings.refNo, ref), inArray(listings.status, [...PUBLIC_STATUSES]), eq(listings.photosHold, false))).limit(1)) as Row[];
   if (!r) return ephemeral({ content: `No public listing has the reference ${ref}.` });
   const msg = listingMessage(b, toEmbedData(r, b));
   // The full listing embed, shown to the channel (no pings).

@@ -25,7 +25,7 @@ export async function mapData(ex: Executor, scope: { purpose?: 'sale' | 'rent'; 
   const s = await ex.query.siteSettings.findFirst({ where: eq(siteSettings.id, 1) });
   const img = s?.mapMediaId ? await ex.query.media.findFirst({ where: eq(media.id, s.mapMediaId), columns: { storageId: true, width: true, height: true } }) : null;
   const zones = await ex.select({ code: postalZones.code, label: postalZones.label, x: postalZones.x, y: postalZones.y, areaId: postalZones.areaId }).from(postalZones).orderBy(asc(postalZones.code));
-  const conds: SQL[] = [inArray(listings.status, [...ON_MAP])];
+  const conds: SQL[] = [inArray(listings.status, [...ON_MAP]), eq(listings.photosHold, false)];
   if (scope.purpose) conds.push(eq(listings.purpose, scope.purpose));
   if (scope.business === true) conds.push(eq(listings.type, 'business'));
   if (scope.business === false) conds.push(sql`${listings.type} <> 'business'`);

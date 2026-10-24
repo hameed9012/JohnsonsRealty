@@ -25,6 +25,7 @@ export async function portalListings(actor: Actor, opts: { statuses?: string[] }
       previousPrice: listings.previousPrice,
       publishedAt: listings.publishedAt,
       updatedAt: listings.updatedAt,
+      photosHold: listings.photosHold,
       areaId: listings.areaId,
       agentId: listings.listingAgentId,
       areaName: areas.name,

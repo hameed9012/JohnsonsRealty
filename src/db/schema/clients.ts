@@ -31,6 +31,12 @@ export const clients = pgTable(
     whoDecides: text('who_decides'),
     background: text('background'),
     notes: text('notes'),
+    /** Stable key for imported files ("legacy:kowalski"), so re-running the import changes nothing. */
+    legacyKey: text('legacy_key').unique(),
+    /** e.g. "Spare seller". */
+    tags: text('tags').array().notNull().default(sql`'{}'::text[]`),
+    /** Set when the seller was generated (a fictional RP seller); Regenerate changes it. */
+    generatedSeed: text('generated_seed'),
     createdBy: text('created_by').references(() => users.id, { onDelete: 'set null' }),
     archived: boolean('archived').notNull().default(false),
     createdAt: createdAt(),

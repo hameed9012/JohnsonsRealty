@@ -41,6 +41,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
     refNo: r.refNo,
     status: displayStatus({ status: r.status as ListingStatus, publishedAt: r.publishedAt, price: r.price, previousPrice: r.previousPrice }),
     ownerListed: r.source === 'owner_submitted',
+    needsPhotos: r.photosHold,
     area: r.areaName,
     agent: r.agentName,
     price: r.price ? money(r.price) + (r.purpose === 'rent' ? '/mo' : '') : '—',

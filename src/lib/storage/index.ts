@@ -98,6 +98,37 @@ export function publicImageUrl(storageId: string, opts: { width?: number; height
   return `https://res.cloudinary.com/${cloud}/image/upload/${t}/${storageId}`;
 }
 
+/** Uploads a file from the server (imports), with the same limits as a browser upload. */
+export async function uploadFromServer(file: Buffer, type: string, folder: 'listings' | 'agents' | 'areas' | 'site' | 'posts'): Promise<Omit<UploadedFile, 'version' | 'signature'>> {
+  if (!ACCEPTED_TYPES.includes(type)) throw new Error('Upload a JPG, PNG or WebP image.');
+  if (file.byteLength > MAX_UPLOAD_BYTES) throw new Error('Photos must be under 10 MB.');
+  const provider = storageProvider();
+  if (provider === 'cloudinary') {
+    const target = createUploadTarget(folder);
+    const form = new FormData();
+    for (const [k, v] of Object.entries(target.fields)) form.append(k, v);
+    form.append('file', new Blob([new Uint8Array(file)], { type }));
+    const res = await fetch(target.url, { method: 'POST', body: form });
+    const j = (await res.json()) as { public_id?: string; width?: number; height?: number; bytes?: number; format?: string; error?: { message: string } };
+    if (!res.ok || !j.public_id) throw new Error(j.error?.message ?? `Upload failed (${res.status}).`);
+    return { storageId: j.public_id, width: j.width!, height: j.height!, bytes: j.bytes, format: j.format };
+  }
+  if (provider === 'local') {
+    const { mkdir, writeFile } = await import('node:fs/promises');
+    const path = await import('node:path');
+    const { randomBytes } = await import('node:crypto');
+    const sharp = (await import('sharp')).default;
+    const ext = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' } as Record<string, string>)[type]!;
+    const name = `${randomBytes(16).toString('hex')}.${ext}`;
+    const dir = path.join(process.cwd(), '.e2e-data', 'uploads', folder);
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, name), file);
+    const meta = await sharp(file).metadata();
+    return { storageId: `/api/uploads/local/${folder}/${name}`, width: meta.width ?? 0, height: meta.height ?? 0, bytes: file.byteLength, format: ext };
+  }
+  throw new Error('Photo uploads aren’t set up yet. Add the Cloudinary keys to the environment.');
+}
+
 export async function destroyUpload(storageId: string): Promise<void> {
   const c = cloudinaryConfig();
   if (!c || storageId.startsWith('/')) return;

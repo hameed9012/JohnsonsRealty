@@ -21,6 +21,7 @@ import { STAGE_WORDS } from '@/server/ops/deals';
 import { requireStaff } from '@/server/session';
 import { MapPinPicker } from '@/components/portal/MapPinPicker';
 import { CancelOpenHouseButton, OpenHouseForm, PostToDiscordButton } from '@/components/portal/DiscordControls';
+import { HeldPhotos } from '@/components/portal/HeldPhotos';
 import { publicImageUrl } from '@/lib/storage';
 import { mediaSrc } from '@/server/queries/media';
 import { getSettings } from '@/server/settings';
@@ -95,6 +96,19 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           reviewNote={null}
           clients={clientRows.map((c) => ({ value: c.id, label: c.name }))}
         />
+      ) : null}
+
+      {row.photosHold ? (
+        <section className="panel stack" aria-labelledby="hold-h">
+          <div className="row">
+            <StatusPill status="pending-review" label="Needs photos" />
+          </div>
+          <h2 id="hold-h" className="heading-2">
+            Add photos to put it on the site
+          </h2>
+          <p className="body-s muted">This listing was imported and is approved, but it stays off the public site until it has at least 3 in-game photos, each with a short description.</p>
+          {manage ? <HeldPhotos listingId={id} initial={data.photos} /> : null}
+        </section>
       ) : null}
 
       {manage && isPublic(row.status as ListingStatus) ? (

@@ -28,7 +28,7 @@ export async function areaListingCounts(): Promise<Record<string, number>> {
   const rows = await db
     .select({ areaId: listings.areaId, n: sql<number>`count(*)::int` })
     .from(listings)
-    .where(sql`${listings.status} in (${sql.join(MARKET_STATUSES.map((s) => sql`${s}`), sql`, `)})`)
+    .where(sql`${listings.status} in (${sql.join(MARKET_STATUSES.map((s) => sql`${s}`), sql`, `)}) and ${listings.photosHold} = false`)
     .groupBy(listings.areaId);
   return Object.fromEntries(rows.filter((r) => r.areaId).map((r) => [r.areaId!, r.n]));
 }

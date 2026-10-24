@@ -24,7 +24,11 @@ export default defineConfig({
   retries: 0,
   reporter: [['list']],
   use: { baseURL: `http://localhost:${PORT}`, trace: 'retain-on-failure' },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: /legacy-import/ },
+    // The legacy import adds real listings, so it runs once everything else has finished.
+    { name: 'import', use: { ...devices['Desktop Chrome'] }, testMatch: /legacy-import/, dependencies: ['chromium'] },
+  ],
   webServer: {
     // Fresh database and data cache every run: wipe both, migrate, seed test users, build, start.
     command: `node -e "for (const d of ['.e2e-data/e2e','.e2e-data/uploads','.next-e2e']) require('fs').rmSync(d,{recursive:true,force:true})" && npx tsx src/db/migrate.ts && npx tsx tests/e2e/seed.ts && npx next build && npx next start -p ${PORT}`,

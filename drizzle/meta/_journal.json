@@ -29,6 +29,13 @@
       "when": 1792817803377,
       "tag": "0003_postal_zones",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792818903108,
+      "tag": "0004_legacy_import",
+      "breakpoints": true
     }
   ]
 }

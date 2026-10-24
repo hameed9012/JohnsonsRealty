@@ -26,7 +26,7 @@ async function noSideScroll(page: Page, path: string) {
 }
 
 const PUBLIC = ['/', '/buy', '/buy?view=map', '/rent', '/businesses', '/sell', '/areas', '/sold', '/agents', '/about', '/guides', '/careers', '/contact', '/property/example-seed-home-00901'];
-const PORTAL = ['/portal', '/portal/listings', '/portal/review', '/portal/clients', '/portal/deals', '/portal/documents', '/portal/documents/new', '/portal/studio', '/portal/showings', '/portal/inbox', '/portal/sales', '/portal/commission', '/portal/team', '/portal/activity', '/portal/settings', '/portal/settings/discord', '/portal/settings/discord/preview', '/portal/settings/map', '/portal/announcements'];
+const PORTAL = ['/portal', '/portal/listings', '/portal/review', '/portal/clients', '/portal/deals', '/portal/documents', '/portal/documents/new', '/portal/studio', '/portal/showings', '/portal/inbox', '/portal/sales', '/portal/commission', '/portal/team', '/portal/activity', '/portal/settings', '/portal/settings/discord', '/portal/settings/discord/preview', '/portal/settings/map', '/portal/settings/import', '/portal/announcements'];
 
 test('public pages pass the automated accessibility audit', async ({ page }) => {
   for (const p of PUBLIC) await audit(page, p);

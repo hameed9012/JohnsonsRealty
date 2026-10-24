@@ -57,7 +57,7 @@ export async function sendContact(_prev: Result, fd: FormData): Promise<Result> 
   if (!p.success) return { ok: false, fieldErrors: fieldErrors(p.error) };
   let listing: typeof listings.$inferSelect | undefined;
   if (p.data.listingId) {
-    listing = await db.query.listings.findFirst({ where: and(eq(listings.id, p.data.listingId), inArray(listings.status, MARKET_STATUSES as Status[])) });
+    listing = await db.query.listings.findFirst({ where: and(eq(listings.id, p.data.listingId), inArray(listings.status, MARKET_STATUSES as Status[]), eq(listings.photosHold, false)) });
   }
   const notify = [...(await managers()), ...(listing?.listingAgentId ? [listing.listingAgentId] : [])];
   const refNo = await record(actor, listing ? 'listing_question' : 'general_contact', p.data, {

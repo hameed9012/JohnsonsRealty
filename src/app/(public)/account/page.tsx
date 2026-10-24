@@ -36,7 +36,7 @@ export default async function AccountDashboard() {
     unreadForUser(actor.id),
     ownerListings(actor.id),
   ]);
-  const saved = savedIds.length ? (await cardsWhere(and(inArray(listings.id, savedIds.map((s) => s.id)), inArray(listings.status, PUBLIC_STATUSES as Status[])), 3)) : [];
+  const saved = savedIds.length ? (await cardsWhere(and(inArray(listings.id, savedIds.map((s) => s.id)), inArray(listings.status, PUBLIC_STATUSES as Status[]), eq(listings.photosHold, false)), 3)) : [];
   const deal = deals.find((d) => d.stage !== 'closed' && d.stage !== 'fallen_through') ?? deals[0];
 
   // Without a deal, the journey shows how far they've got on their own.

@@ -18,7 +18,7 @@ export default async function SavedHomesPage() {
   const actor = await requireActor('/account/saved');
   const rows = await db.select({ id: savedHomes.listingId }).from(savedHomes).where(eq(savedHomes.userId, actor.id)).orderBy(desc(savedHomes.createdAt));
   const ids = rows.map((r) => r.id);
-  const cards = ids.length ? await cardsWhere(and(inArray(listings.id, ids), inArray(listings.status, PUBLIC_STATUSES as Status[])), 200) : [];
+  const cards = ids.length ? await cardsWhere(and(inArray(listings.id, ids), inArray(listings.status, PUBLIC_STATUSES as Status[]), eq(listings.photosHold, false)), 200) : [];
   // Keep the order they were saved in.
   const order = new Map(ids.map((id, i) => [id, i]));
   cards.sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));

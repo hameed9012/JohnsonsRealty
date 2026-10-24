@@ -97,7 +97,7 @@ export async function ledgerFigures() {
       .from(sales)
       .innerJoin(listings, eq(listings.id, sales.listingId))
       .where(eq(listings.purpose, 'sale')),
-    db.select({ active: sql<number>`count(*)::int` }).from(listings).where(inArray(listings.status, MARKET_STATUSES as Status[])),
+    db.select({ active: sql<number>`count(*)::int` }).from(listings).where(and(inArray(listings.status, MARKET_STATUSES as Status[]), eq(listings.photosHold, false))),
   ]);
   return { sold: s?.sold ?? 0, volume: Number(s?.volume ?? 0), active: a?.active ?? 0 };
 }

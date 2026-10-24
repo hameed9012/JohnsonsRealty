@@ -59,6 +59,8 @@ export const listings = pgTable(
     publishedAt: ts('published_at'),
     withdrawnAt: ts('withdrawn_at'),
     /** The listing's announcement in Discord, edited later (price cut, sold, withdrawn) instead of re-posting. */
+    /** Imported listings without 3 photos: Active but hidden from the public site until the photos are in. */
+    photosHold: boolean('photos_hold').notNull().default(false),
     discordMessageId: text('discord_message_id'),
     discordChannelId: text('discord_channel_id'),
     createdAt: createdAt(),
@@ -169,6 +171,8 @@ export const listingTerms = pgTable('listing_terms', {
   photosAllowed: boolean('photos_allowed'),
   lockbox: boolean('lockbox'),
   showingNotice: text('showing_notice'),
+  /** Furnished option: the total price with the furniture (e.g. the Hartmanns' $795,000). */
+  furnishedPrice: integer('furnished_price'),
 });
 
 /** Seller-files "Lease terms" and "What he needs from an applicant". */
@@ -262,6 +266,8 @@ export const listingConfidential = pgTable('listing_confidential', {
   yearlyProfit: integer('yearly_profit'),
   inventoryValue: integer('inventory_value'),
   disclosureNotes: text('disclosure_notes'),
+  /** The least the seller takes for the furniture on a furnished sale. */
+  furnitureLowest: integer('furniture_lowest'),
   updatedAt: updatedAt(),
 });
 

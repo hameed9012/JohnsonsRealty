@@ -1,0 +1,1592 @@
+{
+  "clients": [
+    {
+      "key": "porter",
+      "kind": "person",
+      "displayName": "Elaine Porter",
+      "legalNameOnForms": "Elaine Marie Porter",
+      "roles": [
+        "seller"
+      ],
+      "tags": [],
+      "bestContact": "Phone call, weekday mornings",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": "Yes, until settlement",
+      "mailingAddressAfter": "2210 Murray Avenue, Apt 4C, Pittsburgh, PA 15217",
+      "reason": "Moving closer to family",
+      "timeline": "Settle Dec 12, 2026",
+      "whoDecides": "Her daughter, Karen Porter-Lin. Karen gives advice but does not sign.",
+      "background": "Elaine is 61, a retired school librarian, widowed in 2023. She and her husband Gerald bought the house in 2000 and raised two kids there. She is moving to Pittsburgh to be near her daughter and grandchildren, and her new condo there closes in January. She is warm and chatty, attached to her garden, and would love to sell to a family.",
+      "notes": null,
+      "people": [
+        {
+          "legalName": "Elaine Marie Porter",
+          "goesBy": "Elaine",
+          "ageOccupation": "61, retired school librarian",
+          "maritalStatus": "Widowed (husband Gerald Porter died in 2023)",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "EPorter88"
+        }
+      ],
+      "confidential": {
+        "motivation": "Moving closer to family",
+        "negotiationNotes": "- Lowest price: $350,000.\n- Under $340,000: she declines politely and does not counter.\n- $340,000 to $349,999: she counters at $358,000.\n- $350,000 or more with clean terms: she accepts.\n- Accepts mortgage, inspection, appraisal, termite and radon contingencies. Will not accept a contingency on the sale of the buyer's home.\n- Prefers a repair credit of up to $3,000 over doing repairs herself.\n- An offer with a pre-approval letter gets her attention first.",
+        "relayLines": "- \"The seller has countered at $358,000. She's flexible on the settlement date if that helps you.\"\n- \"She'd prefer to give a repair credit rather than have work done before settlement.\"\n- \"She's asked me to pass along her planting notes for the garden. She'd like the new owners to have them.\"",
+        "commissionTerms": "5% total, 2.5% to each side"
+      }
+    },
+    {
+      "key": "kowalski",
+      "kind": "person",
+      "displayName": "Ray Kowalski",
+      "legalNameOnForms": "Raymond Joseph Kowalski",
+      "roles": [
+        "seller"
+      ],
+      "tags": [],
+      "bestContact": "Phone call, afternoons. He does not text.",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": "Yes, until settlement",
+      "mailingAddressAfter": "c/o Michael Kowalski, 4418 Brookside Drive, Columbus, OH 43221",
+      "reason": "Moving in with his son's family",
+      "timeline": "Settle by Nov 20, 2026",
+      "whoDecides": "His son, Michael Kowalski, who handles paperwork questions by phone",
+      "background": "Ray is 74, a retired steelworker who spent 38 years at the Steelton mill. He has lived in the bungalow since 1981, and his wife Dorothy passed away last year. He is moving to Columbus, Ohio to live with his son's family. Ray is gruff but fair, a handshake kind of man, and has no patience for haggling over small things. He wants it sold fast and as-is.",
+      "notes": null,
+      "people": [
+        {
+          "legalName": "Raymond Joseph Kowalski",
+          "goesBy": "Ray",
+          "ageOccupation": "74, retired steelworker",
+          "maritalStatus": "Widowed (wife Dorothy Kowalski died in 2025)",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "RayK_Steelton"
+        }
+      ],
+      "confidential": {
+        "motivation": "Moving in with his son's family",
+        "negotiationNotes": "- Lowest price: $175,000.\n- Under $165,000: he declines.\n- $165,000 to $174,999: he counters at $182,500.\n- $175,000 or more: he accepts.\n- Speed matters more than price. He would take $180,000 cash with a 30-day settlement over $186,000 with a 60-day settlement.\n- Buyers may inspect, but for information only. No repairs and no credits.\n- Will not accept a contingency on the sale of the buyer's home.",
+        "relayLines": "- \"The seller is selling the home as-is. You're welcome to inspect, but he won't be making repairs or giving credits.\"\n- \"He's countered at $182,500. He's told me a quick settlement matters more to him than squeezing out the last dollar.\"\n- \"He's leaving his workbench and shelving in the garage for whoever buys it.\"",
+        "commissionTerms": "5% total, 2.5% to each side"
+      }
+    },
+    {
+      "key": "raman",
+      "kind": "couple",
+      "displayName": "Priya and Daniel Raman",
+      "legalNameOnForms": "Priya Raman and Daniel James Raman",
+      "roles": [
+        "seller"
+      ],
+      "tags": [],
+      "bestContact": "Written messages, evenings. Daniel answers within the hour.",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": "Yes, until Dec 18",
+      "mailingAddressAfter": "75 Kendall Street, Unit 912, Cambridge, MA 02142",
+      "reason": "Job relocation to Boston",
+      "timeline": "Must settle by Dec 15, 2026",
+      "whoDecides": "Both. Daniel runs the numbers and usually replies first.",
+      "background": "Priya is 39, an anesthesiologist. Daniel is 41, a software architect. They have two children and built this house new in 2019. Priya starts a hospital job in Boston in January, and their movers are booked for Dec 18. They are organized and deadline-driven, expect quick answers, and treat the sale like a project. Daniel handles the numbers.",
+      "notes": null,
+      "people": [
+        {
+          "legalName": "Priya Raman",
+          "goesBy": "Priya",
+          "ageOccupation": "39, anesthesiologist",
+          "maritalStatus": "Married, two children (ages 7 and 10)",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "PRaman_MD"
+        },
+        {
+          "legalName": "Daniel James Raman",
+          "goesBy": "Daniel",
+          "ageOccupation": "41, software architect",
+          "maritalStatus": "Married, two children (ages 7 and 10)",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "DanRaman"
+        }
+      ],
+      "confidential": {
+        "motivation": "Job relocation to Boston",
+        "negotiationNotes": "- Lowest price: $690,000.\n- Under $660,000: they decline.\n- $660,000 to $689,999: they counter at $705,000. They counter once only. After that they ask for best and final offers.\n- $690,000 or more, able to settle by Dec 15: they accept.\n- A buyer who can settle by Dec 15 wins over a slightly higher offer that settles later.\n- Accept mortgage, inspection and appraisal contingencies with 10-day deadlines. Will not accept a contingency on the sale of the buyer's home.\n- No credit for the single bathroom. They say it is already reflected in the price.",
+        "relayLines": "- \"The sellers need to settle by December 15th. That date is firm, so an offer that meets it will be taken very seriously.\"\n- \"They've countered at $705,000. They've told me this is their one counter, so please treat your reply as your best offer.\"\n- \"They'd like a pre-approval letter with any offer before they review it.\"",
+        "commissionTerms": "5% total, 2.5% to each side"
+      }
+    },
+    {
+      "key": "castellano",
+      "kind": "couple",
+      "displayName": "Anthony and Renée Castellano",
+      "legalNameOnForms": "Anthony Joseph Castellano and Renée Marie Castellano",
+      "roles": [
+        "seller"
+      ],
+      "tags": [],
+      "bestContact": "Phone call, mid-afternoon between the lunch and dinner rush",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": "Yes, until settlement",
+      "mailingAddressAfter": "200 North Front Street, Unit 1104, Harrisburg, PA 17101 (their new condo)",
+      "reason": "Empty nesters downsizing to a condo downtown",
+      "timeline": "Settle around Jan 15, 2027",
+      "whoDecides": "Both. Renée handles showings and communication. Anthony has the final say on price.",
+      "background": "Anthony is 52 and Renée is 49. They own Castellano's, a family restaurant group with three locations around Harrisburg. They built this house in 2017 to fit four kids, and the youngest just left for college. Now they want something smaller near their restaurants downtown. They are relaxed and personable, used to negotiating with suppliers, and in no rush. Renée does the talking, and Anthony watches the numbers.",
+      "notes": null,
+      "people": [
+        {
+          "legalName": "Anthony Joseph Castellano",
+          "goesBy": "Anthony",
+          "ageOccupation": "52, Co-owners of Castellano's restaurant group",
+          "maritalStatus": "Married, four grown children",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "ACastellano"
+        },
+        {
+          "legalName": "Renée Marie Castellano",
+          "goesBy": "Renée",
+          "ageOccupation": "49, Co-owners of Castellano's restaurant group",
+          "maritalStatus": "Married, four grown children",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "ReneeC"
+        }
+      ],
+      "confidential": {
+        "motivation": "Empty nesters downsizing to a condo downtown",
+        "negotiationNotes": "- Lowest price: $760,000.\n- Under $730,000: they decline but stay friendly, and invite a better offer.\n- $730,000 to $759,999: they counter at $775,000. They will counter a second time if the buyer comes up.\n- $760,000 or more: they accept.\n- Will give a repair credit of up to $5,000.\n- Will accept a contingency on the sale of the buyer's home, as long as they can keep showing the house and take another offer with 72 hours' notice.\n- A cash offer gets about $10,000 more flexibility on price.\n- Happy to leave the pool table and patio furniture to sweeten a deal.",
+        "relayLines": "- \"The sellers have countered at $775,000. They've told me they're open to continuing the conversation.\"\n- \"They'd like to settle around mid-January, once their new place is ready. If that works for you, it'll help your offer.\"\n- \"They're happy to leave the pool table in the games room for the new owners.\"",
+        "commissionTerms": "5% total, 2.5% to each side"
+      }
+    },
+    {
+      "key": "hartmann",
+      "kind": "couple",
+      "displayName": "Gregory and Lena Hartmann",
+      "legalNameOnForms": "Gregory Alan Hartmann and Lena Marie Hartmann",
+      "roles": [
+        "seller"
+      ],
+      "tags": [],
+      "bestContact": "Messages during the day. Lena replies fastest.",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": "Yes, until settlement",
+      "mailingAddressAfter": "14 Harbour Town Lane, Hilton Head Island, SC 29928",
+      "reason": "Empty nesters, downsizing and retiring to the coast",
+      "timeline": "Flexible, 45 to 90 days",
+      "whoDecides": "Both. Lena decides on the furniture; Gregory on price and dates.",
+      "background": "Gregory is 54 and owns an orthodontics practice in Camp Hill. Lena is 51, an interior designer, and she furnished the house herself. Their youngest left for college this fall, so the house is too big for two. They are retiring to a smaller place on the coast and are in no hurry. They are friendly and proud of the house, and Lena will want to hear what buyers say about the decor. They will sell the furniture with the house if the price is right.",
+      "notes": null,
+      "people": [
+        {
+          "legalName": "Gregory Alan Hartmann",
+          "goesBy": "Gregory",
+          "ageOccupation": "54, orthodontist (owns his practice)",
+          "maritalStatus": "Married, two grown children",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "GregHartmannDDS"
+        },
+        {
+          "legalName": "Lena Marie Hartmann",
+          "goesBy": "Lena",
+          "ageOccupation": "51, interior designer",
+          "maritalStatus": "Married, two grown children",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "LenaHartmannDesign"
+        }
+      ],
+      "confidential": {
+        "motivation": "Empty nesters, downsizing and retiring to the coast",
+        "negotiationNotes": "- Lowest price: $730,000 unfurnished.\n- Under $700,000: they decline.\n- $700,000 to $729,999: they counter at $745,000.\n- $730,000 or more: they accept.\n- Furniture: they would like $35,000 but will take $25,000. They will not sell the furniture piece by piece.\n- A furnished offer at $780,000 or more is accepted on the spot.\n- Flexible on dates. They will give a buyer up to 90 days to settle.\n- No credit for the garage walls or the fence. They say the price allows for it.",
+        "relayLines": "- \"The sellers aren't in a rush, so they'll wait for the right offer rather than take a low one.\"\n- \"Everything you see can stay. Lena designed the interior herself, and she'd love it to go to someone who'll keep it.\"\n- \"They've countered at $745,000. They're flexible on the settlement date if that helps you.\"",
+        "commissionTerms": "5% total, 2.5% to each side"
+      }
+    },
+    {
+      "key": "hayes",
+      "kind": "company",
+      "displayName": "Victor Hayes",
+      "legalNameOnForms": "Hayes Property Holdings LLC",
+      "roles": [
+        "landlord"
+      ],
+      "tags": [],
+      "bestContact": "Text message, any time. Replies within a few hours.",
+      "emergencyContact": "Same contact, 24 hours a day",
+      "businessAddress": "1300 Market Street, Suite 210, Harrisburg, PA 17101",
+      "currentlyOccupying": null,
+      "mailingAddressAfter": null,
+      "reason": null,
+      "timeline": "Lease starts Nov 1, 2026",
+      "whoDecides": null,
+      "background": "Victor is 48, a former contractor who now runs Hayes Property Holdings LLC, which owns four rental homes. He answers fast, fixes things properly, and is strict about paperwork and rent dates. He leases rather than sells, so his details go on a lease, not the Agreement of Sale.\n\nOther rentals: Three more homes in Dauphin County",
+      "notes": null,
+      "people": [
+        {
+          "legalName": "Victor Allen Hayes",
+          "goesBy": "Victor",
+          "ageOccupation": "48, former general contractor",
+          "maritalStatus": null,
+          "signs": true,
+          "roleLabel": "Managing member",
+          "discord": "VHayesRentals"
+        }
+      ],
+      "confidential": {
+        "motivation": null,
+        "negotiationNotes": "- Will drop to $1,850 per month for an 18-month lease. Will not go lower.\n- Will waive the application fee for a strong applicant who signs within a week.\n- No exceptions on the income requirement without a co-signer.",
+        "relayLines": "- \"The landlord asks for first month's rent and a one-month security deposit at signing, so $3,800 in total.\"\n- \"If you're open to an 18-month lease, he's willing to bring the rent down to $1,850.\"\n- \"He'll need proof of income of about three times the rent, or a co-signer.\"",
+        "commissionTerms": null
+      }
+    },
+    {
+      "key": "brennan",
+      "kind": "estate",
+      "displayName": "Estate of Harold Brennan",
+      "legalNameOnForms": "Margaret Brennan-Cole, Executor of the Estate of Harold T. Brennan",
+      "roles": [
+        "seller"
+      ],
+      "tags": [
+        "Spare seller"
+      ],
+      "bestContact": "Written messages. She replies in the evenings after her shifts.",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": "No. The house is vacant.",
+      "mailingAddressAfter": "48 Willow Bend Court, Lancaster, PA 17601",
+      "reason": "Settling her father's estate",
+      "timeline": "Settle in 60 to 90 days",
+      "whoDecides": "Kevin, for any price below 95% of asking",
+      "background": "Use this seller for any older home, ideally one built before 1978. Harold Brennan, a retired postal worker, owned the house from 1974 until he died in March 2026, and he left it to his two children. His daughter Margaret, 52, is the executor. She is a nurse in Lancaster who never lived in the house, so she knows little about its history. She is practical and wants the estate settled without fuss. Her brother Kevin has to agree to any price below 95% of asking, which slows her replies by about a day.\n\nOwner who died: Harold Thomas Brennan, died March 2026\n\nHeirs: Margaret Brennan-Cole and her brother, Kevin Brennan (49, Pittsburgh)\n\nProof she can sell: Short certificate from the Dauphin County Register of Wills, estate file 2226-0418",
+      "notes": "Property\nStreet address, town / area, ZIP, parcel ID: You choose\nCounty: Dauphin\nType, bedrooms, bathrooms, size: Fill in from the house you list\nYear built: Ideally before 1978\nCondition: Dated but sound. Original kitchen and bathroom.\nOccupancy: Vacant. The estate keeps the utilities on for showings.\nContents: Harold's furniture is still inside\n\nListing terms\nListing agreement: Six months from the listing date\nAsking price: Set per listing\nCommission: 5% total, 2.5% to each side\nEarnest money she expects: About 3% of the price\nSettlement date: 60 to 90 days after acceptance\nPossession: At settlement\nIncluded: All appliances. The furniture can stay if the buyer wants it.\nExcluded: Family photos and personal papers\nLeased items: None known\nRealty transfer tax: Split equally\nTitle company: Red Rose Title Agency\nAttorney: Thomas Albright, Albright & Rhee Law (estate attorney)\nHome warranty: No\nSale terms: As-is\nFinancing she accepts: Any\nOffer replies: Same evening at 95% of asking or more. About a day below that, while Kevin reviews.\nShowings: Any time with an hour's notice. Lockbox on the side door. House is vacant.\nYard sign and photos: Both allowed\n\nDisclosures\n- Executors who never lived in the home are generally exempt from the full Seller's Property Disclosure Statement. She shares what she knows.\n- She knows of no major problems but cannot vouch for the house's history.\n- Built before 1978, so the lead paint disclosure is required. No reports are available.",
+      "people": [
+        {
+          "legalName": "Margaret Ann Brennan-Cole",
+          "goesBy": null,
+          "ageOccupation": "52, registered nurse",
+          "maritalStatus": null,
+          "signs": true,
+          "roleLabel": "Executor",
+          "discord": "MBrennanCole"
+        }
+      ],
+      "confidential": {
+        "motivation": "Settling her father's estate",
+        "negotiationNotes": "- Lowest price: about 93% of asking.\n- At 95% of asking or more: she accepts the same evening.\n- Between 93% and 95%: she accepts after checking with Kevin, about a day later.\n- Under 93%: she counters at 97% of asking.\n- Accepts mortgage, inspection, appraisal and termite contingencies. Will not accept a contingency on the sale of the buyer's home.\n- No repairs and no credits.",
+        "relayLines": "- \"The home is being sold by the estate. The executor never lived there, so she can only share what she knows about its history. An inspection is a good idea.\"\n- \"She needs to check any offer with her brother, so expect a reply within a day.\"\n- \"The estate is happy to leave the furniture if you'd like to keep any of it.\"",
+        "commissionTerms": "5% total, 2.5% to each side"
+      }
+    },
+    {
+      "key": "whitaker",
+      "kind": "couple",
+      "displayName": "Jordan and Alexis Whitaker",
+      "legalNameOnForms": "Jordan Michael Whitaker and Alexis Renee Whitaker",
+      "roles": [
+        "seller"
+      ],
+      "tags": [
+        "Spare seller"
+      ],
+      "bestContact": "Text message. Evenings and weekends work best.",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": "Yes, until settlement or the end of a rent-back",
+      "mailingAddressAfter": "The listed property until they move",
+      "reason": "Upgrading to a bigger home before the baby arrives",
+      "timeline": "Settle in 30 to 45 days",
+      "whoDecides": "Both. Alexis handles scheduling and Jordan answers questions about the house.",
+      "background": "Use this couple for any starter home, townhouse or condo. Jordan is 31, an HVAC technician. Alexis is 30, a dental hygienist. They bought their first home in 2021, have a baby due in April 2027 and need more space, so they are buying a bigger home at the same time. Their main worry is timing: they cannot be left without a place to live. They are friendly and easy to work with, and Jordan kept every maintenance record.",
+      "notes": "Property\nStreet address, town / area, ZIP, parcel ID: You choose\nCounty: Dauphin\nType, bedrooms, bathrooms, size: Fill in from the house you list\nCondition: Move-in ready, well maintained\nHeating and cooling: Serviced every year by Jordan. Receipts available.\nRecent updates: New garage door opener in 2024. Fresh interior paint in 2025.\n\nListing terms\nListing agreement: Three months from the listing date\nAsking price: Set per listing\nCommission: 5% total, 2.5% to each side\nEarnest money they expect: About 3% of the price\nSettlement date: 30 to 45 days after acceptance, matched to their own purchase\nPossession: At settlement, or up to 30 days later with a rent-back\nRent-back: They would like to stay up to 30 days after settlement, paying the buyer $50 a day\nIncluded: All appliances and window treatments\nExcluded: The backyard swing set and the TV mounts\nLeased items: None\nRealty transfer tax: Split equally\nTitle company: Keystone Abstract & Title Co.\nAttorney: None\nHome warranty: Will offer a one-year warranty\nFinancing they accept: Any, with a pre-approval letter\nOffer replies: Same evening\nShowings: One hour's notice, evenings and weekends. Their golden retriever, Maple, is crated in the garage during showings.\nYard sign and photos: Both allowed\n\nDisclosures\n- Small roof leak over the garage, repaired in 2025 with a two-year workmanship warranty.\n- No other known problems. Adjust to fit the house you list.\n- Lead paint disclosure only if the house was built before 1978.",
+      "people": [
+        {
+          "legalName": "Jordan Michael Whitaker",
+          "goesBy": "Jordan",
+          "ageOccupation": "31, HVAC technician",
+          "maritalStatus": "Married, first baby due April 2027",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "JWhitaker_HVAC"
+        },
+        {
+          "legalName": "Alexis Renee Whitaker",
+          "goesBy": "Alexis",
+          "ageOccupation": "30, dental hygienist",
+          "maritalStatus": "Married, first baby due April 2027",
+          "signs": true,
+          "roleLabel": null,
+          "discord": "AlexisW"
+        }
+      ],
+      "confidential": {
+        "motivation": "Upgrading to a bigger home before the baby arrives",
+        "negotiationNotes": "- Lowest price: about 96% of asking.\n- Under 96%: they counter halfway between the offer and the asking price.\n- Will not accept a settlement date more than 45 days out.\n- A buyer who agrees to the rent-back gets priority, even at a slightly lower price.\n- Will fix small inspection items themselves rather than give a credit, since Jordan does the work.",
+        "relayLines": "- \"The sellers are buying their next home at the same time, so they'd like to rent back for up to 30 days after settlement. They'll pay you $50 a day.\"\n- \"They've countered halfway between your offer and the asking price.\"\n- \"The seller is an HVAC technician and has kept the service records for the furnace and AC. I can get you copies.\"",
+        "commissionTerms": "5% total, 2.5% to each side"
+      }
+    },
+    {
+      "key": "marchetti",
+      "kind": "company",
+      "displayName": "Dee Marchetti",
+      "legalNameOnForms": "Dee's Diner LLC",
+      "roles": [
+        "business_owner"
+      ],
+      "tags": [
+        "Spare seller"
+      ],
+      "bestContact": "Phone, after 3 pm when the diner closes",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": null,
+      "mailingAddressAfter": "1420 Gulf Breeze Way, Sarasota, FL 34231",
+      "reason": "Retiring after 31 years",
+      "timeline": "About 60 days after acceptance",
+      "whoDecides": null,
+      "background": "Use this seller for any restaurant, diner or café. Dolores \"Dee\" Marchetti is 66 and opened Dee's Diner in 1995. She has worked the counter almost every morning since. She is retiring to Florida to be near her sister. Dee is warm, proud of the place and protective of her staff. She cares who buys it as much as what they pay, and will not let anyone tell her staff before she does.",
+      "notes": "Business\nBusiness name: Dee's Diner\nType: Restaurant / diner, breakfast and lunch\nStreet address, town / area, ZIP, parcel ID: You choose\nOpened: 1995\nSeats: 60\nOpening hours: Daily, 6 am to 3 pm\nEmployees: 9: two cooks, five servers, a dishwasher and a shift manager\nWhat is being sold: Business and building (she owns both)\nBuilding: About 2,400 sq ft, with a 20-space parking lot\nAlcohol: None. No liquor licence.\n\nFinancials\nYearly sales: $780,000\nYearly owner profit: $165,000\nProperty taxes: About $7,400 per year\nInventory on hand: About $10,000 of food and supplies\nTrend: Steady. Sales dipped in 2020 and had fully recovered by 2022.\n\nListing terms\nAsking price: $595,000\nPrice split: Building $300,000 · Equipment $85,000 · Inventory $10,000 · Goodwill and name $200,000\nCommission: 8%\nEarnest money she expects: $20,000\nOwner financing: Yes, up to 20% of the price, over five years at 7%\nSettlement date: About 60 days after acceptance\nIncluded: All kitchen equipment, tables, chairs and booths, the name and sign, her recipes, phone number, website and social pages\nExcluded: Framed family photos on the wall and the first dollar the diner ever earned\nLicenses: Health permit must be reissued to the new owner. No liquor licence.\nTraining: 30 days, mornings, including all her recipes\nNon-compete: Will not open a restaurant within 10 miles for 5 years\nStaff: She wants the buyer to offer jobs to her current staff\nTitle company: Keystone Abstract & Title Co.\nAttorney: Carla Benedetti, Benedetti Law\nConfidentiality: Yes. Staff must not find out until a deal is signed.\nShowings: After 3 pm only, when the diner is closed\n\nDisclosures\n- Walk-in cooler compressor dates from 2015 and is ageing.\n- Grill hood fire suppression system passed inspection in 2026.\n- Roof from 2012.\n- Parking lot needs resealing.",
+      "people": [
+        {
+          "legalName": "Dolores Ann Marchetti",
+          "goesBy": "Dee",
+          "ageOccupation": "66",
+          "maritalStatus": null,
+          "signs": true,
+          "roleLabel": "Sole member of the LLC",
+          "discord": "DeeMarchetti"
+        }
+      ],
+      "confidential": {
+        "motivation": "Retiring after 31 years",
+        "negotiationNotes": "- Lowest price: $560,000.\n- Under $530,000: she declines.\n- $530,000 to $559,999: she counters at $575,000.\n- $560,000 or more: she accepts, as long as the buyer will offer jobs to her staff.\n- Will knock off $5,000 if the buyer replaces the cooler compressor themselves.\n- Prefers a buyer who plans to keep it a diner over the highest offer.",
+        "relayLines": "- \"The owner would like to keep this confidential, so please don't mention the sale to the staff.\"\n- \"She's willing to finance up to 20% of the price herself, over five years.\"\n- \"She'll spend 30 days training you, recipes included.\"",
+        "commissionTerms": "8%"
+      }
+    },
+    {
+      "key": "malhotra",
+      "kind": "company",
+      "displayName": "Raj Malhotra",
+      "legalNameOnForms": "Malhotra Petroleum & Retail LLC",
+      "roles": [
+        "business_owner"
+      ],
+      "tags": [
+        "Spare seller"
+      ],
+      "bestContact": "Written messages, any time. Replies within the hour.",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": null,
+      "mailingAddressAfter": "2280 Linglestown Road, Harrisburg, PA 17110",
+      "reason": "Moving to run the family hotel in Pittsburgh",
+      "timeline": "About 90 days after acceptance, to allow for licences and the environmental review",
+      "whoDecides": null,
+      "background": "Use this seller for any convenience store or gas station. Rajesh \"Raj\" Malhotra is 54. He bought the station in 2009 and rebuilt it into a busy corner store. His family owns a hotel in Pittsburgh, and his brother needs him there full-time. Raj is sharp, numbers-first and polite. He knows his margins to the cent and expects buyers to come with financing ready.",
+      "notes": "Business\nBusiness name: Malhotra's Corner Mart & Fuel\nType: Convenience store and fuel\nStreet address, town / area, ZIP, parcel ID: You choose\nOwned since: 2009\nOpening hours: Daily, 5 am to 11 pm\nEmployees: 7 cashiers and a store manager\nWhat is being sold: Business and building (he owns both)\nBuilding: About 3,000 sq ft store on 1.1 acres\nFuel: 4 pumps, 8 nozzles. Three double-walled underground tanks installed 2008, registered with the state and tested every year.\nFuel supplier: Contract with Susquehanna Fuel Supply, 4 years left. The buyer takes it over.\n\nFinancials\nYearly sales: $2,400,000 (mostly fuel, which has thin margins)\nYearly owner profit: $210,000\nProperty taxes: About $14,200 per year\nInventory on hand: About $60,000 at cost\nTrend: Store sales up 6% a year since a 2021 remodel\n\nListing terms\nAsking price: $1,150,000\nPrice split: Building, land and fuel system $750,000 · Equipment $90,000 · Inventory $60,000 · Goodwill and name $250,000\nCommission: 6%\nEarnest money he expects: $40,000\nOwner financing: No\nSettlement date: About 90 days after acceptance, to allow for licences and the environmental review\nIncluded: Store fixtures, coolers, shelving, point-of-sale system, security cameras, canopy and pumps, the name and sign\nExcluded: Cash in the registers and safe, his personal office furniture\nLicenses: Lottery and tobacco licences cannot be transferred. The buyer must apply for new ones. Fuel tank registration moves to the new owner.\nTraining: 2 weeks, including the ordering systems and fuel deliveries\nNon-compete: Will not open a store or station within 5 miles for 5 years\nStaff: Buyer may offer jobs to current staff. The store manager wants to stay.\nTitle company: Capital Area Settlement Services\nAttorney: Priya Natarajan, Natarajan & Kessler LLP\nConfidentiality: Yes. Staff are not to be told.\nShowings: Weekday mornings. Buyers visit as customers first, then meet Raj in the back office.\n\nDisclosures\n- Underground fuel tanks from 2008, double-walled, passed every yearly test.\n- A small fuel spill in 2017 was cleaned up and closed by the state.\n- One pump dispenser replaced in 2024. Canopy lights switched to LED in 2021.\n- An environmental review of the site is strongly recommended, as with any gas station.",
+      "people": [
+        {
+          "legalName": "Rajesh Kumar Malhotra",
+          "goesBy": "Raj",
+          "ageOccupation": "54",
+          "maritalStatus": null,
+          "signs": true,
+          "roleLabel": "Managing member",
+          "discord": "RajMalhotra"
+        }
+      ],
+      "confidential": {
+        "motivation": "Moving to run the family hotel in Pittsburgh",
+        "negotiationNotes": "- Lowest price: $1,080,000.\n- Under $1,000,000: he declines without countering.\n- $1,000,000 to $1,079,999: he counters at $1,110,000.\n- $1,080,000 or more with proof of financing: he accepts.\n- Will not finance any of the price.\n- A buyer with a bank pre-approval and a short environmental review period gets priority.",
+        "relayLines": "- \"The owner will want to see proof of financing before he shares the full financial records.\"\n- \"The lottery and tobacco licences don't transfer, so you'd need to apply for your own. He'll help you through it.\"\n- \"He recommends an environmental review of the site, which is standard for any gas station.\"",
+        "commissionTerms": "6%"
+      }
+    },
+    {
+      "key": "boyd",
+      "kind": "company",
+      "displayName": "Kendra Boyd",
+      "legalNameOnForms": "Boyd & Co. Boutique LLC",
+      "roles": [
+        "business_owner"
+      ],
+      "tags": [
+        "Spare seller"
+      ],
+      "bestContact": "Text, any time",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": null,
+      "mailingAddressAfter": "3105 Selwyn Avenue, Charlotte, NC 28209",
+      "reason": "Family relocating for her husband's job",
+      "timeline": "45 to 60 days after acceptance, before her move in March",
+      "whoDecides": null,
+      "background": "Use this seller for any retail shop: clothing, gifts, tools, electronics or similar. Kendra Boyd is 38 and opened Boyd & Co., a clothing boutique, in 2018. Her husband has taken a job in Charlotte, North Carolina, and the family moves in the spring. Kendra is upbeat, organised and good with social media, which drives a fifth of her sales. She rents the shop rather than owning the building.",
+      "notes": "Business\nBusiness name: Boyd & Co.\nType: Retail shop (clothing boutique)\nStreet address, town / area, ZIP: You choose\nOpened: 2018\nOpening hours: Tuesday to Saturday, 10 am to 7 pm\nEmployees: 3 part-time sales assistants\nWhat is being sold: Business only. The space is leased.\nShop size: About 1,600 sq ft\nLandlord: Market Square Properties LLC\nRent: $3,200 per month\nLease: Runs to December 2029. Can be transferred to a buyer with the landlord's approval.\n\nFinancials\nYearly sales: $420,000, about 20% of it online\nYearly owner profit: $88,000\nInventory on hand: About $55,000 at cost\nTrend: Growing about 8% a year. January and February are slow.\n\nListing terms\nAsking price: $165,000\nPrice split: Fixtures and equipment $25,000 · Inventory $55,000 · Goodwill and name $85,000\nCommission: 10%\nEarnest money she expects: $8,000\nOwner financing: Yes, up to 25% of the price, over three years at 6%\nSettlement date: 45 to 60 days after acceptance, before her move in March\nIncluded: Display fixtures, mannequins, point-of-sale system, the name and logo, website and online store, Instagram account (12,000 followers), supplier accounts\nExcluded: Her personal sewing machine and design sketches\nLicenses: No special licences. Local business registration must be updated.\nTraining: 2 weeks, plus introductions to every supplier\nNon-compete: Will not open a clothing shop within 25 miles for 3 years\nStaff: Buyer may offer jobs to the three assistants\nTitle company: Keystone Abstract & Title Co.\nAttorney: None\nConfidentiality: Light. Staff know she is moving, but not the price.\nShowings: Any open hour. Kendra introduces buyers as \"a friend from the business association\".\n\nDisclosures\n- The lease needs the landlord's approval to transfer. The landlord has said yes in principle.\n- Two main suppliers raised prices 5% this year.\n- Sales drop in January and February every year.",
+      "people": [
+        {
+          "legalName": "Kendra Michelle Boyd",
+          "goesBy": "Kendra",
+          "ageOccupation": "38",
+          "maritalStatus": null,
+          "signs": true,
+          "roleLabel": "Sole member of the LLC",
+          "discord": "KendraBoyd"
+        }
+      ],
+      "confidential": {
+        "motivation": "Family relocating for her husband's job",
+        "negotiationNotes": "- Lowest price: $150,000.\n- Under $140,000: she counters at $158,000.\n- $140,000 to $149,999: she counters at $155,000.\n- $150,000 or more: she accepts.\n- Will drop the inventory price by up to $5,000 for a quick settlement before her move.",
+        "relayLines": "- \"The shop is leased, so the landlord will need to approve the transfer. They've already said yes in principle.\"\n- \"She'll finance up to a quarter of the price herself.\"\n- \"The Instagram account and online store come with the business. They bring in about a fifth of the sales.\"",
+        "commissionTerms": "10%"
+      }
+    },
+    {
+      "key": "delgado",
+      "kind": "company",
+      "displayName": "Frank Delgado",
+      "legalNameOnForms": "Delgado Automotive Inc.",
+      "roles": [
+        "business_owner"
+      ],
+      "tags": [
+        "Spare seller"
+      ],
+      "bestContact": "Phone call, before 7:30 am or after 5:30 pm",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": null,
+      "mailingAddressAfter": "47 Oak Crest Drive, Harrisburg, PA 17112",
+      "reason": "Retiring, with no family taking over",
+      "timeline": "60 to 90 days after acceptance",
+      "whoDecides": null,
+      "background": "Use this seller for any mechanic or auto repair garage. Frank Delgado is 61 and opened Delgado Auto Repair in 1998 after twenty years working for a dealership. His two sons chose other careers, so there is nobody to hand it to. Frank is blunt, honest and old-school. He will tell a buyer exactly what is wrong with the place and expects the same straight talk back.",
+      "notes": "Business\nBusiness name: Delgado Auto Repair\nType: Auto repair garage\nStreet address, town / area, ZIP, parcel ID: You choose\nOpened: 1998\nOpening hours: Monday to Friday, 7:30 am to 5:30 pm. Saturday, 8 am to noon.\nEmployees: 3 mechanics and an office manager\nWhat is being sold: Business and building (he owns both)\nBuilding: 4-bay garage with office and waiting room, about 3,800 sq ft on 0.8 acres\nState inspections: Licensed state inspection and emissions station. Two mechanics hold inspector certificates and plan to stay.\n\nFinancials\nYearly sales: $890,000\nYearly owner profit: $190,000\nProperty taxes: About $8,900 per year\nInventory on hand: About $15,000 of parts and fluids\nTrend: Steady, with a loyal base of repeat customers and three local fleet contracts\n\nListing terms\nAsking price: $690,000\nPrice split: Building and land $380,000 · Equipment $120,000 · Inventory $15,000 · Goodwill and name $175,000\nCommission: 8%\nEarnest money he expects: $25,000\nOwner financing: Yes, up to 15% of the price, over five years at 7%\nSettlement date: 60 to 90 days after acceptance\nIncluded: 4 vehicle lifts, tyre machine and balancer, diagnostic computers, air compressor, hand and power tools, office furniture, the name and sign, phone number, customer records, fleet contracts\nExcluded: Frank's personal toolbox and his 1969 project car in bay 4\nLicenses: The state inspection station licence must be applied for by the new owner. Inspector certificates belong to the mechanics, not the business.\nTraining: 4 weeks, including introductions to fleet customers and parts suppliers\nNon-compete: Will not open or work at a repair shop within 15 miles for 5 years\nStaff: Buyer will keep all current staff\nTitle company: Capital Area Settlement Services\nAttorney: None\nConfidentiality: Yes, until his mechanics have been told by Frank himself\nShowings: Saturday afternoons, after the shop closes at noon\n\nDisclosures\n- One lift needs a new hydraulic cylinder, about $3,500.\n- Used-oil storage tank and parts washer on site, handled by a licensed disposal company.\n- An environmental review in 2019 found no problems. A new one is recommended.\n- Roof replaced 2016. Only the office and waiting room are air conditioned.",
+      "people": [
+        {
+          "legalName": "Francisco \"Frank\" Delgado",
+          "goesBy": "Frank",
+          "ageOccupation": "61",
+          "maritalStatus": null,
+          "signs": true,
+          "roleLabel": "President and sole shareholder",
+          "discord": "FrankDelgado"
+        }
+      ],
+      "confidential": {
+        "motivation": "Retiring, with no family taking over",
+        "negotiationNotes": "- Lowest price: $650,000.\n- Under $620,000: he declines and tells the buyer why.\n- $620,000 to $649,999: he counters at $670,000.\n- $650,000 or more: he accepts.\n- Will fix the lift himself before settlement rather than give a credit.\n- Will only sell to a buyer who keeps his three mechanics.",
+        "relayLines": "- \"The owner wants to tell his mechanics himself, so please keep this between us for now.\"\n- \"The state inspection licence has to be applied for by the new owner, but two of the mechanics already hold inspector certificates and plan to stay.\"\n- \"He'll fix the lift with the worn cylinder before settlement.\"",
+        "commissionTerms": "8%"
+      }
+    },
+    {
+      "key": "lindqvist",
+      "kind": "company",
+      "displayName": "Gary Lindqvist",
+      "legalNameOnForms": "Common Cents Laundry LLC",
+      "roles": [
+        "business_owner"
+      ],
+      "tags": [],
+      "bestContact": "Messages in the morning. He checks the store at 7 am every day.",
+      "emergencyContact": null,
+      "businessAddress": null,
+      "currentlyOccupying": null,
+      "mailingAddressAfter": "9120 East Sunridge Drive, Mesa, AZ 85207",
+      "reason": "Retiring",
+      "timeline": "30 to 60 days after acceptance",
+      "whoDecides": null,
+      "background": "Gary Lindqvist is 63 and has run Common Cents Laundromat since 2009. It is a self-service laundromat with a wash, dry and fold service, in a leased unit next to Sammy's Pizzeria in Fairview. He wants to retire and spend winters with his daughter in Arizona. Gary is easygoing and plain-spoken, knows every machine by its quirks, and keeps tidy books. His one part-time attendant, Rosa, runs the wash-and-fold counter, and he wants her kept on.",
+      "notes": null,
+      "people": [
+        {
+          "legalName": "Gary Robert Lindqvist",
+          "goesBy": "Gary",
+          "ageOccupation": "63",
+          "maritalStatus": null,
+          "signs": true,
+          "roleLabel": "Sole member of the LLC",
+          "discord": "GaryLindqvist"
+        }
+      ],
+      "confidential": {
+        "motivation": "Retiring",
+        "negotiationNotes": "- Lowest price: $135,000.\n- Under $125,000: he declines.\n- $125,000 to $134,999: he counters at $142,000.\n- $135,000 or more: he accepts.\n- He will fix the washer seal before settlement at his own cost if asked.\n- A buyer who promises to keep Rosa gets the benefit of the doubt on a close offer.",
+        "relayLines": "- \"The machines are on card readers as well as coins, so there's very little cash handling.\"\n- \"Wash-and-fold brings in about a quarter of the sales, and the customer list comes with the business.\"\n- \"He'll finance up to 20% of the price himself over three years.\"",
+        "commissionTerms": "10%"
+      }
+    }
+  ],
+  "listings": [
+    {
+      "key": "porter",
+      "type": "house",
+      "purpose": "sale",
+      "status": "active",
+      "addressLine": "7063 Franklin Court",
+      "postal": "706",
+      "postalCode": null,
+      "county": "Dauphin",
+      "price": 365000,
+      "beds": 3,
+      "baths": 2,
+      "sqft": 1850,
+      "lot": "0.22 acres",
+      "yearBuilt": 1994,
+      "garage": "Single-car garage",
+      "description": "Single-family detached dwelling with home office, formal dining room and laundry room. Rooms: Home office, formal dining room, living room, laundry room.",
+      "showingInstructions": "24 hours’ notice. Lockbox on the front door. Seller leaves during showings. Her cat, Biscuit, stays in the laundry room.",
+      "availableFrom": null,
+      "listedOn": "2026-10-14",
+      "property": {
+        "propertyStyle": "Single-family detached, two storeys",
+        "otherRooms": "Home office, formal dining room, living room, laundry room",
+        "parking": "Single-car attached garage, driveway for two more cars",
+        "basement": "Full, unfinished, with sump pump",
+        "heating": "Natural gas forced air, installed 2019",
+        "cooling": "Central air, installed 2019",
+        "waterHeater": "50-gallon gas, installed 2014",
+        "waterSewer": "Public water, public sewer",
+        "electrical": "200-amp service",
+        "roof": "Asphalt shingle, replaced 2017",
+        "windows": null,
+        "appliancesProvided": null,
+        "furnished": null,
+        "taxes": "About $6,200 per year",
+        "hoa": "None",
+        "utilities": "About $310 per month",
+        "legalDescription": "Single-family detached dwelling with home office, formal dining room and laundry room",
+        "zoning": "R-2 Residential",
+        "occupancy": "Owner-occupied"
+      },
+      "ownership": {
+        "vesting": "Sole owner (surviving spouse)",
+        "whoSigns": "Elaine alone",
+        "boughtOn": "June 2000",
+        "boughtFor": 162000,
+        "ownedSince": "June 2000",
+        "deedReference": "Deed Book 3381, Page 204",
+        "mortgage": "None (paid off 2022)",
+        "liens": "None known"
+      },
+      "terms": {
+        "agreementStart": "2026-10-14",
+        "agreementEnd": "2027-04-14",
+        "earnestMoneyExpected": "At least $10,000",
+        "targetSettlement": "Ideally Dec 12, 2026. Anywhere from 45 to 60 days after acceptance works.",
+        "possession": "At settlement",
+        "included": "Refrigerator, range, dishwasher, washer, dryer, all window treatments, garden shed",
+        "excluded": "Dining room chandelier (her mother's). She will put up a standard fixture in its place.",
+        "leasedItems": "None",
+        "transferTax": "Split equally",
+        "titleCompany": "Keystone Abstract & Title Co.",
+        "attorney": "None",
+        "homeWarranty": "Will add a one-year warranty if a buyer asks",
+        "financingAccepted": "Conventional, FHA, VA or cash",
+        "offerReplies": "Within 24 hours",
+        "asIs": false,
+        "yardSign": true,
+        "photosAllowed": true,
+        "lockbox": true,
+        "showingNotice": "24 hours' notice",
+        "furnishedPrice": null
+      },
+      "lease": null,
+      "business": null,
+      "disclosures": [
+        {
+          "item": "roof",
+          "answer": "no",
+          "detail": "Asphalt shingle, replaced 2017"
+        },
+        {
+          "item": "basement_water",
+          "answer": "yes",
+          "detail": "Water after heavy rain in 2021. Sump pump installed 2021, dry since."
+        },
+        {
+          "item": "foundation",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "heating",
+          "answer": "no",
+          "detail": "Natural gas forced air, installed 2019"
+        },
+        {
+          "item": "cooling",
+          "answer": "no",
+          "detail": "Central air, installed 2019"
+        },
+        {
+          "item": "water_heater",
+          "answer": "no",
+          "detail": "50-gallon gas, installed 2014"
+        },
+        {
+          "item": "plumbing",
+          "answer": "no",
+          "detail": "Copper and PEX"
+        },
+        {
+          "item": "electrical",
+          "answer": "no",
+          "detail": "200-amp service"
+        },
+        {
+          "item": "water_sewer",
+          "answer": "no",
+          "detail": "Public water and public sewer"
+        },
+        {
+          "item": "wood_insects",
+          "answer": "no",
+          "detail": "No known infestation"
+        },
+        {
+          "item": "radon",
+          "answer": "unknown",
+          "detail": "Never tested"
+        },
+        {
+          "item": "lead_paint",
+          "answer": "na",
+          "detail": "Built 1994"
+        },
+        {
+          "item": "fuel_tanks",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "mold",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "pool_spa",
+          "answer": "na",
+          "detail": "No pool"
+        },
+        {
+          "item": "windows_doors",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "appliances",
+          "answer": "no",
+          "detail": "All included appliances in working order"
+        },
+        {
+          "item": "hoa",
+          "answer": "na",
+          "detail": "No HOA"
+        },
+        {
+          "item": "liens_violations",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "flooding",
+          "answer": "no",
+          "detail": null
+        }
+      ],
+      "confidential": {
+        "bottomLine": 350000,
+        "negotiationRules": "- Lowest price: $350,000.\n- Under $340,000: she declines politely and does not counter.\n- $340,000 to $349,999: she counters at $358,000.\n- $350,000 or more with clean terms: she accepts.\n- Accepts mortgage, inspection, appraisal, termite and radon contingencies. Will not accept a contingency on the sale of the buyer's home.\n- Prefers a repair credit of up to $3,000 over doing repairs herself.\n- An offer with a pre-approval letter gets her attention first.",
+        "relayLines": "- \"The seller has countered at $358,000. She's flexible on the settlement date if that helps you.\"\n- \"She'd prefer to give a repair credit rather than have work done before settlement.\"\n- \"She's asked me to pass along her planting notes for the garden. She'd like the new owners to have them.\"",
+        "commissionTerms": "5% total, 2.5% to each side",
+        "yearlySales": null,
+        "yearlyProfit": null,
+        "inventoryValue": null,
+        "disclosureNotes": "- Water heater is from 2014.\n- Basement took on water after heavy rain in 2021. A sump pump was installed that year and it has been dry since.\n- Roof replaced in 2017. Furnace and central air replaced in 2019.\n- Lead paint disclosure not needed, built 1994.\n\nSeller will put up a standard light fixture in place of the dining room chandelier, which she is keeping.",
+        "furnitureLowest": null
+      },
+      "photosDir": null,
+      "sale": null
+    },
+    {
+      "key": "kowalski",
+      "type": "house",
+      "purpose": "sale",
+      "status": "active",
+      "addressLine": "8095 Lakeway Street",
+      "postal": "809",
+      "postalCode": null,
+      "county": "Dauphin",
+      "price": 189000,
+      "beds": 1,
+      "baths": 1,
+      "sqft": 920,
+      "lot": "0.4 acres",
+      "yearBuilt": 1956,
+      "garage": "Detached two-car garage",
+      "description": "Bungalow with open kitchen and lounge, covered front porch and long private driveway. Sold as-is. Rooms: Open kitchen and lounge, covered front porch.",
+      "showingInstructions": "Two hours’ notice. No lockbox. Seller lets buyers in and waits on the porch.",
+      "availableFrom": null,
+      "listedOn": "2026-10-14",
+      "property": {
+        "propertyStyle": "Bungalow, one storey",
+        "otherRooms": "Open kitchen and lounge, covered front porch",
+        "parking": "Detached two-car garage, long private driveway",
+        "basement": "None, slab foundation",
+        "heating": "Oil-fired furnace. Indoor oil tank in the utility room, installed 2015.",
+        "cooling": "None. Window units only.",
+        "waterHeater": "40-gallon electric, installed 2018",
+        "waterSewer": "Public water, public sewer",
+        "electrical": "100-amp service",
+        "roof": "Asphalt shingle, from 2009",
+        "windows": "Original wood",
+        "appliancesProvided": null,
+        "furnished": null,
+        "taxes": "About $3,300 per year",
+        "hoa": "None",
+        "utilities": "About $260 per month, including heating oil",
+        "legalDescription": "Bungalow with open kitchen and lounge, covered front porch and long private driveway. Sold as-is.",
+        "zoning": "R-1 Residential",
+        "occupancy": "Owner-occupied"
+      },
+      "ownership": {
+        "vesting": "Sole owner (surviving spouse)",
+        "whoSigns": "Ray alone",
+        "boughtOn": "April 1981",
+        "boughtFor": 38500,
+        "ownedSince": "April 1981",
+        "deedReference": "Deed Book 1102, Page 87",
+        "mortgage": "None (paid off 2001)",
+        "liens": "None known"
+      },
+      "terms": {
+        "agreementStart": "2026-10-14",
+        "agreementEnd": "2027-01-14",
+        "earnestMoneyExpected": "$5,000",
+        "targetSettlement": "Within 30 days, ideally by Nov 20, 2026",
+        "possession": "At settlement",
+        "included": "Refrigerator, range, washer, the workbench and shelving in the garage",
+        "excluded": "His recliner and the porch rocking chairs",
+        "leasedItems": "None",
+        "transferTax": "Split equally",
+        "titleCompany": "Capital Area Settlement Services",
+        "attorney": "None",
+        "homeWarranty": "No",
+        "financingAccepted": "Cash or conventional preferred. Wary of FHA, because the appraiser may ask for repairs he won't make.",
+        "offerReplies": "Same day, by phone",
+        "asIs": true,
+        "yardSign": true,
+        "photosAllowed": true,
+        "lockbox": false,
+        "showingNotice": "Two hours' notice",
+        "furnishedPrice": null
+      },
+      "lease": null,
+      "business": null,
+      "disclosures": [
+        {
+          "item": "roof",
+          "answer": "no",
+          "detail": "Asphalt shingle, from 2009. Nearing the end of its life."
+        },
+        {
+          "item": "basement_water",
+          "answer": "na",
+          "detail": "No basement, slab foundation"
+        },
+        {
+          "item": "foundation",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "heating",
+          "answer": "no",
+          "detail": "Oil-fired furnace"
+        },
+        {
+          "item": "cooling",
+          "answer": "na",
+          "detail": "No central air. Window units only."
+        },
+        {
+          "item": "water_heater",
+          "answer": "no",
+          "detail": "40-gallon electric, installed 2018"
+        },
+        {
+          "item": "plumbing",
+          "answer": "yes",
+          "detail": "Some original galvanized pipe. Part replaced in 2012."
+        },
+        {
+          "item": "electrical",
+          "answer": "no",
+          "detail": "100-amp service"
+        },
+        {
+          "item": "water_sewer",
+          "answer": "no",
+          "detail": "Public water and public sewer"
+        },
+        {
+          "item": "wood_insects",
+          "answer": "unknown",
+          "detail": "Never inspected"
+        },
+        {
+          "item": "radon",
+          "answer": "unknown",
+          "detail": "Never tested"
+        },
+        {
+          "item": "lead_paint",
+          "answer": "unknown",
+          "detail": "Built 1956. No known lead paint and no reports."
+        },
+        {
+          "item": "fuel_tanks",
+          "answer": "yes",
+          "detail": "Indoor oil tank in the utility room, installed 2015. No buried tanks known."
+        },
+        {
+          "item": "mold",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "pool_spa",
+          "answer": "na",
+          "detail": "No pool"
+        },
+        {
+          "item": "windows_doors",
+          "answer": "yes",
+          "detail": "Original wood windows. Garage door sticks in cold weather."
+        },
+        {
+          "item": "appliances",
+          "answer": "no",
+          "detail": "Included appliances work"
+        },
+        {
+          "item": "hoa",
+          "answer": "na",
+          "detail": "No HOA"
+        },
+        {
+          "item": "liens_violations",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "flooding",
+          "answer": "no",
+          "detail": null
+        }
+      ],
+      "confidential": {
+        "bottomLine": 175000,
+        "negotiationRules": "- Lowest price: $175,000.\n- Under $165,000: he declines.\n- $165,000 to $174,999: he counters at $182,500.\n- $175,000 or more: he accepts.\n- Speed matters more than price. He would take $180,000 cash with a 30-day settlement over $186,000 with a 60-day settlement.\n- Buyers may inspect, but for information only. No repairs and no credits.\n- Will not accept a contingency on the sale of the buyer's home.",
+        "relayLines": "- \"The seller is selling the home as-is. You're welcome to inspect, but he won't be making repairs or giving credits.\"\n- \"He's countered at $182,500. He's told me a quick settlement matters more to him than squeezing out the last dollar.\"\n- \"He's leaving his workbench and shelving in the garage for whoever buys it.\"",
+        "commissionTerms": "5% total, 2.5% to each side",
+        "yearlySales": null,
+        "yearlyProfit": null,
+        "inventoryValue": null,
+        "disclosureNotes": "- Roof is from 2009.\n- Original wood windows.\n- Oil furnace with an indoor oil tank in the utility room, from 2015. No central air.\n- Some older galvanized plumbing. Part of it was replaced in 2012.\n- Never tested for radon.\n- Garage door sticks in cold weather.\n- Built before 1978, so the lead paint disclosure is required. He knows of no lead paint and has no reports.\n\nProperty is sold as-is. Seller will not make repairs or give credits.",
+        "furnitureLowest": null
+      },
+      "photosDir": null,
+      "sale": null
+    },
+    {
+      "key": "raman",
+      "type": "house",
+      "purpose": "sale",
+      "status": "active",
+      "addressLine": "601 Cardinal Court",
+      "postal": "601",
+      "postalCode": null,
+      "county": "Dauphin",
+      "price": 725000,
+      "beds": 4,
+      "baths": 1,
+      "sqft": 3400,
+      "lot": "0.6 acres",
+      "yearBuilt": 2019,
+      "garage": "Garage parking for three vehicles",
+      "description": "Modern two-storey dwelling in Whispering Pines (gated, HOA $210/month) with in-ground pool, covered cabana and patio. Rooms: Home office, double-height living room, kitchen with centre island, dining area, sitting room, upstairs open landing. Covered cabana, covered patio, fenced backyard. In-ground, heated. Heater replaced 2024. Whispering Pines, gated. Every home in the community shares the address 601 Cardinal Court.",
+      "showingInstructions": "Four hours’ notice. The family leaves during showings. Agent meets buyers at the community gate.",
+      "availableFrom": null,
+      "listedOn": "2026-10-14",
+      "property": {
+        "propertyStyle": "Single-family detached, modern two-storey",
+        "otherRooms": "Home office, double-height living room, kitchen with centre island, dining area, sitting room, upstairs open landing",
+        "parking": "Garage parking for three vehicles (a double and a single garage)",
+        "basement": "None, slab foundation",
+        "heating": "Natural gas forced air, two zones",
+        "cooling": "Central air, two zones",
+        "waterHeater": "Tankless gas",
+        "waterSewer": "Public water, public sewer",
+        "electrical": "200-amp service",
+        "roof": "Flat membrane and shingle, from 2019",
+        "windows": null,
+        "appliancesProvided": null,
+        "furnished": null,
+        "taxes": "About $11,800 per year",
+        "hoa": "Whispering Pines HOA, $210 per month",
+        "utilities": "About $520 per month, including pool heating in summer",
+        "legalDescription": "Modern two-storey dwelling in Whispering Pines (gated, HOA $210/month) with in-ground pool, covered cabana and patio",
+        "zoning": "R-1 Low Density Residential",
+        "occupancy": "Owner-occupied"
+      },
+      "ownership": {
+        "vesting": "Married couple, tenants by the entirety",
+        "whoSigns": "Both, on every document",
+        "boughtOn": "Built new, completed August 2019",
+        "boughtFor": 598000,
+        "ownedSince": "August 2019 (built new)",
+        "deedReference": "Deed Book 4120, Page 33",
+        "mortgage": "Commonwealth Home Lending",
+        "liens": "None known"
+      },
+      "terms": {
+        "agreementStart": "2026-10-14",
+        "agreementEnd": "2027-01-31",
+        "earnestMoneyExpected": "$25,000",
+        "targetSettlement": "By Dec 15, 2026. Not negotiable.",
+        "possession": "At settlement",
+        "included": "Refrigerator, range, dishwasher, washer, dryer, pool equipment and cover, cabana lounge chairs, TV wall mount",
+        "excluded": "Living room TV and all indoor furniture, unless a buyer negotiates for it",
+        "leasedItems": "None. The pool heater is owned.",
+        "transferTax": "Split equally",
+        "titleCompany": "Susquehanna Title & Escrow",
+        "attorney": "Melissa Grant, Grant & Whitfield LLP",
+        "homeWarranty": "No",
+        "financingAccepted": "Any, as long as the offer includes a pre-approval letter or proof of funds",
+        "offerReplies": "Within 12 hours",
+        "asIs": false,
+        "yardSign": false,
+        "photosAllowed": true,
+        "lockbox": false,
+        "showingNotice": "Four hours' notice",
+        "furnishedPrice": null
+      },
+      "lease": null,
+      "business": null,
+      "disclosures": [
+        {
+          "item": "roof",
+          "answer": "no",
+          "detail": "Flat membrane and shingle, 2019"
+        },
+        {
+          "item": "basement_water",
+          "answer": "na",
+          "detail": "No basement, slab foundation"
+        },
+        {
+          "item": "foundation",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "heating",
+          "answer": "no",
+          "detail": "Natural gas forced air, two zones, 2019"
+        },
+        {
+          "item": "cooling",
+          "answer": "no",
+          "detail": "Central air, two zones, 2019"
+        },
+        {
+          "item": "water_heater",
+          "answer": "no",
+          "detail": "Tankless gas, 2019"
+        },
+        {
+          "item": "plumbing",
+          "answer": "no",
+          "detail": "PEX, 2019"
+        },
+        {
+          "item": "electrical",
+          "answer": "no",
+          "detail": "200-amp service"
+        },
+        {
+          "item": "water_sewer",
+          "answer": "no",
+          "detail": "Public water and public sewer"
+        },
+        {
+          "item": "wood_insects",
+          "answer": "no",
+          "detail": "No known infestation"
+        },
+        {
+          "item": "radon",
+          "answer": "no",
+          "detail": "Tested at completion in 2019, below the action level"
+        },
+        {
+          "item": "lead_paint",
+          "answer": "na",
+          "detail": "Built 2019"
+        },
+        {
+          "item": "fuel_tanks",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "mold",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "pool_spa",
+          "answer": "yes",
+          "detail": "In-ground heated pool. Heater replaced 2024. Hairline cosmetic crack in the pool deck."
+        },
+        {
+          "item": "windows_doors",
+          "answer": "no",
+          "detail": "Community gate reader is sometimes slow (HOA matter)"
+        },
+        {
+          "item": "appliances",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "hoa",
+          "answer": "yes",
+          "detail": "Whispering Pines HOA, $210 per month. Covers gate, roads and snow removal."
+        },
+        {
+          "item": "liens_violations",
+          "answer": "no",
+          "detail": null
+        },
+        {
+          "item": "flooding",
+          "answer": "no",
+          "detail": null
+        }
+      ],
+      "confidential": {
+        "bottomLine": 690000,
+        "negotiationRules": "- Lowest price: $690,000.\n- Under $660,000: they decline.\n- $660,000 to $689,999: they counter at $705,000. They counter once only. After that they ask for best and final offers.\n- $690,000 or more, able to settle by Dec 15: they accept.\n- A buyer who can settle by Dec 15 wins over a slightly higher offer that settles later.\n- Accept mortgage, inspection and appraisal contingencies with 10-day deadlines. Will not accept a contingency on the sale of the buyer's home.\n- No credit for the single bathroom. They say it is already reflected in the price.",
+        "relayLines": "- \"The sellers need to settle by December 15th. That date is firm, so an offer that meets it will be taken very seriously.\"\n- \"They've countered at $705,000. They've told me this is their one counter, so please treat your reply as your best offer.\"\n- \"They'd like a pre-approval letter with any offer before they review it.\"",
+        "commissionTerms": "5% total, 2.5% to each side",
+        "yearlySales": null,
+        "yearlyProfit": null,
+        "inventoryValue": null,
+        "disclosureNotes": "- One bathroom only.\n- Pool heater replaced in 2024.\n- Hairline crack in the pool deck. It is cosmetic.\n- The community gate reader is sometimes slow. That is an HOA matter.\n- Lead paint disclosure not needed, built 2019.\n\nThe home has one bathroom. The HOA resale certificate has been ordered for the buyer.",
+        "furnitureLowest": null
+      },
+      "photosDir": null,
+      "sale": null
+    },
+    {
+      "key": "castellano",
+      "type": "house",
+      "purpose": "sale",
+      "status": "sold",
+      "addressLine": "601 Cardinal Court",
+      "postal": "601",
+      "postalCode": null,
+      "county": "Dauphin",
+      "price": 795000,
+      "beds": 6,
+      "baths": 2,
+      "sqft": 4200,
+      "lot": "0.7 acres",
+      "yearBuilt": 2017,
+      "garage": "Oversized garage, fits three vehicles",
+      "description": "Modern two-storey dwelling in Whispering Pines (gated, HOA $210/month) with double-height dining room, upstairs loft and games room, covered front patio and private backyard. Rooms: Double-height dining room with floor-to-ceiling windows, open kitchen with centre island, lounge, upstairs loft and games room. Private backyard, covered front patio. Whispering Pines, gated.",
+      "showingInstructions": "24 hours' notice. The owners are usually at the restaurants. Hameed meets buyers at the community gate.",
+      "availableFrom": null,
+      "listedOn": "2026-10-20",
+      "property": {
+        "propertyStyle": "Single-family detached, modern two-storey",
+        "otherRooms": "Double-height dining room with floor-to-ceiling windows, open kitchen with centre island, lounge, upstairs loft and games room",
+        "parking": "Oversized garage that fits three vehicles",
+        "basement": "None, slab foundation",
+        "heating": "Natural gas forced air, two zones",
+        "cooling": "Central air, two zones. Upstairs compressor replaced in 2023.",
+        "waterHeater": "Two 50-gallon gas tanks, from 2017",
+        "waterSewer": "Public water, public sewer",
+        "electrical": "200-amp service",
+        "roof": "Flat membrane, from 2017. Resealed in 2024.",
+        "windows": null,
+        "appliancesProvided": null,
+        "furnished": null,
+        "taxes": "About $13,500 per year",
+        "hoa": "$210 per month. Covers the gate, private roads and snow removal.",
+        "utilities": "About $480 per month",
+        "legalDescription": "Modern two-storey dwelling in Whispering Pines (gated, HOA $210/month) with double-height dining room, upstairs loft and games room, covered front patio and private backyard",
+        "zoning": "R-1 Low Density Residential",
+        "occupancy": null
+      },
+      "ownership": {
+        "vesting": "Jointly, as a married couple (tenants by the entirety)",
+        "whoSigns": "Both, on every document",
+        "boughtOn": "Built new, completed September 2017",
+        "boughtFor": 640000,
+        "ownedSince": null,
+        "deedReference": "Deed Book 3987, Page 141",
+        "mortgage": "Keystone Federal Bank, payoff about $390,000",
+        "liens": "None known"
+      },
+      "terms": {
+        "agreementStart": "2026-10-20",
+        "agreementEnd": "2027-04-20",
+        "earnestMoneyExpected": "$25,000",
+        "targetSettlement": "60 to 75 days after acceptance, ideally Jan 15, 2027, when their condo is finished",
+        "possession": "At settlement",
+        "included": "Refrigerator, range, dishwasher, washer, dryer, the pool table in the games room, patio chairs",
+        "excluded": "Framed artwork and the living room TV",
+        "leasedItems": "None",
+        "transferTax": "Split equally",
+        "titleCompany": "Keystone Abstract & Title Co.",
+        "attorney": "Daniel Okafor, Okafor Law Group",
+        "homeWarranty": "Will offer a one-year warranty",
+        "financingAccepted": "Any, with a pre-approval letter or proof of funds",
+        "offerReplies": "Within 24 hours",
+        "asIs": false,
+        "yardSign": false,
+        "photosAllowed": true,
+        "lockbox": null,
+        "showingNotice": "24 hours' notice",
+        "furnishedPrice": null
+      },
+      "lease": null,
+      "business": null,
+      "disclosures": [],
+      "confidential": {
+        "bottomLine": 760000,
+        "negotiationRules": "- Lowest price: $760,000.\n- Under $730,000: they decline but stay friendly, and invite a better offer.\n- $730,000 to $759,999: they counter at $775,000. They will counter a second time if the buyer comes up.\n- $760,000 or more: they accept.\n- Will give a repair credit of up to $5,000.\n- Will accept a contingency on the sale of the buyer's home, as long as they can keep showing the house and take another offer with 72 hours' notice.\n- A cash offer gets about $10,000 more flexibility on price.\n- Happy to leave the pool table and patio furniture to sweeten a deal.",
+        "relayLines": "- \"The sellers have countered at $775,000. They've told me they're open to continuing the conversation.\"\n- \"They'd like to settle around mid-January, once their new place is ready. If that works for you, it'll help your offer.\"\n- \"They're happy to leave the pool table in the games room for the new owners.\"",
+        "commissionTerms": "5% total, 2.5% to each side",
+        "yearlySales": null,
+        "yearlyProfit": null,
+        "inventoryValue": null,
+        "disclosureNotes": "- Two bathrooms for six bedrooms. This is the layout, not a defect, but buyers should know.\n- One section of the flat roof held water after heavy rain. It was resealed in 2024 with no leaks since.\n- Upstairs air conditioning compressor replaced in 2023.\n- Hairline settling crack in the garage floor. It is cosmetic.\n- Radon tested at completion in 2017, below the action level.\n- Lead paint disclosure not needed, built 2017.",
+        "furnitureLowest": null
+      },
+      "photosDir": null,
+      "sale": {
+        "price": 795000,
+        "soldOn": "2027-01-15"
+      }
+    },
+    {
+      "key": "hartmann",
+      "type": "house",
+      "purpose": "sale",
+      "status": "active",
+      "addressLine": "6012 Estate Drive",
+      "postal": "601",
+      "postalCode": null,
+      "county": "Dauphin",
+      "price": 760000,
+      "beds": 4,
+      "baths": 1.5,
+      "sqft": 3200,
+      "lot": "0.7 acres",
+      "yearBuilt": 2018,
+      "garage": "Attached two-car garage",
+      "description": "Modern farmhouse two-storey dwelling in Whispering Pines (gated, HOA $210/month) with in-ground pool, covered back porch, fire pit, games room and fenced backyard. Rooms: Open-plan living room and kitchen, separate dining room (seats six), sitting room, games room with pool table, upstairs landing lounge. Marble island, farmhouse sink, French-door refrigerator, stainless range, white shaker cabinets. Covered back porch, fire pit with seating, privacy fence, concrete pad beside the garage (room for a shed or trailer), white fence at the front. In-ground, with a stone deck. Whispering Pines, gated.",
+      "showingInstructions": "Two hours' notice. Lena often stays to answer questions about the house; ask her to step out if the buyer prefers. Hameed meets buyers at the gate.",
+      "availableFrom": null,
+      "listedOn": "2026-10-23",
+      "property": {
+        "propertyStyle": "Single-family detached, modern farmhouse, two storeys",
+        "otherRooms": "Open-plan living room and kitchen, separate dining room (seats six), sitting room, games room with pool table, upstairs landing lounge",
+        "parking": "Attached two-car garage, wide driveway",
+        "basement": "None, slab foundation",
+        "heating": "Natural gas forced air, two zones",
+        "cooling": "Central air, two zones",
+        "waterHeater": "75-gallon gas",
+        "waterSewer": "Public water, public sewer",
+        "electrical": "200-amp service",
+        "roof": "Architectural shingle, from 2018",
+        "windows": null,
+        "appliancesProvided": null,
+        "furnished": null,
+        "taxes": "About $12,400 per year",
+        "hoa": "$210 per month. Covers the gate, private roads and snow removal.",
+        "utilities": "About $480 per month",
+        "legalDescription": "Modern farmhouse two-storey dwelling in Whispering Pines (gated, HOA $210/month) with in-ground pool, covered back porch, fire pit, games room and fenced backyard",
+        "zoning": "R-1 Low Density Residential",
+        "occupancy": null
+      },
+      "ownership": {
+        "vesting": "Jointly, as a married couple (tenants by the entirety)",
+        "whoSigns": "Both, on every document",
+        "boughtOn": "Built new, completed May 2018",
+        "boughtFor": 612000,
+        "ownedSince": null,
+        "deedReference": "Deed Book 4087, Page 112",
+        "mortgage": "Penn Valley Bank, payoff about $318,000",
+        "liens": "None known"
+      },
+      "terms": {
+        "agreementStart": "2026-10-23",
+        "agreementEnd": "2027-04-23",
+        "earnestMoneyExpected": "$25,000",
+        "targetSettlement": "Flexible, 45 to 90 days after the agreement",
+        "possession": "At settlement",
+        "included": "Refrigerator, range, dishwasher, washer, dryer, pool table, pool loungers, fire pit chairs, TV wall mounts",
+        "excluded": "Indoor furniture, artwork and TVs, unless the buyer takes the furnished option",
+        "leasedItems": "None",
+        "transferTax": "Split equally",
+        "titleCompany": "Capital Area Settlement Services",
+        "attorney": "Rachel Stein, Stein Legal Group",
+        "homeWarranty": "Yes, one year, paid by the sellers",
+        "financingAccepted": "Any, with a pre-approval letter or proof of funds",
+        "offerReplies": "Within 24 hours",
+        "asIs": false,
+        "yardSign": false,
+        "photosAllowed": true,
+        "lockbox": null,
+        "showingNotice": "Two hours' notice",
+        "furnishedPrice": 795000
+      },
+      "lease": null,
+      "business": null,
+      "disclosures": [],
+      "confidential": {
+        "bottomLine": 730000,
+        "negotiationRules": "- Lowest price: $730,000 unfurnished.\n- Under $700,000: they decline.\n- $700,000 to $729,999: they counter at $745,000.\n- $730,000 or more: they accept.\n- Furniture: they would like $35,000 but will take $25,000. They will not sell the furniture piece by piece.\n- A furnished offer at $780,000 or more is accepted on the spot.\n- Flexible on dates. They will give a buyer up to 90 days to settle.\n- No credit for the garage walls or the fence. They say the price allows for it.",
+        "relayLines": "- \"The sellers aren't in a rush, so they'll wait for the right offer rather than take a low one.\"\n- \"Everything you see can stay. Lena designed the interior herself, and she'd love it to go to someone who'll keep it.\"\n- \"They've countered at $745,000. They're flexible on the settlement date if that helps you.\"",
+        "commissionTerms": "5% total, 2.5% to each side",
+        "yearlySales": null,
+        "yearlyProfit": null,
+        "inventoryValue": null,
+        "disclosureNotes": "- One full bathroom for four bedrooms, plus a half bathroom downstairs.\n- The garage walls are taped drywall that was never painted.\n- Pool pump replaced in 2025.\n- The back fence stain is fading and will need redoing within a year or two.\n- Lead paint disclosure not needed, built 2018.",
+        "furnitureLowest": 25000
+      },
+      "photosDir": "photos/6012-estate-drive",
+      "sale": null
+    },
+    {
+      "key": "hayes",
+      "type": "rental",
+      "purpose": "rent",
+      "status": "for_lease",
+      "addressLine": "",
+      "postal": null,
+      "postalCode": null,
+      "county": "Dauphin",
+      "price": 1900,
+      "beds": 2,
+      "baths": 1,
+      "sqft": 1250,
+      "lot": null,
+      "yearBuilt": null,
+      "garage": "Garage plus driveway",
+      "description": "Rooms: Home office, lounge, kitchen, laundry room.",
+      "showingInstructions": null,
+      "availableFrom": "2026-11-01",
+      "listedOn": null,
+      "property": {
+        "propertyStyle": "Single-family detached",
+        "otherRooms": "Home office, lounge, kitchen, laundry room",
+        "parking": "Garage plus driveway",
+        "basement": null,
+        "heating": "Gas forced air, central air",
+        "cooling": null,
+        "waterHeater": null,
+        "waterSewer": null,
+        "electrical": null,
+        "roof": null,
+        "windows": null,
+        "appliancesProvided": "Refrigerator, range, dishwasher, washer, dryer",
+        "furnished": "No",
+        "taxes": null,
+        "hoa": null,
+        "utilities": null,
+        "legalDescription": null,
+        "zoning": null,
+        "occupancy": null
+      },
+      "ownership": {
+        "vesting": null,
+        "whoSigns": "Victor Allen Hayes, managing member",
+        "boughtOn": null,
+        "boughtFor": null,
+        "ownedSince": "2017",
+        "deedReference": null,
+        "mortgage": null,
+        "liens": null
+      },
+      "terms": null,
+      "lease": {
+        "leaseLengthMonths": 12,
+        "deposit": 1900,
+        "dueAtSigning": "First month's rent and the security deposit, $3,800 in total",
+        "rentDue": "1st of each month",
+        "lateFee": "$75 if paid after the 5th",
+        "paymentMethod": "Bank transfer",
+        "renewal": "Either side gives 60 days' notice before the lease ends",
+        "utilities": "Tenant pays electric, gas and internet. Landlord pays water, sewer and trash.",
+        "yardAndSnow": "Tenant mows and shovels",
+        "maxOccupants": 4,
+        "pets": "Cats allowed. Dogs under 40 lb allowed with a $300 pet deposit and $35 per month pet rent.",
+        "smoking": "Not allowed, inside or out",
+        "subletting": "Not allowed",
+        "insurance": "Required, with at least $100,000 liability cover",
+        "moveInInspection": "Walk-through with a signed checklist on move-in day",
+        "leasingFee": "One month's rent, paid by the landlord",
+        "incomeRequirement": "At least 3 times the rent ($5,700 per month). A co-signer is acceptable.",
+        "checks": "Credit and background check",
+        "references": "Two, including a previous landlord",
+        "applicationFee": "$40",
+        "decisionTime": "Within two business days"
+      },
+      "business": null,
+      "disclosures": [],
+      "confidential": {
+        "bottomLine": 1850,
+        "negotiationRules": "- Will drop to $1,850 per month for an 18-month lease. Will not go lower.\n- Will waive the application fee for a strong applicant who signs within a week.\n- No exceptions on the income requirement without a co-signer.",
+        "relayLines": "- \"The landlord asks for first month's rent and a one-month security deposit at signing, so $3,800 in total.\"\n- \"If you're open to an 18-month lease, he's willing to bring the rent down to $1,850.\"\n- \"He'll need proof of income of about three times the rent, or a co-signer.\"",
+        "commissionTerms": "One month's rent, paid by the landlord",
+        "yearlySales": null,
+        "yearlyProfit": null,
+        "inventoryValue": null,
+        "disclosureNotes": null,
+        "furnitureLowest": null
+      },
+      "photosDir": null,
+      "sale": null
+    },
+    {
+      "key": "lindqvist",
+      "type": "business",
+      "purpose": "sale",
+      "status": "active",
+      "addressLine": "Building 8061",
+      "postal": "806",
+      "postalCode": "17109",
+      "county": "Dauphin",
+      "price": 149000,
+      "beds": null,
+      "baths": null,
+      "sqft": 1800,
+      "lot": null,
+      "yearBuilt": null,
+      "garage": null,
+      "description": "Self-service laundromat with wash-and-fold service. Open daily, 6 am to 10 pm.. Equipment: 12 commercial front-load machines (6 washers, 6 dryers) from 2016, folding table, two benches, drinks vending machine, outside security camera.. $2.00 for the first 32 minutes, $0.50 for every 8 minutes after. Coin and card readers on every machine.",
+      "showingInstructions": "Weekday mornings. Buyers can come in as customers first, then meet Gary in the back room.",
+      "availableFrom": null,
+      "listedOn": null,
+      "property": {
+        "propertyStyle": null,
+        "otherRooms": null,
+        "parking": null,
+        "basement": null,
+        "heating": null,
+        "cooling": null,
+        "waterHeater": null,
+        "waterSewer": null,
+        "electrical": null,
+        "roof": null,
+        "windows": null,
+        "appliancesProvided": null,
+        "furnished": null,
+        "taxes": null,
+        "hoa": null,
+        "utilities": null,
+        "legalDescription": null,
+        "zoning": null,
+        "occupancy": null
+      },
+      "ownership": {
+        "vesting": null,
+        "whoSigns": "Sole member of the LLC",
+        "boughtOn": null,
+        "boughtFor": null,
+        "ownedSince": "2009",
+        "deedReference": null,
+        "mortgage": null,
+        "liens": null
+      },
+      "terms": {
+        "agreementStart": null,
+        "agreementEnd": null,
+        "earnestMoneyExpected": "$7,500",
+        "targetSettlement": "30 to 60 days after acceptance",
+        "possession": null,
+        "included": "All 12 machines, coin and card readers, folding table, benches, vending machine, security camera, the name and sign, wash-and-fold customer list, phone number",
+        "excluded": "Cash in the machines and change safe on settlement day",
+        "leasedItems": null,
+        "transferTax": null,
+        "titleCompany": "Capital Area Settlement Services",
+        "attorney": "None",
+        "homeWarranty": null,
+        "financingAccepted": null,
+        "offerReplies": null,
+        "asIs": false,
+        "yardSign": null,
+        "photosAllowed": null,
+        "lockbox": null,
+        "showingNotice": null,
+        "furnishedPrice": null
+      },
+      "lease": null,
+      "business": {
+        "businessName": "Common Cents Laundromat (\"Wash · Dry · Fold\")",
+        "nameWithheld": false,
+        "teaser": "Self-service laundromat with wash-and-fold service, Fairview",
+        "entity": "Common Cents Laundry LLC",
+        "signerCapacity": "Sole member of the LLC",
+        "businessType": "Self-service laundromat with wash-and-fold service",
+        "openedYear": 2009,
+        "employees": 1,
+        "hours": "Daily, 6 am to 10 pm",
+        "seats": null,
+        "whatIsSold": "Business only. The unit is leased.",
+        "buildingSize": "About 1,800 sq ft: machine floor, back room and rear corridor to a back exit",
+        "premisesRent": "$2,600 per month, plus water and sewer",
+        "premisesLeaseEnd": "Runs to June 2031, with one 5-year renewal option. Can be transferred to a buyer with the landlord's approval.",
+        "premisesLandlord": "Fairview Commons Plaza LLC",
+        "tradingHistory": "Steady. Busiest on weekends and in winter.",
+        "ownerFinancing": "Yes, up to 20% of the price, over three years at 6%",
+        "priceBuilding": null,
+        "priceEquipment": 70000,
+        "priceInventory": 2000,
+        "priceGoodwill": 77000,
+        "included": "All 12 machines, coin and card readers, folding table, benches, vending machine, security camera, the name and sign, wash-and-fold customer list, phone number",
+        "excluded": "Cash in the machines and change safe on settlement day",
+        "licences": "No special licences. Local business registration must be updated.",
+        "training": "2 weeks, including machine maintenance and the wash-and-fold routine",
+        "nonCompete": "Will not open a laundromat within 10 miles for 5 years",
+        "staffTerms": "Buyer is asked to keep Rosa, the attendant"
+      },
+      "disclosures": [],
+      "confidential": {
+        "bottomLine": 135000,
+        "negotiationRules": "- Lowest price: $135,000.\n- Under $125,000: he declines.\n- $125,000 to $134,999: he counters at $142,000.\n- $135,000 or more: he accepts.\n- He will fix the washer seal before settlement at his own cost if asked.\n- A buyer who promises to keep Rosa gets the benefit of the doubt on a close offer.",
+        "relayLines": "- \"The machines are on card readers as well as coins, so there's very little cash handling.\"\n- \"Wash-and-fold brings in about a quarter of the sales, and the customer list comes with the business.\"\n- \"He'll finance up to 20% of the price himself over three years.\"",
+        "commissionTerms": "10%",
+        "yearlySales": 168000,
+        "yearlyProfit": 61000,
+        "inventoryValue": 2000,
+        "disclosureNotes": "- The lease needs the landlord's approval to transfer. The landlord has not been asked yet.\n- The machines are from 2016. Commercial machines usually last 15 to 20 years.\n- One washer needs a new door seal (about $400). Two dryers have sticky coin slots; the card readers work fine.\n- Water and sewer run about $1,400 a month and are already counted in the profit figure.",
+        "furnitureLowest": null
+      },
+      "photosDir": null,
+      "sale": null
+    }
+  ],
+  "flags": [
+    {
+      "key": "porter",
+      "field": "postalCode",
+      "message": "No ZIP code in the file."
+    },
+    {
+      "key": "porter",
+      "field": "photos",
+      "message": "No photos yet: imports Active but hidden from the public site until 3 photos are added."
+    },
+    {
+      "key": "kowalski",
+      "field": "postalCode",
+      "message": "No ZIP code in the file."
+    },
+    {
+      "key": "kowalski",
+      "field": "photos",
+      "message": "No photos yet: imports Active but hidden from the public site until 3 photos are added."
+    },
+    {
+      "key": "raman",
+      "field": "addressLine",
+      "message": "Two homes share 601 Cardinal Court in the files (Raman and Castellano). Confirm the address."
+    },
+    {
+      "key": "raman",
+      "field": "postalCode",
+      "message": "No ZIP code in the file."
+    },
+    {
+      "key": "raman",
+      "field": "photos",
+      "message": "No photos yet: imports Active but hidden from the public site until 3 photos are added."
+    },
+    {
+      "key": "castellano",
+      "field": "addressLine",
+      "message": "Two homes share 601 Cardinal Court in the files (Raman and Castellano). Confirm the address."
+    },
+    {
+      "key": "castellano",
+      "field": "postalCode",
+      "message": "No ZIP code in the file."
+    },
+    {
+      "key": "castellano",
+      "field": "sale",
+      "message": "Sold: check the sale price and date before importing."
+    },
+    {
+      "key": "hartmann",
+      "field": "postalCode",
+      "message": "No ZIP code in the file."
+    },
+    {
+      "key": "hayes",
+      "field": "addressLine",
+      "message": "The file says \"You choose\": add the street address before it goes live."
+    },
+    {
+      "key": "hayes",
+      "field": "postal",
+      "message": "No postal code: it won’t appear on the property map until one is set."
+    },
+    {
+      "key": "hayes",
+      "field": "postalCode",
+      "message": "No ZIP code in the file."
+    },
+    {
+      "key": "hayes",
+      "field": "listedOn",
+      "message": "No \"Listed\" date: published today."
+    },
+    {
+      "key": "hayes",
+      "field": "photos",
+      "message": "No photos yet: imports Active but hidden from the public site until 3 photos are added."
+    },
+    {
+      "key": "lindqvist",
+      "field": "listedOn",
+      "message": "No \"Listed\" date: published today."
+    },
+    {
+      "key": "lindqvist",
+      "field": "photos",
+      "message": "No photos yet: imports Active but hidden from the public site until 3 photos are added."
+    }
+  ]
+}

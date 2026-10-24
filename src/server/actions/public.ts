@@ -24,7 +24,7 @@ export async function toggleSavedHome(listingId: string): Promise<{ ok: boolean;
     revalidatePath('/account/saved');
     return { ok: true, saved: false, message: 'Removed from saved homes' };
   }
-  const l = await db.query.listings.findFirst({ where: and(eq(listings.id, listingId), inArray(listings.status, MARKET_STATUSES as Status[])), columns: { id: true } });
+  const l = await db.query.listings.findFirst({ where: and(eq(listings.id, listingId), inArray(listings.status, MARKET_STATUSES as Status[]), eq(listings.photosHold, false)), columns: { id: true } });
   if (!l) return { ok: false, message: 'This home is no longer on the market.' };
   await db.insert(savedHomes).values({ userId: actor.id, listingId }).onConflictDoNothing();
   revalidatePath('/account/saved');
@@ -47,7 +47,7 @@ export async function requestShowing(listingId: string, _prev: ActionState<{ ref
   if (!actor) return { ok: false, message: 'Sign in to book a showing.' };
   const parsed = showingSchema.safeParse({ when: fd.get('when'), note: fd.get('note') });
   if (!parsed.success) return { ok: false, fieldErrors: fieldErrors(parsed.error) };
-  const l = await db.query.listings.findFirst({ where: and(eq(listings.id, listingId), inArray(listings.status, MARKET_STATUSES as Status[])) });
+  const l = await db.query.listings.findFirst({ where: and(eq(listings.id, listingId), inArray(listings.status, MARKET_STATUSES as Status[]), eq(listings.photosHold, false)) });
   if (!l) return { ok: false, message: 'This listing isn’t taking showings right now.' };
 
   const refNo = await db.transaction(async (tx) => {

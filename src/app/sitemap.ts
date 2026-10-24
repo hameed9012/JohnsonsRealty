@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const fixed = ['/', '/buy', '/rent', '/businesses', '/sell', '/areas', '/sold', '/agents', '/about', '/guides', '/careers', '/contact', '/privacy', '/terms'];
   const [l, a, ag, p, c] = await Promise.all([
-    db.select({ slug: listings.slug, updatedAt: listings.updatedAt }).from(listings).where(inArray(listings.status, PUBLIC_STATUSES as Status[])),
+    db.select({ slug: listings.slug, updatedAt: listings.updatedAt }).from(listings).where(and(inArray(listings.status, PUBLIC_STATUSES as Status[]), eq(listings.photosHold, false))),
     db.select({ slug: areas.slug, updatedAt: areas.updatedAt }).from(areas),
     db.select({ slug: agentProfiles.slug, updatedAt: agentProfiles.updatedAt }).from(agentProfiles).where(eq(agentProfiles.active, true)),
     db.select({ slug: posts.slug, updatedAt: posts.updatedAt }).from(posts).where(and(isNotNull(posts.publishedAt), lte(posts.publishedAt, new Date()))),

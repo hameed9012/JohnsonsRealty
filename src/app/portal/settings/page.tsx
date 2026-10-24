@@ -34,6 +34,9 @@ export default async function SettingsPage() {
           <Button variant="secondary" href="/portal/settings/discord">
             Discord server
           </Button>
+          <Button variant="secondary" href="/portal/settings/import">
+            Import seller files
+          </Button>
         </div>
       </div>
       <section className="panel stack">

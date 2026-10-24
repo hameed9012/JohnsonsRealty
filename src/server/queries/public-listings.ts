@@ -12,7 +12,7 @@ type Status = (typeof listings.status.enumValues)[number];
 /** A public listing by slug, or null. Never loads confidential tables. */
 export const publicListingBySlug = cache(async (slug: string) => {
   const row = await db.query.listings.findFirst({
-    where: and(eq(listings.slug, slug), inArray(listings.status, PUBLIC_STATUSES as Status[])),
+    where: and(eq(listings.slug, slug), inArray(listings.status, PUBLIC_STATUSES as Status[]), eq(listings.photosHold, false)),
     columns: { id: true },
   });
   if (!row) return null;
@@ -30,6 +30,7 @@ export async function similarListings(b: { id: string; areaId: string | null; pu
         ne(listings.id, b.id),
         eq(listings.purpose, b.purpose),
         inArray(listings.status, MARKET_STATUSES as Status[]),
+        eq(listings.photosHold, false),
         b.areaId ? or(eq(listings.areaId, b.areaId), eq(listings.type, b.type as (typeof listings.type.enumValues)[number])) : undefined,
       ),
     )

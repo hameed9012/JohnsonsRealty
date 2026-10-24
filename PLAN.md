@@ -635,3 +635,26 @@ Each step gets its own local branch and commit, with tests passing (unit plus e2
 - **Tests:**
   - **Unit:** 8 new tests covering postal derivation, zone areas, layout (grouping, sold window, overrides, unplaced), the hash, and a real PNG render at 1500px.
   - **End-to-end:** the Buy map circle for postal 601, the property page zone caption, `/api/map.png`, and the hand-placed circle. The accessibility audit now covers Settings → Property map.
+
+### Step 4, Legacy import: built (Oct 24, 2026), branch `p2-import`
+
+- **Data** (migration `0004`): `clients.legacy_key` (unique), `clients.tags`, `clients.generated_seed` (for step 5), `listings.photos_hold`, `listing_terms.furnished_price`, `listing_confidential.furniture_lowest`.
+- **Parser** (`src/import/legacy/parse.ts`): splits `import/seller-files.md` into one section per seller, each bold heading becoming a field table or a list. Reads the forms tool's `SELLERS` and `EXTRA` objects with a small literal parser (no `eval`). `reference/seller-files.md` already matches the current file.
+- **Plan** (`src/import/legacy/map.ts`, pure): maps every field onto the client, people, confidential and listing detail tables. Disclosures come from the forms tool's SPDS answers, in form order.
+  - **Listings:** Porter, Kowalski, Raman, Castellano (Sold), Hartmann, Hayes (For lease), Lindqvist's laundromat.
+  - **Spare client files**, tagged "Spare seller": Brennan, Whitaker, Marchetti, Malhotra, Boyd, Delgado. Their property and business blocks are kept in the file's notes.
+  - **Postal codes:** the 601 houses (Raman, Castellano, Hartmann) and 809 (Kowalski) are set explicitly; the rest use the house-number rule.
+  - **Hartmann:** $760,000 asking, $795,000 furnished, furniture lowest $25,000.
+  - **Flags in the preview:** "You choose" addresses and ZIP codes, the shared 601 Cardinal Court, missing "Listed" dates (published on import day), the sale to confirm, and listings without photos.
+- **Import** (`src/import/legacy/apply.ts`): one transaction per seller, keyed on `legacy:{key}`, so a second run skips everything.
+  - **Listings** are Active (Hayes For lease), `published_at` = the "Listed" date, with price history and the Owner as listing agent. No review queue and no Discord post.
+  - **Castellano** gets the sale record (next Sale No., 001 on a fresh site), with the price and date from the preview (default $795,000, Jan 15, 2027).
+  - **6012 Estate Drive** gets its 20 photos in order, 01 as the cover, with descriptions from the file names.
+  - **Activity log:** every client, listing and sale gets an entry starting "Imported from legacy seller files".
+- **Needs photos:** imported listings without 3 photos are Active but left out of every public query (search, map, sitemap, areas, Discord commands, enquiries), with a "Needs photos" badge in the listings manager and a photos panel on the listing. Saving 3 described photos puts the listing live with no second review. **Post to Discord** (step 2) announces it when ready.
+- **Running it:**
+  - `npm run import:legacy` writes `import/legacy.json` and prints the preview; `-- --yes` saves it (optionally `--sale-price`, `--sold-on`).
+  - **Portal → Site settings → Import seller files** (Owner) shows the same preview with links to what's already imported, the sale inputs and an Import button. On Vercel the kit files and photos are bundled with that page.
+- **Tests:**
+  - **Unit:** 8 new tests covering the parser, the plan built from the real kit files, import counts, idempotency, photos and cover, the detail tables, activity entries, the release at 3 photos, and the sold-without-price refusal.
+  - **End-to-end:** the import runs last, as its own project, then the badge and the public site are checked. The accessibility audit covers the import page.

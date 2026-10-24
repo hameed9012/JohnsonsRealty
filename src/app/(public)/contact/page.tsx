@@ -17,7 +17,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
   const [actor, s] = await Promise.all([getActor(), getSettings()]);
   const listing =
     listingRef && /^[a-z0-9-]{1,120}$/.test(listingRef)
-      ? await db.query.listings.findFirst({ where: and(eq(listings.slug, listingRef), inArray(listings.status, MARKET_STATUSES as Status[])), columns: { id: true, addressLine: true } })
+      ? await db.query.listings.findFirst({ where: and(eq(listings.slug, listingRef), inArray(listings.status, MARKET_STATUSES as Status[]), eq(listings.photosHold, false)), columns: { id: true, addressLine: true } })
       : undefined;
   const details = [
     { label: 'Office', value: s.officeLocation },

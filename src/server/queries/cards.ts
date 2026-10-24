@@ -101,7 +101,7 @@ function base() {
     .leftJoin(listingLeaseTerms, eq(listingLeaseTerms.listingId, listings.id));
 }
 
-const onMarket = () => inArray(listings.status, MARKET_STATUSES as Status[]);
+const onMarket = () => and(inArray(listings.status, MARKET_STATUSES as Status[]), eq(listings.photosHold, false))!;
 
 /** Newest listings on the market, optionally filtered. */
 export async function newestCards(opts: { limit?: number; where?: SQL; featuredFirst?: boolean } = {}): Promise<CardData[]> {
