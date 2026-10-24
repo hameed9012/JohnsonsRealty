@@ -86,6 +86,9 @@ async function createClient(ex: Executor, c: ClientPlan, actorId: string | null)
   return id;
 }
 
+/** Photo folders live under photos/ in the repo; scoping the path keeps Vercel from tracing the whole project. */
+const photosPath = (root: string | undefined, dir: string, name = '') => path.join(root ?? process.cwd(), 'photos', path.basename(dir), name);
+
 const MIME: Record<string, string> = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
 
 /** "03-kitchen.jpg" → "Kitchen"; "11-bedroom-3-twin.jpg" → "Bedroom 3 twin". */
@@ -105,7 +108,7 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
   const area = zone?.areaId ? await ex.query.areas.findFirst({ where: eq(areas.id, zone.areaId) }) : undefined;
   const refNo = await nextRef(ex, now);
   const published = l.listedOn ? new Date(`${l.listedOn}T12:00:00Z`) : now;
-  const files = l.photosDir ? await photoFiles(path.join(opts.root ?? process.cwd(), l.photosDir)) : [];
+  const files = l.photosDir ? await photoFiles(photosPath(opts.root, l.photosDir)) : [];
   if (files.length && !opts.upload) throw new Error(`Photo uploads aren’t set up, so ${address}'s photos can’t be imported.`);
 
   const [row] = await ex
@@ -155,7 +158,7 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
 
   let photos = 0;
   for (const [i, name] of files.entries()) {
-    const buf = await readFile(path.join(opts.root ?? process.cwd(), l.photosDir!, name));
+    const buf = await readFile(photosPath(opts.root, l.photosDir!, name));
     const up = await opts.upload!(buf, MIME[path.extname(name).toLowerCase()]!);
     const [m] = await ex.insert(media).values({ storageId: up.storageId, width: up.width, height: up.height, bytes: up.bytes, format: up.format, uploadedBy: opts.actorId }).returning({ id: media.id });
     await ex.insert(listingPhotos).values({ listingId: id, mediaId: m!.id, alt: altFromFilename(name), sortOrder: i, isCover: i === 0 });

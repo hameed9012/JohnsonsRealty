@@ -13,10 +13,11 @@ import type { MapData } from './data';
 
 export const MAP_WIDTH = 1500;
 
+// Paths under node_modules/@fontsource, written out statically so the build traces only these files.
 const FONT_FILES = {
-  title: 'node_modules/@fontsource/manrope/files/manrope-latin-800-normal.woff',
-  text: 'node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-500-normal.woff',
-  strong: 'node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff',
+  title: () => path.join(process.cwd(), 'node_modules', '@fontsource', 'manrope', 'files', 'manrope-latin-800-normal.woff'),
+  text: () => path.join(process.cwd(), 'node_modules', '@fontsource', 'ibm-plex-sans', 'files', 'ibm-plex-sans-latin-500-normal.woff'),
+  strong: () => path.join(process.cwd(), 'node_modules', '@fontsource', 'ibm-plex-sans', 'files', 'ibm-plex-sans-latin-600-normal.woff'),
 } as const;
 
 type Fonts = Record<keyof typeof FONT_FILES, opentype.Font>;
@@ -25,7 +26,7 @@ async function loadFonts() {
   if (fonts) return fonts;
   const entries = await Promise.all(
     Object.entries(FONT_FILES).map(async ([k, f]) => {
-      const buf = await readFile(path.join(process.cwd(), f));
+      const buf = await readFile(f());
       return [k, opentype.parse(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength))] as const;
     }),
   );

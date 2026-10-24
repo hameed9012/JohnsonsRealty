@@ -22,8 +22,8 @@ test('the studio fills a brochure from a listing, exports it, and drafts a Chirp
   await page.getByLabel('When').fill('Saturday 2–4 pm');
   await expect(post).toHaveValue(/^Open house · Saturday 2–4 pm: Example Open Home/);
 
-  await expect(page.getByLabel('Just Listed post', { exact: true })).toHaveValue(/^🏡 Just Listed: Example Open Home/);
-  const market = page.getByLabel('Marketplace post', { exact: true });
+  await expect(page.getByRole('textbox', { name: 'Just Listed post' })).toHaveValue(/^🏡 Just Listed: Example Open Home/);
+  const market = page.getByRole('textbox', { name: 'Marketplace post' });
   await expect(market).toHaveValue(/^Address: Example Open Home/);
   await expect(market).toHaveValue(/Private showings by appointment\./);
   await expect(market).toHaveValue(/— Example Agent, Johnson’s Realty/);
