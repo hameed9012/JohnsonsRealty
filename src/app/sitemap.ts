@@ -7,7 +7,8 @@ import { PUBLIC_STATUSES } from '@/lib/listing-status';
 
 type Status = (typeof listings.status.enumValues)[number];
 
-export const revalidate = 3600;
+// Built per request rather than at build time, so a build never needs the database.
+export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const fixed = ['/', '/buy', '/rent', '/businesses', '/sell', '/areas', '/sold', '/agents', '/about', '/guides', '/careers', '/contact', '/privacy', '/terms'];

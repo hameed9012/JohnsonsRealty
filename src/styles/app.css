@@ -86,7 +86,8 @@ img.jr-card-img { width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 900px) { .grid-12 { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .grid-12 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .main { flex: 1; }
-.grid-12 > * { grid-column: span 12; min-width: 0; }
+/* Full width at every breakpoint: "span 12" would add implicit tracks to the 8- and 4-column grids. */
+.grid-12 > * { grid-column: 1 / -1; min-width: 0; }
 @media (min-width: 641px) {
   .grid-12 > .span-3 { grid-column: span 4; }
   .grid-12 > .span-4 { grid-column: span 4; }
@@ -114,6 +115,11 @@ img.jr-card-img { width: 100%; height: 100%; object-fit: cover; }
 }
 @media (min-width: 1181px) { .jr-nav-actions .jr-nav-menu { display: none; } }
 @media (max-width: 560px) { .jr-nav .jr-nav-cta { display: none; } }
+/* Signed in, the bell and the menu button sit beside the lockup; tighten so a 375px phone never scrolls sideways. */
+@media (max-width: 420px) {
+  .jr-nav { padding: 0 var(--space-4); gap: var(--space-3); }
+  .jr-nav .jr-logo-sub { display: none; }
+}
 
 .site-footer { background: var(--surface-inverse); color: var(--ink-inverse); padding: var(--space-16) 0 var(--space-8); margin-top: auto; }
 .site-footer a { color: var(--ink-inverse); text-decoration: none; }
@@ -726,3 +732,8 @@ textarea.doc-in { resize: vertical; min-height: calc(var(--space-12) + var(--spa
 .map-pin span { position: absolute; inset: 0; background: var(--brass-500); border: var(--rule) solid var(--green-900); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: var(--shadow-overlay); }
 a.map-pin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .map-pick { cursor: crosshair; }
+
+
+/* ---------- Fixes from the accessibility audit ---------- */
+/* The sidebar's span rule otherwise turns the monogram grey on brass (fails contrast). */
+.jr-side-user .jr-mono-avatar { display: grid; color: var(--green-900); font-weight: 800; }

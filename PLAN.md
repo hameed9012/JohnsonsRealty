@@ -324,7 +324,29 @@ Phase 4 is pushed and merged into `main` (`69b95d4`). On Oct 24 the user asked m
   - **Showing.** The property page shows "On the map" only when there is both a map image and a pin.
   - **Map views.** Buy, Rent and Businesses get a **Map** view, only when a map image exists. It shows every matching listing that has a pin (not just the current page), each linking to its listing, with the list below. Nothing is ever placed automatically.
 - **Accessibility fix found by the tests:** pipeline cards were links with no accessible name. They are now named by address and client.
-- **Flaky build:** once, PGlite aborted while prerendering the sitemap during the e2e build. A rerun passed. If it recurs, the sitemap can opt out of build-time prerendering.
+- **Flaky build:** once, PGlite aborted while prerendering the sitemap during the e2e build. A rerun passed. (Fixed in Phase 8: the sitemap is now built per request.)
+
+### Phase 8 — Polish: built (Oct 24, 2026); deploy waiting on account setup
+
+- **Accessibility audit** (`tests/e2e/accessibility.spec.ts`, axe-core, WCAG 2.1 A/AA). Every public page, the client account pages, and every portal page (including a document, a listing with the map picker, and the studio with a listing loaded) must have no serious or critical violations. Fixed along the way:
+  - **Contrast:** the sidebar's monogram avatar was grey on brass, because the design-system bundle's span rule won.
+  - **Week calendar:** it claimed `role="grid"` without rows; it is now a list of days.
+  - Pipeline cards were unnamed links (fixed in Phase 7).
+- **Mobile pass:** portal and account pages must not scroll sideways at 375px. Fixed:
+  - `.grid-12` children defaulted to `span 12`, which added implicit columns to the 8- and 4-column grids on tablets and phones (every grid form overflowed).
+  - The signed-in header (bell plus menu button) was about 3px too wide on a 375px phone.
+- **Performance:**
+  - The property page no longer renders the off-screen brochure (and fetches three full-size photos) on every visit; it renders only when "Download brochure" is clicked.
+  - html-to-image is loaded only when an export runs.
+  - Images already go through `next/image` with the Cloudinary loader.
+- **SEO:**
+  - Property pages carry `RealEstateListing` JSON-LD from the listing's own fields, with `<` escaped.
+  - The sitemap is built per request, so a Vercel build never needs the database.
+  - Robots, canonical URLs and Open Graph images were already in place.
+- **README:**
+  - Re-saved as UTF-8. It had been UTF-16 since Phase 2, which GitHub may show as a binary file.
+  - New "What's in the portal" section (documents, studio, map pins) and the full list of end-to-end journeys.
+- **Not done:** the Vercel deploy, which is waiting on the Neon, Discord and Cloudinary setup in the README.
 
 ## 11. Build order
 

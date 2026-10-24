@@ -16,11 +16,11 @@ export function WeekCalendar({ weekStart, events, today = new Date() }: { weekSt
   const days = Array.from({ length: 7 }, (_, i) => new Date(weekStart.getTime() + i * 86400000));
   const key = (d: Date) => d.toISOString().slice(0, 10);
   return (
-    <div className="cal" role="grid" aria-label="Week">
+    <div className="cal" role="list" aria-label="Week">
       {days.map((d) => {
         const evs = events.filter((e) => key(e.start) === key(d)).sort((a, b) => a.start.getTime() - b.start.getTime());
         return (
-          <section key={key(d)} className="cal-day" role="gridcell" data-today={key(d) === key(today)} aria-label={d.toDateString()}>
+          <section key={key(d)} className="cal-day" role="listitem" data-today={key(d) === key(today)} aria-label={d.toDateString()}>
             <header>
               {DAY.format(d)}
               <b>{d.getUTCDate()}</b>

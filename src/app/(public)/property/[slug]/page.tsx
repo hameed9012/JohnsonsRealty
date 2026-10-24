@@ -15,6 +15,7 @@ import { MapPin } from '@/components/listing/MapPin';
 import { studioDataFrom } from '@/server/listings/studio';
 import { mediaSrc } from '@/server/queries/media';
 import { getSettings } from '@/server/settings';
+import { siteUrl } from '@/lib/discord';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -52,8 +53,23 @@ export default async function PropertyPage({ params }: Props) {
   const path = `/property/${v.slug}`;
   const section = v.type === 'business' ? { label: 'Businesses', href: '/businesses' } : v.purpose === 'rent' ? { label: 'Rent', href: '/rent' } : { label: 'Buy', href: '/buy' };
 
+  // Structured data for search engines, from the listing's own fields only.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    name: v.title,
+    url: siteUrl(path),
+    datePosted: b.publishedAt?.toISOString(),
+    image: v.cover ? publicImageUrl(v.cover.src, { width: 1200 }) : undefined,
+    description: v.description ?? undefined,
+    ...(v.price ? { offers: { '@type': 'Offer', price: v.price, priceCurrency: 'USD', availability: onMarket ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut' } } : {}),
+    ...(v.areaName ? { contentLocation: { '@type': 'Place', name: [v.areaName, v.areaParentName, 'PA'].filter(Boolean).join(', ') } } : {}),
+  };
+
   return (
     <div className="container section stack-lg">
+      {/* JSON.stringify escapes quotes; replacing "<" keeps a listing's text from closing the script tag. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <Breadcrumbs items={[section, ...(v.areaName && v.areaSlug ? [{ label: v.areaName, href: `/areas/${v.areaSlug}` }] : []), { label: v.title }]} />
       <PropertyView
         view={v}
