@@ -62,6 +62,13 @@ export async function setListingPrice(id: string, price: string) {
   return run(() => db.transaction((tx) => listingOps.changePrice(tx, actor, id, { price })), 'Price updated', ['/portal/listings']);
 }
 
+export async function setListingPin(id: string, pin: { x: number; y: number } | null) {
+  const actor = await actorOrThrow();
+  const r = await run(() => db.transaction((tx) => listingOps.placePin(tx, actor, id, pin)), pin ? 'Pin placed' : 'Pin removed', [`/portal/listings/${id}`]);
+  revalidateTag('listings', 'max');
+  return r;
+}
+
 export async function saveLiveEdit(id: string, values: Record<string, string>) {
   const actor = await actorOrThrow();
   const settings = await getSettings();

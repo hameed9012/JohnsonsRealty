@@ -23,7 +23,7 @@ export interface SearchQuery {
   features: string[];
   owner: 'include' | 'exclude' | 'only';
   sort: Sort;
-  view: 'grid' | 'list';
+  view: 'grid' | 'list' | 'map';
   page: number;
 }
 
@@ -63,7 +63,7 @@ export function parseSearch(p: Params): SearchQuery {
     features: [...new Set(features)].sort(),
     owner: owner === 'exclude' || owner === 'only' ? owner : 'include',
     sort: SORTS.includes(sort as Sort) ? (sort as Sort) : 'newest',
-    view: first(p.view) === 'list' ? 'list' : 'grid',
+    view: first(p.view) === 'list' ? 'list' : first(p.view) === 'map' ? 'map' : 'grid',
     page: Math.max(1, Math.min(500, num(first(p.page), 500) ?? 1)),
   };
 }

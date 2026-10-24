@@ -44,6 +44,8 @@ const cardColumns = {
   baths: listings.baths,
   sqft: listings.sqft,
   publishedAt: listings.publishedAt,
+  mapX: listings.mapX,
+  mapY: listings.mapY,
   areaName: areas.name,
   areaSlug: areas.slug,
   nameWithheld: listingBusiness.nameWithheld,
@@ -124,7 +126,7 @@ export interface SearchScope {
 export const PAGE_SIZE = 12;
 
 /** Buy, Rent and Businesses search. */
-export async function searchCards(scope: SearchScope, q: SearchQuery) {
+export async function searchCards(scope: SearchScope, q: SearchQuery, opts: { pins?: boolean } = {}) {
   const conds: (SQL | undefined)[] = [onMarket()];
   if (scope.purpose) conds.push(eq(listings.purpose, scope.purpose));
   if (scope.types?.length) conds.push(inArray(listings.type, scope.types));
@@ -155,14 +157,20 @@ export async function searchCards(scope: SearchScope, q: SearchQuery) {
           ? [sql`${listings.beds} desc nulls last`, desc(listings.publishedAt)]
           : [desc(listings.publishedAt)];
 
-  const [[{ total } = { total: 0 }], rows] = await Promise.all([
+  const [[{ total } = { total: 0 }], rows, pinned] = await Promise.all([
     db.select({ total: sql<number>`count(*)::int` }).from(listings).where(where),
     base()
       .where(where)
       .orderBy(...order)
       .limit(PAGE_SIZE)
       .offset((q.page - 1) * PAGE_SIZE),
+    // The map view shows every matching listing that has a hand-placed pin, not just this page.
+    opts.pins ? base().where(and(where, sql`${listings.mapX} is not null and ${listings.mapY} is not null`)).orderBy(...order).limit(300) : Promise.resolve([]),
   ]);
-  return { total, pages: Math.max(1, Math.ceil(total / PAGE_SIZE)), cards: rows.map((r) => toCard(r as Row)) };
+  const pins = pinned.map((r) => {
+    const c = toCard(r as Row);
+    return { x: Number(r.mapX), y: Number(r.mapY), label: c.title, href: `/property/${c.slug}` };
+  });
+  return { total, pages: Math.max(1, Math.ceil(total / PAGE_SIZE)), cards: rows.map((r) => toCard(r as Row)), pins };
 }
 

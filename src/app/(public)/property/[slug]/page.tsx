@@ -10,6 +10,11 @@ import { money } from '@/lib/format';
 import { publicImageUrl } from '@/lib/storage';
 import { isSaved, publicListingBySlug, similarListings } from '@/server/queries/public-listings';
 import { getActor } from '@/server/session';
+import { BrochureDownload } from '@/components/studio/BrochureDownload';
+import { MapPin } from '@/components/listing/MapPin';
+import { studioDataFrom } from '@/server/listings/studio';
+import { mediaSrc } from '@/server/queries/media';
+import { getSettings } from '@/server/settings';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,7 +41,13 @@ export default async function PropertyPage({ params }: Props) {
   if (!r) notFound();
   const { view: v, bundle: b } = r;
   const actor = await getActor();
-  const [saved, similar] = await Promise.all([isSaved(actor?.id, b.id), similarListings({ id: b.id, areaId: b.areaId, purpose: b.purpose, type: b.type })]);
+  const settings = await getSettings();
+  const [saved, similar, mapSrc, studio] = await Promise.all([
+    isSaved(actor?.id, b.id),
+    similarListings({ id: b.id, areaId: b.areaId, purpose: b.purpose, type: b.type }),
+    b.mapX !== null && b.mapY !== null ? mediaSrc(settings.mapMediaId) : null,
+    studioDataFrom(b, settings),
+  ]);
   const onMarket = MARKET_STATUSES.includes(b.status as ListingStatus);
   const path = `/property/${v.slug}`;
   const section = v.type === 'business' ? { label: 'Businesses', href: '/businesses' } : v.purpose === 'rent' ? { label: 'Rent', href: '/rent' } : { label: 'Buy', href: '/buy' };
@@ -46,7 +57,13 @@ export default async function PropertyPage({ params }: Props) {
       <Breadcrumbs items={[section, ...(v.areaName && v.areaSlug ? [{ label: v.areaName, href: `/areas/${v.areaSlug}` }] : []), { label: v.title }]} />
       <PropertyView
         view={v}
-        actions={onMarket ? <SaveShare listingId={b.id} saved={saved} signedIn={!!actor} title={v.title} path={path} /> : null}
+        actions={
+          <>
+            {onMarket ? <SaveShare listingId={b.id} saved={saved} signedIn={!!actor} title={v.title} path={path} /> : null}
+            <BrochureDownload data={studio.data} name={v.title} />
+          </>
+        }
+        map={mapSrc ? <MapPin src={publicImageUrl(mapSrc, { width: 1600 })} pins={[{ x: b.mapX!, y: b.mapY!, label: v.title }]} caption="Placed by hand by the brokerage. Ask the agent for directions in the city." /> : null}
         booking={
           onMarket ? (
             <>

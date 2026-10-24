@@ -7,7 +7,7 @@ import type { Actor } from '@/lib/permissions';
 import { addOffer, changeDealStage, createDeal, listingStatusFor, recordSale } from '@/server/ops/deals';
 import { acceptInvite, createInvite } from '@/server/ops/invites';
 import { assignEnquiry, replyToEnquiry } from '@/server/ops/inbox';
-import { bulkStatus, changeListingStatus, changePrice, decideRevision, liveEdit } from '@/server/ops/listings';
+import { bulkStatus, changeListingStatus, changePrice, decideRevision, liveEdit, placePin } from '@/server/ops/listings';
 import { saveClientFile } from '@/server/ops/clients';
 import { updateShowing } from '@/server/ops/showings';
 import { resetDb, testDb } from './helpers/db';
@@ -55,6 +55,18 @@ describe('listing operations', () => {
     await expect(changeListingStatus(db, agent, listingId, 'sold')).rejects.toThrow('record a sale');
     await expect(changeListingStatus(db, agent2, listingId, 'active')).rejects.toThrow('You can’t change this listing.');
     await expect(changeListingStatus(db, agent, listingId, 'for_lease')).rejects.toThrow();
+  });
+
+  it('places and clears a hand-placed map pin, only for staff who manage the listing', async () => {
+    await placePin(db, agent, listingId, { x: 12.345, y: 67.891 });
+    let l = await db.query.listings.findFirst({ where: eq(listings.id, listingId) });
+    expect([l!.mapX, l!.mapY]).toEqual([12.35, 67.89]);
+    await expect(placePin(db, agent, listingId, { x: 120, y: 5 })).rejects.toThrow('Click inside the map');
+    await expect(placePin(db, agent2, listingId, { x: 1, y: 1 })).rejects.toThrow('You can’t place the pin');
+    await expect(placePin(db, client, listingId, { x: 1, y: 1 })).rejects.toThrow('You can’t place the pin');
+    await placePin(db, owner, listingId, null);
+    l = await db.query.listings.findFirst({ where: eq(listings.id, listingId) });
+    expect([l!.mapX, l!.mapY]).toEqual([null, null]);
   });
 
   it('bulk changes report failures without stopping', async () => {

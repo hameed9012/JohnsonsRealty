@@ -16,6 +16,10 @@ import { SearchFilters, SortSelect } from './SearchFilters';
 import { SaveSearchButton } from './SavedSearchControls';
 import type { SavedScope } from '@/lib/saved-search';
 import { getActor } from '@/server/session';
+import { MapPin } from '@/components/listing/MapPin';
+import { publicImageUrl } from '@/lib/storage';
+import { mediaSrc } from '@/server/queries/media';
+import { getSettings } from '@/server/settings';
 
 export interface SearchPageProps {
   scopeKey: SavedScope;
@@ -32,16 +36,20 @@ export interface SearchPageProps {
 }
 
 export async function SearchPage(p: SearchPageProps) {
+  const settings = await getSettings();
+  // The map view exists only when the Owner has uploaded a map image.
+  const mapSrc = await mediaSrc(settings.mapMediaId);
+  const mapView = !!mapSrc && p.q.view === 'map';
   const [actor, allAreas, feats, res] = await Promise.all([
     getActor(),
     getAreas(),
     db.select().from(features).where(eq(features.active, true)).orderBy(asc(features.displayOrder)),
-    searchCards(p.scope, p.q),
+    searchCards(p.scope, p.q, { pins: mapView }),
   ]);
   const byId = new Map(allAreas.map((a) => [a.id, a]));
   const areaOpts = allAreas.map((a) => ({ value: a.slug, label: a.parentId ? `${a.name} · ${byId.get(a.parentId)?.name ?? ''}` : `${a.name} (all)` }));
   const href = (page: number) => p.basePath + toQueryString({ ...p.q, page });
-  const view = (v: 'grid' | 'list') => p.basePath + toQueryString({ ...p.q, view: v, page: 1 });
+  const view = (v: 'grid' | 'list' | 'map') => p.basePath + toQueryString({ ...p.q, view: v, page: 1 });
   const noun = res.total === 1 ? p.noun[0] : p.noun[1];
 
   return (
@@ -81,12 +89,24 @@ export async function SearchPage(p: SearchPageProps) {
                 <Link href={view('list')} aria-current={p.q.view === 'list' ? 'true' : undefined}>
                   List
                 </Link>
+                {mapSrc ? (
+                  <Link href={view('map')} aria-current={mapView ? 'true' : undefined}>
+                    Map
+                  </Link>
+                ) : null}
               </nav>
             </div>
           </div>
+          {mapView ? (
+            <MapPin
+              src={publicImageUrl(mapSrc!, { width: 1600 })}
+              pins={res.pins}
+              caption={res.pins.length ? `${count(res.pins.length)} of ${count(res.total)} ${noun} have a pin, placed by hand by the brokerage. Choose a pin to open the listing.` : 'None of these listings has a pin on the map yet. Use the grid or list to see them.'}
+            />
+          ) : null}
           {res.cards.length ? (
             <>
-              <CardGrid cards={res.cards} layout={p.q.view} priority={3} returnTo={p.basePath + toQueryString(p.q)} />
+              <CardGrid cards={res.cards} layout={p.q.view === 'map' ? 'list' : p.q.view} priority={3} returnTo={p.basePath + toQueryString(p.q)} />
               <Pagination page={p.q.page} pages={res.pages} href={href} />
             </>
           ) : (

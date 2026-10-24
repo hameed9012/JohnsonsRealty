@@ -2,7 +2,7 @@
 import 'dotenv/config';
 import { eq } from 'drizzle-orm';
 import { getDb } from '@/db/client';
-import { agentProfiles, areas, clientPeople, clients, dealParties, deals, documents, listingPhotos, listingReviews, listings, media, priceHistory, users } from '@/db/schema';
+import { agentProfiles, areas, clientPeople, clients, dealParties, deals, documents, listingPhotos, listingReviews, listings, media, priceHistory, siteSettings, users } from '@/db/schema';
 import { testAuthEnabled } from '@/lib/test-auth';
 
 const PHOTOS = ['/styleguide/in-game-exterior-sample.jpg', '/styleguide/in-game-interior-sample.jpg', '/styleguide/in-game-exterior-sample.jpg'];
@@ -26,6 +26,9 @@ async function main() {
   const photoRows = await Promise.all(
     PHOTOS.map((p, i) => db.insert(media).values({ storageId: `${p}?e2e=${i}`, width: 1600, height: 900 }).returning().then((r) => r[0]!)),
   );
+  // A stand-in map image so the manual map pin can be tested.
+  const [mapImage] = await db.insert(media).values({ storageId: '/styleguide/in-game-exterior-sample.jpg?map', width: 1600, height: 900 }).returning();
+  await db.update(siteSettings).set({ mapMediaId: mapImage!.id }).where(eq(siteSettings.id, 1));
   const photos = (listingId: string) => photoRows.map((m, i) => ({ listingId, mediaId: m.id, alt: `Example photo ${i + 1}`, sortOrder: i, isCover: i === 0 }));
 
   const [seller] = await db.insert(clients).values({ displayName: 'Example Seller', roles: ['seller'], agentId: 'e2e-agent' }).returning();

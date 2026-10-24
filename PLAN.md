@@ -306,6 +306,26 @@ Phase 4 is pushed and merged into `main` (`69b95d4`). On Oct 24 the user asked m
   - `/portal/documents/[id]`: the paper editor. It has the quick area picker (it fills the municipality and ZIP), Fill from client file, typed signatures, Save draft, Mark as sent or signed, Share with the client, Save as image (html-to-image, an 860px sheet at 2×) and Print/PDF (print stylesheet, letter size).
   - The deal page and client file both have a "New document" button, and the client's deal page links each shared document.
 
+### Phase 7 — Marketing studio and map pin: built (Oct 24, 2026)
+
+- **Artboards** (`components/studio/Artboards.tsx`): the formats from `surfaces.md`.
+  - **Brochure**: green band and lockup, photo with a status ribbon, address, StatRow, price in mono, agent footer on `surface-sunken` with a brass top rule.
+  - Also a **square post**, a **banner** (lockup plus the ledger's sold, volume and active figures; zero figures are left out), and a **business card** front and back.
+  - **How the sizes come out exact.** Each artboard is laid out at half size with the design tokens and exported with html-to-image at 2×, so the PNGs are exactly 1080×1350, 1080×1080, 1500×500 and 1050×600 (checked in the browser). This keeps raw font sizes and spacing out of app code. Artboards are pinned to the light theme so the portal's dark mode doesn't recolour them.
+- **Studio** (`/portal/studio?listing=`):
+  - Picking a listing fills the brochure from it (`server/listings/studio.ts`), using public fields only, since brochures are shared outside. That covers the ribbon (from status, including Price Reduced), date, address, area line, up to four figures, the description's first sentence, the price (the recorded sale price once sold), who was represented, up to three photos in the order picked, and the agent.
+  - Owner-listed homes carry "Listed by Owner" with the brokerage name.
+  - Everything can be changed before export. Business cards use the signed-in agent's profile.
+  - The picker lists only listings the agent can see in the portal.
+- **Chirper composer** (`lib/chirper.ts`): template drafts (Just listed, Price reduced, Open house with a typed time, Under contract, Sold, For lease, Leased) built from the listing's real fields. Empty lines drop out, handles aren't repeated, and the blurb is trimmed with an ellipsis to stay within 280 characters. The draft is editable and has Copy and Reset buttons. No AI.
+- **Property page**: "Download brochure" makes the same 1080×1350 PNG in the visitor's browser. It also shows for sold listings, as a record.
+- **Manual map pin**:
+  - **Placing.** Staff who manage a listing click the uploaded map image (Site settings) to place its pin. It is stored as x/y percentages, can be nudged with the arrow keys, and can be removed. The change is audited.
+  - **Showing.** The property page shows "On the map" only when there is both a map image and a pin.
+  - **Map views.** Buy, Rent and Businesses get a **Map** view, only when a map image exists. It shows every matching listing that has a pin (not just the current page), each linking to its listing, with the list below. Nothing is ever placed automatically.
+- **Accessibility fix found by the tests:** pipeline cards were links with no accessible name. They are now named by address and client.
+- **Flaky build:** once, PGlite aborted while prerendering the sitemap during the e2e build. A rerun passed. If it recurs, the sitemap can opt out of build-time prerendering.
+
 ## 11. Build order
 
 Each phase ends with tests passing, a short summary, and this file updated.

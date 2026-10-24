@@ -19,6 +19,10 @@ import { WIZARD_STATUSES } from '@/server/listings/service';
 import { MANUAL_STATUSES } from '@/server/ops/listings';
 import { STAGE_WORDS } from '@/server/ops/deals';
 import { requireStaff } from '@/server/session';
+import { MapPinPicker } from '@/components/portal/MapPinPicker';
+import { publicImageUrl } from '@/lib/storage';
+import { mediaSrc } from '@/server/queries/media';
+import { getSettings } from '@/server/settings';
 
 export const metadata: Metadata = { title: 'Listing' };
 
@@ -33,7 +37,9 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
   const subject = { source: row.source, status: row.status, listingAgentId: row.listingAgentId, submittedByUserId: row.submittedByUserId };
   const manage = can(actor, 'listing.changeStatus', subject) && !WIZARD_STATUSES.includes(row.status);
   const manager = actor.role === 'owner' || actor.role === 'admin';
-  const [listingDeals, listingShowings, revision, clientRows] = await Promise.all([
+  const settings = await getSettings();
+  const [mapSrc, listingDeals, listingShowings, revision, clientRows] = await Promise.all([
+    mediaSrc(settings.mapMediaId),
     db.select().from(deals).where(eq(deals.listingId, id)).orderBy(desc(deals.updatedAt)),
     db.select().from(showings).where(eq(showings.listingId, id)).orderBy(desc(showings.requestedFor)).limit(20),
     db.query.listingRevisions.findFirst({ where: and(eq(listingRevisions.listingId, id), eq(listingRevisions.status, 'pending')) }),
@@ -64,6 +70,9 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
             </Button>
           ) : null}
           {data.status === 'pending_review' ? <Button href={`/portal/review/${id}`}>Open review</Button> : null}
+          <Button variant="ghost" href={`/portal/studio?listing=${id}`} icon="image">
+            Marketing
+          </Button>
           {row.sellerClientId ? (
             <Button variant="ghost" href={`/portal/clients/${row.sellerClientId}/seller-file`} icon="document">
               Seller file
@@ -83,6 +92,15 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           reviewNote={null}
           clients={clientRows.map((c) => ({ value: c.id, label: c.name }))}
         />
+      ) : null}
+
+      {mapSrc && manage && can(actor, 'listing.placePin') ? (
+        <section className="stack" aria-labelledby="pin-h">
+          <h2 id="pin-h" className="heading-2">
+            Map pin
+          </h2>
+          <MapPinPicker id={id} src={publicImageUrl(mapSrc, { width: 1600 })} initial={row.mapX !== null && row.mapY !== null ? { x: row.mapX, y: row.mapY } : null} title={data.preview.title} />
+        </section>
       ) : null}
 
       <section className="stack">

@@ -18,12 +18,14 @@ export interface PropertyViewProps {
   booking?: React.ReactNode;
   /** Similar listings rail. */
   similar?: React.ReactNode;
+  /** The hand-placed map pin, when the brokerage has a map and this listing has a pin. */
+  map?: React.ReactNode;
   /** Wizard and review previews render without links out of the page. */
   preview?: boolean;
   headingLevel?: 1 | 2;
 }
 
-export function PropertyView({ view: v, actions, booking, similar, preview, headingLevel = 1 }: PropertyViewProps) {
+export function PropertyView({ view: v, actions, booking, similar, map, preview, headingLevel = 1 }: PropertyViewProps) {
   const H = headingLevel === 1 ? 'h1' : 'h2';
   const kind = v.purpose === 'rent' ? 'rent' : v.previousPrice ? 'reduced' : v.rawStatus === 'sold' ? 'sold' : 'sale';
   return (
@@ -116,6 +118,13 @@ export function PropertyView({ view: v, actions, booking, similar, preview, head
                   </tbody>
                 </table>
               </div>
+            </section>
+          ) : null}
+
+          {map ? (
+            <section className="stack">
+              <h2 className="heading-2">On the map</h2>
+              {map}
             </section>
           ) : null}
 

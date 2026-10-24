@@ -124,3 +124,13 @@ export async function decideRevision(ex: Executor, actor: Actor, settings: Permi
 export async function pendingRevisions(ex: Executor) {
   return ex.query.listingRevisions.findMany({ where: inArray(listingRevisions.status, ['pending']), with: { listing: true } });
 }
+
+/** Places (or clears) the hand-placed pin on the brokerage map. x and y are percentages of the map image. */
+export async function placePin(ex: Executor, actor: Actor, id: string, pin: { x: number; y: number } | null) {
+  const l = await get(ex, id);
+  if (!can(actor, 'listing.placePin') || !can(actor, 'listing.changeStatus', subject(l))) throw new ServiceError('You can’t place the pin on this listing.');
+  if (pin && ![pin.x, pin.y].every((v) => Number.isFinite(v) && v >= 0 && v <= 100)) throw new ServiceError('Click inside the map to place the pin.');
+  const values = pin ? { mapX: Math.round(pin.x * 100) / 100, mapY: Math.round(pin.y * 100) / 100 } : { mapX: null, mapY: null };
+  await ex.update(listings).set(values).where(eq(listings.id, id));
+  await audit(ex, { actorId: actor.id, action: pin ? 'listing.pin' : 'listing.unpin', entity: 'listing', entityId: id, summary: `${pin ? 'Placed' : 'Removed'} the map pin on ${l.addressLine || l.refNo}` });
+}
