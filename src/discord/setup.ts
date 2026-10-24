@@ -23,6 +23,7 @@ import {
   type RoleKey,
 } from './blueprint';
 import { author, tokenColor, type BrandContext } from './brand';
+import { COMMANDS } from './commands';
 import { DiscordApiError, type DiscordRest } from './rest';
 
 export interface StoredItem {
@@ -45,6 +46,8 @@ export interface SetupOptions {
   dryRun?: boolean;
   /** PNG bytes for the server icon; omitted = leave the icon alone. */
   icon?: Uint8Array | null;
+  /** The application ID, to register the slash commands; omitted = skip them. */
+  appId?: string;
 }
 
 export interface SetupReport {
@@ -391,6 +394,19 @@ export async function runSetup(o: SetupOptions): Promise<SetupReport> {
         }
       } else report.unchanged++;
     }
+  }
+
+  // ---- Slash commands (guild-scoped; a bulk overwrite keeps them exactly as defined) ----
+  if (o.appId) {
+    const hash = digest(COMMANDS);
+    if (stored.get('setting:commands')?.hash !== hash) {
+      try {
+        await change(`Register ${COMMANDS.length} slash commands`, () => rest.put(`/applications/${o.appId}/guilds/${g}/commands`, COMMANDS), null);
+        await remember('setting:commands', 'setting', { discordId: g, hash });
+      } catch (e) {
+        report.manual.push(`Slash commands couldn't be registered (${describe(e)}). Re-invite the bot with the applications.commands scope (the README link includes it).`);
+      }
+    } else report.unchanged++;
   }
 
   report.manual.push('Server Settings → Safety Setup: require 2FA for moderator actions (only the server owner can turn this on).');

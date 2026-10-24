@@ -69,6 +69,12 @@ export const enquiries = pgTable(
     userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
     status: enquiryStatusEnum('status').notNull().default('new'),
     assigneeId: text('assignee_id').references(() => users.id, { onDelete: 'set null' }),
+    /** Discord tickets: who opened it, the closing summary and the transcript message link. */
+    discordUserId: text('discord_user_id'),
+    summary: text('summary'),
+    transcriptUrl: text('transcript_url'),
+    /** Career applications: set by the Accept / Decline buttons in Discord or the portal. */
+    decision: text('decision'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },

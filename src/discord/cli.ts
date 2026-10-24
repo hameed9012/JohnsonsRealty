@@ -32,6 +32,7 @@ async function main() {
     brand: await brandContext(db),
     dryRun,
     icon: await readFile(SERVER.iconFile),
+    appId: env.value.appId,
   });
   console.log(dryRun ? '\nDry run: nothing was changed. This is what setup would do:\n' : '\nSetup finished.\n');
   console.log(report.changes.length ? report.changes.map((c) => `  · ${c}`).join('\n') : '  Everything already matches the blueprint.');

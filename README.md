@@ -138,6 +138,26 @@ Running setup again updates by stored ID: it re-orders roles, fixes permissions 
 - Finish **onboarding**. Discord wants more default channels than the blueprint lists, so setup prints the questions to add.
 - Add the server banner. It needs a boost level.
 
+**What the bot does day to day:**
+
+| On the website or in Discord | What happens |
+| --- | --- |
+| A listing is approved | Posted to #new-listings, #for-rent or #businesses-for-sale, pinging Notifications: Listings |
+| Its price is cut | "Price Reduced" in #new-listings, with the old price struck through |
+| It's withdrawn, archived or taken off the market | The original post is edited to "No longer available" |
+| A sale or lease is recorded | Posted in #sold (no buyer names); buyers on the deal get the Client role |
+| A listing is submitted for review | Posted in #listing-review, pinging Management |
+| A deal changes stage | Posted in #deal-board |
+| Someone applies on Careers | Posted in #applications with **Accept** and **Decline**, which update the application on the site and notify the applicant |
+| **Portal → Announcements** | Posts to #announcements |
+| An open house is scheduled on a listing | Posts to #open-houses and shows on the property page |
+| A ticket button in #open-a-ticket | Asks a few questions, then opens a private `ticket-…` channel for the person and staff (Complaints: Management and up). Staff **Claim** it; **Close** asks for a summary, saves an HTML transcript in #ticket-transcripts, records the ticket on the site, and deletes the channel. |
+| **Clock in** / **Clock out** in #shifts | Hours this week show on the portal's Discord page |
+| `/listings`, `/listing`, `/agent`, `/map`, `/link` | Search listings, show one, show an agent, link to the map, link a member to their site account and sync their roles |
+| Someone's role changes on the site | Their Discord role follows: Owner, Admin → Co-Owner, Agent, and Client after a closed deal. Management, Senior Agent and Trainee are set by hand. |
+
+If a post fails (for example, a missing permission), the website action still goes through. The post is saved under **Failed posts** on the Discord page with a **Retry** button, and noted in #bot-log. **See how every post looks** on that page previews them all with sample data. Imported listings are never posted automatically: use **Post to Discord** on the listing.
+
 **Not included:** logging message edits, deletions and member joins needs a bot that stays connected, which Vercel can't run. If you want those logs, add a free logging bot alongside this one.
 
 ## The first Owner

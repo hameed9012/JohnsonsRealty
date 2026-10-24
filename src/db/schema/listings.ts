@@ -55,6 +55,9 @@ export const listings = pgTable(
     featured: boolean('featured').notNull().default(false),
     publishedAt: ts('published_at'),
     withdrawnAt: ts('withdrawn_at'),
+    /** The listing's announcement in Discord, edited later (price cut, sold, withdrawn) instead of re-posting. */
+    discordMessageId: text('discord_message_id'),
+    discordChannelId: text('discord_channel_id'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },

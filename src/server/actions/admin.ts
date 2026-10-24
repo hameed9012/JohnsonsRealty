@@ -3,6 +3,7 @@
 import { and, eq, ne } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { after } from 'next/server';
 import { db } from '@/db/client';
 import { agentProfiles, areas, sessions, siteSettings, users } from '@/db/schema';
 import { fieldErrors, formObject, type ActionState } from '@/lib/action-result';
@@ -11,6 +12,7 @@ import { agentProfileSchema, areaSchema, roleChangeSchema, settingsSchema } from
 import { slugify } from '@/lib/slug';
 import { audit, diffOf } from '@/server/audit';
 import { actorOrThrow } from '@/server/session';
+import { syncDiscordRoles } from '@/server/discord-posts';
 
 const DENIED = { ok: false as const, message: 'You don’t have access to that.' };
 
@@ -102,6 +104,7 @@ export async function changeRole(input: { userId: string; role: 'admin' | 'agent
     });
   });
   revalidatePath('/portal/team');
+  after(() => syncDiscordRoles([target.id]));
   return { ok: true, message: 'Role updated' };
 }
 
@@ -116,6 +119,7 @@ export async function setUserActive(userId: string, active: boolean): Promise<Ac
     await audit(tx, { actorId: actor.id, action: active ? 'user.reactivate' : 'user.deactivate', entity: 'user', entityId: userId, summary: `${active ? 'Reactivated' : 'Deactivated'} ${target.displayName ?? target.name ?? 'a user'}` });
   });
   revalidatePath('/portal/team');
+  after(() => syncDiscordRoles([userId]));
   return { ok: true, message: active ? 'Account reactivated' : 'Account deactivated' };
 }
 

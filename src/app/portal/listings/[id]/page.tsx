@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, gte } from 'drizzle-orm';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
@@ -9,7 +9,7 @@ import { Breadcrumbs, DataTable } from '@/components/ui/layout';
 import { LocalTime } from '@/components/ui/LocalTime';
 import { StatusPill } from '@/components/ui/StatusStamp';
 import { db } from '@/db/client';
-import { clients, deals, listingRevisions, listings, showings } from '@/db/schema';
+import { clients, deals, listingRevisions, listings, openHouses, showings } from '@/db/schema';
 import { stagePill } from '@/lib/deal-stage';
 import { canTransition, isPublic, label, statusKey, type ListingStatus } from '@/lib/listing-status';
 import { can } from '@/lib/permissions';
@@ -20,6 +20,7 @@ import { MANUAL_STATUSES } from '@/server/ops/listings';
 import { STAGE_WORDS } from '@/server/ops/deals';
 import { requireStaff } from '@/server/session';
 import { MapPinPicker } from '@/components/portal/MapPinPicker';
+import { CancelOpenHouseButton, OpenHouseForm, PostToDiscordButton } from '@/components/portal/DiscordControls';
 import { publicImageUrl } from '@/lib/storage';
 import { mediaSrc } from '@/server/queries/media';
 import { getSettings } from '@/server/settings';
@@ -38,7 +39,8 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
   const manage = can(actor, 'listing.changeStatus', subject) && !WIZARD_STATUSES.includes(row.status);
   const manager = actor.role === 'owner' || actor.role === 'admin';
   const settings = await getSettings();
-  const [mapSrc, listingDeals, listingShowings, revision, clientRows] = await Promise.all([
+  const [upcomingOpenHouses, mapSrc, listingDeals, listingShowings, revision, clientRows] = await Promise.all([
+    db.select().from(openHouses).where(and(eq(openHouses.listingId, id), eq(openHouses.cancelled, false), gte(openHouses.endsAt, new Date()))).orderBy(asc(openHouses.startsAt)),
     mediaSrc(settings.mapMediaId),
     db.select().from(deals).where(eq(deals.listingId, id)).orderBy(desc(deals.updatedAt)),
     db.select().from(showings).where(eq(showings.listingId, id)).orderBy(desc(showings.requestedFor)).limit(20),
@@ -73,6 +75,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <Button variant="ghost" href={`/portal/studio?listing=${id}`} icon="image">
             Marketing
           </Button>
+          {manager && isPublic(data.status as ListingStatus) ? <PostToDiscordButton listingId={id} posted={!!row.discordMessageId} /> : null}
           {row.sellerClientId ? (
             <Button variant="ghost" href={`/portal/clients/${row.sellerClientId}/seller-file`} icon="document">
               Seller file
@@ -92,6 +95,30 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           reviewNote={null}
           clients={clientRows.map((c) => ({ value: c.id, label: c.name }))}
         />
+      ) : null}
+
+      {manage && isPublic(row.status as ListingStatus) ? (
+        <section className="stack" aria-labelledby="oh-h">
+          <h2 id="oh-h" className="heading-2">
+            Open houses
+          </h2>
+          {upcomingOpenHouses.length ? (
+            <ul className="saved-list">
+              {upcomingOpenHouses.map((o) => (
+                <li key={o.id}>
+                  <span className="stack">
+                    <LocalTime iso={o.startsAt.toISOString()} />
+                    {o.notes ? <span className="body-s muted">{o.notes}</span> : null}
+                  </span>
+                  <CancelOpenHouseButton id={o.id} />
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <div className="panel">
+            <OpenHouseForm listingId={id} />
+          </div>
+        </section>
       ) : null}
 
       {mapSrc && manage && can(actor, 'listing.placePin') ? (

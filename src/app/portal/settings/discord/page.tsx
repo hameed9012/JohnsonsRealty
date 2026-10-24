@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { desc, gte } from 'drizzle-orm';
+import Link from 'next/link';
+import { RetryPostButton, SyncRolesButton } from '@/components/portal/DiscordControls';
 import { DiscordSetupPanel } from '@/components/portal/DiscordSetupPanel';
+import { LocalTime } from '@/components/ui/LocalTime';
 import { Breadcrumbs } from '@/components/ui/layout';
 import { db } from '@/db/client';
-import { discordConfig } from '@/db/schema';
+import { discordConfig, discordOutbox, shifts } from '@/db/schema';
 import { discordEnv, inviteUrl } from '@/discord/config';
 import { can } from '@/lib/permissions';
 import { requireStaff } from '@/server/session';
@@ -26,7 +30,22 @@ export default async function DiscordSettingsPage() {
   const missing = env.ok ? [] : env.missing;
   const appId = process.env.DISCORD_APP_ID || process.env.AUTH_DISCORD_ID || '';
   const site = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
-  const stored = await db.select({ key: discordConfig.key }).from(discordConfig);
+  const weekStart = new Date();
+  weekStart.setUTCHours(0, 0, 0, 0);
+  weekStart.setUTCDate(weekStart.getUTCDate() - ((weekStart.getUTCDay() + 6) % 7));
+  const [stored, failed, weekShifts] = await Promise.all([
+    db.select({ key: discordConfig.key }).from(discordConfig),
+    db.select().from(discordOutbox).orderBy(desc(discordOutbox.createdAt)).limit(50),
+    db.select().from(shifts).where(gte(shifts.startedAt, weekStart)),
+  ]);
+  const hours = new Map<string, { name: string; minutes: number; open: boolean }>();
+  for (const s of weekShifts) {
+    const h = hours.get(s.discordUserId) ?? { name: s.displayName, minutes: 0, open: false };
+    h.minutes += Math.round(((s.endedAt ?? new Date()).getTime() - s.startedAt.getTime()) / 60000);
+    h.open ||= !s.endedAt;
+    hours.set(s.discordUserId, h);
+  }
+  const hourRows = [...hours.values()].sort((a, b) => b.minutes - a.minutes);
   const count = (prefix: string) => stored.filter((s) => s.key.startsWith(prefix)).length;
 
   return (
@@ -88,6 +107,62 @@ export default async function DiscordSettingsPage() {
           Created so far: {count('role:')} roles, {count('category:') + count('channel:')} categories and channels, {count('message:') + count('faq:')} panels and posts. Preview first to see every change without touching the server.
         </p>
         <DiscordSetupPanel ready={missing.length === 0} />
+        <p className="body-s">
+          <Link href="/portal/settings/discord/preview">See how every post looks</Link>
+        </p>
+      </section>
+
+      <section className="panel stack" aria-labelledby="d-4">
+        <h2 id="d-4" className="panel-title">
+          Roles
+        </h2>
+        <p className="body-s muted">Owner, Admin (Co-Owner), Agent and Client (after a closed deal) follow the website automatically when they change. Management, Senior Agent and Trainee are set by hand in Discord. Run a full sync after setup, or if roles drift.</p>
+        <div className="row">
+          <SyncRolesButton disabled={missing.length > 0} />
+        </div>
+      </section>
+
+      <section className="panel stack" aria-labelledby="d-5">
+        <h2 id="d-5" className="panel-title">
+          Failed posts
+        </h2>
+        {failed.length ? (
+          <ul className="saved-list">
+            {failed.map((f) => (
+              <li key={f.id}>
+                <span className="stack">
+                  <b className="ui">{f.event.replace(/_/g, ' ')}</b>
+                  <span className="body-s muted">
+                    {f.error?.slice(0, 160)} · {f.attempts} {f.attempts === 1 ? 'try' : 'tries'} · <LocalTime iso={f.createdAt.toISOString()} />
+                  </span>
+                </span>
+                <RetryPostButton id={f.id} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="body-s muted">Nothing failed. Every post reached Discord.</p>
+        )}
+      </section>
+
+      <section className="panel stack" aria-labelledby="d-6">
+        <h2 id="d-6" className="panel-title">
+          Shifts this week
+        </h2>
+        {hourRows.length ? (
+          <ul className="saved-list">
+            {hourRows.map((h) => (
+              <li key={h.name}>
+                <b className="ui">{h.name}</b>
+                <span className="figure">
+                  {Math.floor(h.minutes / 60)}h {h.minutes % 60}m{h.open ? ' · on shift now' : ''}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="body-s muted">No one has clocked in this week. Staff use the buttons in #shifts.</p>
+        )}
       </section>
     </div>
   );

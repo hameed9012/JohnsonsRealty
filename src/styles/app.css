@@ -751,3 +751,31 @@ a.map-pin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; 
 .bthumb-line { display: block; height: var(--space-1); width: 70%; background: var(--green-900); opacity: 0.8; }
 .bthumb-price { font: var(--type-caption); font-family: var(--font-mono); color: var(--green-900); line-height: 1; transform: scale(0.7); transform-origin: left bottom; white-space: nowrap; }
 .bthumb-foot { height: var(--space-1); border-top: var(--hairline) solid var(--brass-500); background: var(--surface-sunken); flex: none; }
+
+
+/* ---------- Discord previews (styled like Discord's dark theme, from our own tokens) ---------- */
+.dc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: var(--space-6); }
+.dc-preview { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); background: var(--green-950); color: var(--cream); border: var(--hairline) solid var(--line); }
+.dc-preview .label { margin-bottom: var(--space-1); }
+.dc-content { font: var(--type-body-s); }
+.dc-embed { display: flex; gap: var(--space-3); padding: var(--space-3); background: var(--green-900); border-left: var(--space-1) solid var(--brass-500); }
+.dc-embed-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); font: var(--type-body-s); }
+.dc-author { font: var(--type-caption); font-weight: 600; }
+.dc-title { font: var(--type-ui); font-weight: 700; color: var(--brass-300); }
+.dc-desc { white-space: pre-wrap; }
+.dc-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-1); }
+.dc-field--wide { grid-column: 1 / -1; }
+.dc-field-name { font: var(--type-caption); font-weight: 700; }
+.dc-image { padding: var(--space-6) var(--space-3); background: var(--green-800); font: var(--type-caption); color: var(--green-300); text-align: center; }
+.dc-footer { font: var(--type-caption); color: var(--green-300); margin-top: var(--space-1); }
+.dc-thumb { width: var(--space-16); height: var(--space-16); background: var(--green-800); flex: none; }
+.dc-chip { background: var(--green-800); padding: 0 var(--space-1); }
+.dc-buttons { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dc-button { font: var(--type-caption); font-weight: 600; padding: var(--space-1) var(--space-3); background: var(--green-700); color: var(--cream); }
+.dc-button--3 { background: var(--status-available); color: var(--green-950); }
+.dc-button--4 { background: var(--danger); color: var(--green-950); }
+.dc-button--1 { background: var(--brass-700); }
+.dc-button--off { opacity: 0.5; }
+
+/* Long env var names and URLs wrap instead of pushing the page wider on a phone. */
+.panel code { overflow-wrap: anywhere; word-break: break-word; }

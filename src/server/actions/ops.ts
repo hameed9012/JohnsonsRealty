@@ -2,14 +2,13 @@
 
 import { eq } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { after } from 'next/server';
 import { db } from '@/db/client';
 import { listings } from '@/db/schema';
 import { formObject } from '@/lib/action-result';
-import { postWebhook, siteUrl } from '@/lib/discord';
-import { money, saleNo } from '@/lib/format';
-import { TransitionError, type ListingStatus } from '@/lib/listing-status';
-import { loadBundle } from '@/server/listings/bundle';
-import { webhookMessageFor } from '@/server/listings/present';
+import { siteUrl } from '@/lib/discord';
+import { saleNo } from '@/lib/format';
+import { isPublic, TransitionError, type ListingStatus } from '@/lib/listing-status';
 import { ServiceError } from '@/server/listings/service';
 import * as clientsOps from '@/server/ops/clients';
 import * as dealOps from '@/server/ops/deals';
@@ -19,6 +18,7 @@ import * as listingOps from '@/server/ops/listings';
 import * as showingOps from '@/server/ops/showings';
 import { actorOrThrow, ForbiddenError } from '@/server/session';
 import { getSettings } from '@/server/settings';
+import { dealPartyUserIds, markListingUnavailable, postDealStage, postPriceReduced, postSale, syncDiscordRoles } from '@/server/discord-posts';
 
 export type OpResult<T = undefined> = { ok: true; message?: string; data?: T } | { ok: false; message?: string; fieldErrors?: Record<string, string> };
 
@@ -42,10 +42,13 @@ async function run<T>(fn: () => Promise<T>, message?: string, paths: string[] = 
 
 // ---------- Listings ----------
 
+const OFF_MARKET: ListingStatus[] = ['withdrawn', 'archived', 'off_market'];
+
 export async function setListingStatus(id: string, to: ListingStatus) {
   const actor = await actorOrThrow();
   const r = await run(() => db.transaction((tx) => listingOps.changeListingStatus(tx, actor, id, to)), 'Status updated', ['/portal/listings']);
   revalidateTag('listings', 'max');
+  if (r.ok && OFF_MARKET.includes(to)) after(() => markListingUnavailable(id));
   return r;
 }
 
@@ -53,13 +56,20 @@ export async function bulkListingStatus(ids: string[], to: ListingStatus) {
   const actor = await actorOrThrow();
   const r = await run(() => listingOps.bulkStatus(db, actor, ids, to));
   revalidateTag('listings', 'max');
+  if (r.ok && r.data && OFF_MARKET.includes(to)) for (const done of r.data.done) after(() => markListingUnavailable(done));
   if (r.ok && r.data) return { ...r, message: r.data.failed.length ? `${r.data.done.length} updated, ${r.data.failed.length} couldn’t change` : `${r.data.done.length} updated` };
   return r;
 }
 
 export async function setListingPrice(id: string, price: string) {
   const actor = await actorOrThrow();
-  return run(() => db.transaction((tx) => listingOps.changePrice(tx, actor, id, { price })), 'Price updated', ['/portal/listings']);
+  const r = await run(() => db.transaction((tx) => listingOps.changePrice(tx, actor, id, { price })), 'Price updated', ['/portal/listings']);
+  // A cut on a live listing is announced in #new-listings with the old price struck through.
+  if (r.ok && r.data?.previousPrice && r.data.price && r.data.price < r.data.previousPrice && isPublic(r.data.status as ListingStatus)) {
+    const old = r.data.previousPrice;
+    after(() => postPriceReduced(id, old));
+  }
+  return { ...r, data: undefined };
 }
 
 export async function setListingPin(id: string, pin: { x: number; y: number } | null) {
@@ -117,12 +127,8 @@ export async function moveDealStage(id: string, to: (typeof dealOps.STAGE_WORDS 
   const r = await run(() => db.transaction((tx) => dealOps.changeDealStage(tx, actor, id, to as never)), `Moved to ${dealOps.STAGE_WORDS[to as keyof typeof dealOps.STAGE_WORDS]}`, ['/portal/deals', `/portal/deals/${id}`, `/account/deal/${id}`]);
   if (r.ok && r.data) {
     revalidateTag('listings', 'max');
-    const b = await loadBundle(db, r.data.listing.id, { confidential: false });
-    if (b) {
-      const msg = webhookMessageFor(b, `Deal moved to ${dealOps.STAGE_WORDS[r.data.to]}`, `/portal/deals/${id}`, { internal: true });
-      msg.fields = [{ name: 'From', value: dealOps.STAGE_WORDS[r.data.from], inline: true }, { name: 'To', value: dealOps.STAGE_WORDS[r.data.to], inline: true }, ...(msg.fields ?? [])];
-      await postWebhook('deal_stage', msg);
-    }
+    const { listing, from, to: toKey } = r.data;
+    after(() => postDealStage(id, listing.id, dealOps.STAGE_WORDS[from], dealOps.STAGE_WORDS[toKey], toKey));
     return { ok: true as const, message: r.message };
   }
   return r;
@@ -133,12 +139,9 @@ export async function recordSaleAction(id: string, input: unknown) {
   const r = await run(() => dealOps.recordSale(db, actor, id, input), undefined, ['/portal/deals', '/portal/sales', '/portal/commission', '/sold', `/portal/deals/${id}`]);
   if (r.ok && r.data) {
     revalidateTag('listings', 'max');
-    const b = await loadBundle(db, r.data.listing.id, { confidential: false });
-    if (b) {
-      const msg = webhookMessageFor(b, b.purpose === 'rent' ? 'Lease signed' : 'Sale recorded', `/sold`);
-      msg.fields = [{ name: 'Sale', value: saleNo(r.data.saleNo), inline: true }, { name: b.purpose === 'rent' ? 'Rent' : 'Sold for', value: money(r.data.price) + (b.purpose === 'rent' ? '/mo' : ''), inline: true }, ...(msg.fields ?? []).filter((f) => f.name !== 'Price')];
-      await postWebhook('sale_recorded', msg);
-    }
+    const { listing, saleNo: no, price } = r.data;
+    after(() => postSale(listing.id, no, price));
+    after(async () => syncDiscordRoles(await dealPartyUserIds(id)));
     return { ok: true as const, message: `${saleNo(r.data.saleNo)} recorded`, data: r.data.saleNo };
   }
   return r;
@@ -190,7 +193,9 @@ export async function revokeInviteAction(id: string) {
 
 export async function acceptInviteAction(token: string) {
   const actor = await actorOrThrow();
-  return run(() => db.transaction((tx) => invites.acceptInvite(tx, actor.id, token)), 'Welcome to the team');
+  const r = await run(() => db.transaction((tx) => invites.acceptInvite(tx, actor.id, token)), 'Welcome to the team');
+  if (r.ok) after(() => syncDiscordRoles([actor.id]));
+  return r;
 }
 
 export async function listingSlug(id: string) {

@@ -1,0 +1,637 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`embeds > every other message type matches its snapshot 1`] = `
+{
+  "agent": {
+    "allowed_mentions": {
+      "parse": [],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "label": "View profile",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/agents/example-agent",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 1454122,
+        "fields": [
+          {
+            "inline": true,
+            "name": "Active listings",
+            "value": "2",
+          },
+          {
+            "inline": true,
+            "name": "Sales",
+            "value": "0",
+          },
+        ],
+        "footer": {
+          "text": "Example Realty",
+        },
+        "title": "Example Agent",
+        "url": "https://example.test/agents/example-agent",
+      },
+    ],
+  },
+  "app": {
+    "allowed_mentions": {
+      "parse": [],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "custom_id": "jr:app:accept:E1",
+            "disabled": false,
+            "label": "Accept",
+            "style": 3,
+            "type": 2,
+          },
+          {
+            "custom_id": "jr:app:decline:E1",
+            "disabled": false,
+            "label": "Decline",
+            "style": 4,
+            "type": 2,
+          },
+          {
+            "label": "Open in portal",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/portal/inbox",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 8019762,
+        "description": "Example reason.",
+        "fields": [
+          {
+            "inline": true,
+            "name": "Applicant",
+            "value": "Example Applicant",
+          },
+          {
+            "inline": true,
+            "name": "Roblox",
+            "value": "ExampleRbx",
+          },
+        ],
+        "footer": {
+          "text": "Ref JR-2026-00002 · Example Realty",
+        },
+        "timestamp": "T",
+        "title": "Application · Agent",
+        "url": "https://example.test/portal/inbox",
+      },
+    ],
+  },
+  "appDone": {
+    "allowed_mentions": {
+      "parse": [],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "custom_id": "jr:app:accept:E1",
+            "disabled": true,
+            "label": "Accept",
+            "style": 3,
+            "type": 2,
+          },
+          {
+            "custom_id": "jr:app:decline:E1",
+            "disabled": true,
+            "label": "Decline",
+            "style": 4,
+            "type": 2,
+          },
+          {
+            "label": "Open in portal",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/portal/inbox",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 1454122,
+        "fields": [
+          {
+            "inline": true,
+            "name": "Applicant",
+            "value": "Example Applicant",
+          },
+          {
+            "inline": false,
+            "name": "Decision",
+            "value": "Accepted by Example Owner",
+          },
+        ],
+        "footer": {
+          "text": "Ref JR-2026-00002 · Example Realty",
+        },
+        "timestamp": "T",
+        "title": "Application · Agent",
+        "url": "https://example.test/portal/inbox",
+      },
+    ],
+  },
+  "deal": {
+    "allowed_mentions": {
+      "parse": [],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "label": "Open deal",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/portal/deals/D1",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 9067026,
+        "fields": [
+          {
+            "inline": true,
+            "name": "From",
+            "value": "Active",
+          },
+          {
+            "inline": true,
+            "name": "To",
+            "value": "Under Offer",
+          },
+          {
+            "inline": true,
+            "name": "Agent",
+            "value": "Example Agent",
+          },
+        ],
+        "footer": {
+          "text": "Ref JR-2026-00001 · Example Realty",
+        },
+        "timestamp": "T",
+        "title": "Deal moved to Under Offer · Example Lane",
+        "url": "https://example.test/portal/deals/D1",
+      },
+    ],
+  },
+  "gone": {
+    "allowed_mentions": {
+      "parse": [],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "label": "Browse current listings",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/buy",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "content": "",
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 1454122,
+        "description": "This listing has been taken off the market.",
+        "fields": [
+          {
+            "inline": true,
+            "name": "Area",
+            "value": "Example Area · Postal 601",
+          },
+        ],
+        "footer": {
+          "text": "Ref JR-2026-00001 · Example Realty",
+        },
+        "thumbnail": {
+          "url": "https://example.test/cover.jpg",
+        },
+        "title": "No longer available · Example Lane",
+      },
+    ],
+  },
+  "news": {
+    "allowed_mentions": {
+      "parse": [],
+    },
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 1454122,
+        "description": "Example **body**.",
+        "footer": {
+          "text": "Example Owner · Example Realty",
+        },
+        "timestamp": "T",
+        "title": "Example news",
+      },
+    ],
+  },
+  "open": {
+    "allowed_mentions": {
+      "parse": [],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "label": "View listing",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/property/example-lane",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 11833946,
+        "description": "<t:1794078000:F> to <t:1794085200:t>",
+        "fields": [],
+        "footer": {
+          "text": "Ref JR-2026-00001 · Example Realty",
+        },
+        "title": "Open House · Example Lane",
+        "url": "https://example.test/property/example-lane",
+      },
+    ],
+  },
+  "price": {
+    "allowed_mentions": {
+      "parse": [],
+      "roles": [
+        "42",
+      ],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "label": "View listing",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/property/example-lane",
+          },
+          {
+            "label": "Book a showing",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/property/example-lane#book",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "content": "<@&42>",
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 11833946,
+        "description": "~~$760,000~~ → **$735,000**",
+        "fields": [
+          {
+            "inline": true,
+            "name": "Beds",
+            "value": "4",
+          },
+          {
+            "inline": true,
+            "name": "Baths",
+            "value": "1.5",
+          },
+          {
+            "inline": true,
+            "name": "Area",
+            "value": "Example Area · Postal 601",
+          },
+          {
+            "inline": true,
+            "name": "Agent",
+            "value": "Example Agent",
+          },
+        ],
+        "footer": {
+          "text": "Ref JR-2026-00001 · Example Realty",
+        },
+        "thumbnail": {
+          "url": "https://example.test/cover.jpg",
+        },
+        "timestamp": "T",
+        "title": "Price Reduced · Example Lane",
+        "url": "https://example.test/property/example-lane",
+      },
+    ],
+  },
+  "review": {
+    "allowed_mentions": {
+      "parse": [],
+      "roles": [
+        "7",
+      ],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "label": "Open in portal",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/portal/review/L1",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "content": "<@&7>",
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 8019762,
+        "fields": [
+          {
+            "inline": true,
+            "name": "Submitted by",
+            "value": "Example Agent",
+          },
+          {
+            "inline": true,
+            "name": "Source",
+            "value": "Listed by Owner",
+          },
+          {
+            "inline": true,
+            "name": "Round",
+            "value": "2",
+          },
+          {
+            "inline": true,
+            "name": "Price",
+            "value": "$760,000",
+          },
+        ],
+        "footer": {
+          "text": "Ref JR-2026-00001 · Example Realty",
+        },
+        "timestamp": "T",
+        "title": "Resubmitted for review · Example Lane",
+        "url": "https://example.test/portal/review/L1",
+      },
+    ],
+  },
+  "sold": {
+    "allowed_mentions": {
+      "parse": [],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "label": "See all sales",
+            "style": 5,
+            "type": 2,
+            "url": "https://example.test/sold",
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 1454122,
+        "description": "Sale No. 001",
+        "fields": [
+          {
+            "inline": true,
+            "name": "Sold for",
+            "value": "$752,000",
+          },
+          {
+            "inline": true,
+            "name": "Area",
+            "value": "Example Area · Postal 601",
+          },
+          {
+            "inline": true,
+            "name": "Agent",
+            "value": "Example Agent",
+          },
+        ],
+        "footer": {
+          "text": "Ref JR-2026-00001 · Example Realty",
+        },
+        "timestamp": "T",
+        "title": "Sold · Example Lane",
+        "url": "https://example.test/sold",
+      },
+    ],
+  },
+  "ticket": {
+    "allowed_mentions": {
+      "parse": [],
+      "roles": [],
+      "users": [
+        "55",
+      ],
+    },
+    "components": [
+      {
+        "components": [
+          {
+            "custom_id": "jr:tk:claim",
+            "disabled": false,
+            "label": "Claim",
+            "style": 1,
+            "type": 2,
+          },
+          {
+            "custom_id": "jr:tk:close",
+            "disabled": false,
+            "label": "Close",
+            "style": 2,
+            "type": 2,
+          },
+        ],
+        "type": 1,
+      },
+    ],
+    "content": "<@55>",
+    "embeds": [
+      {
+        "author": {
+          "icon_url": "https://example.test/brand/jr-avatar-green.png",
+          "name": "Example Realty",
+          "url": "https://example.test",
+        },
+        "color": 1454122,
+        "description": "Thanks for reaching out to Example Realty. An agent will reply here shortly.",
+        "fields": [
+          {
+            "inline": false,
+            "name": "Roblox username",
+            "value": "ExampleRbx",
+          },
+        ],
+        "footer": {
+          "text": "Ref 0001 · Example Realty",
+        },
+        "timestamp": "T",
+        "title": "Buy ticket 0001",
+      },
+    ],
+  },
+}
+`;
+
+exports[`embeds > new listing: title, summary, cover, fields, ping and buttons 1`] = `
+{
+  "allowed_mentions": {
+    "parse": [],
+    "roles": [
+      "42",
+    ],
+  },
+  "components": [
+    {
+      "components": [
+        {
+          "label": "View listing",
+          "style": 5,
+          "type": 2,
+          "url": "https://example.test/property/example-lane",
+        },
+        {
+          "label": "Book a showing",
+          "style": 5,
+          "type": 2,
+          "url": "https://example.test/property/example-lane#book",
+        },
+      ],
+      "type": 1,
+    },
+  ],
+  "content": "<@&42>",
+  "embeds": [
+    {
+      "author": {
+        "icon_url": "https://example.test/brand/jr-avatar-green.png",
+        "name": "Example Realty",
+        "url": "https://example.test",
+      },
+      "color": 11833946,
+      "description": "Example first sentence. Example second sentence!",
+      "fields": [
+        {
+          "inline": true,
+          "name": "Price",
+          "value": "$760,000",
+        },
+        {
+          "inline": true,
+          "name": "Beds",
+          "value": "4",
+        },
+        {
+          "inline": true,
+          "name": "Baths",
+          "value": "1.5",
+        },
+        {
+          "inline": true,
+          "name": "Area",
+          "value": "Example Area · Postal 601",
+        },
+        {
+          "inline": true,
+          "name": "Agent",
+          "value": "Example Agent",
+        },
+      ],
+      "footer": {
+        "text": "Ref JR-2026-00001 · Example Realty",
+      },
+      "image": {
+        "url": "https://example.test/cover.jpg",
+      },
+      "timestamp": "T",
+      "title": "Just Listed · Example Lane",
+      "url": "https://example.test/property/example-lane",
+    },
+  ],
+}
+`;

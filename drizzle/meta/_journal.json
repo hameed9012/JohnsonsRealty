@@ -15,6 +15,13 @@
       "when": 1792811243311,
       "tag": "0001_discord_config",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792812760372,
+      "tag": "0002_discord_live",
+      "breakpoints": true
     }
   ]
 }

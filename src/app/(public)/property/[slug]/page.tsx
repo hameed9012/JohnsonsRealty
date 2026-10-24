@@ -1,4 +1,8 @@
+import { and, asc, eq, gte } from 'drizzle-orm';
 import type { Metadata } from 'next';
+import { LocalTime } from '@/components/ui/LocalTime';
+import { db } from '@/db/client';
+import { openHouses } from '@/db/schema';
 import { notFound } from 'next/navigation';
 import { BookShowing, SaveShare } from '@/components/listing/PropertyActions';
 import { PropertyView } from '@/components/listing/PropertyView';
@@ -49,6 +53,7 @@ export default async function PropertyPage({ params }: Props) {
     b.mapX !== null && b.mapY !== null ? mediaSrc(settings.mapMediaId) : null,
     studioDataFrom(b, settings),
   ]);
+  const openHouse = await db.query.openHouses.findFirst({ where: and(eq(openHouses.listingId, b.id), eq(openHouses.cancelled, false), gte(openHouses.endsAt, new Date())), orderBy: [asc(openHouses.startsAt)] });
   const onMarket = MARKET_STATUSES.includes(b.status as ListingStatus);
   const path = `/property/${v.slug}`;
   const section = v.type === 'business' ? { label: 'Businesses', href: '/businesses' } : v.purpose === 'rent' ? { label: 'Rent', href: '/rent' } : { label: 'Buy', href: '/buy' };
@@ -82,12 +87,21 @@ export default async function PropertyPage({ params }: Props) {
         map={mapSrc ? <MapPin src={publicImageUrl(mapSrc, { width: 1600 })} pins={[{ x: b.mapX!, y: b.mapY!, label: v.title }]} caption="Placed by hand by the brokerage. Ask the agent for directions in the city." /> : null}
         booking={
           onMarket ? (
-            <>
+            <div id="book" className="stack">
+              {openHouse ? (
+                <section className="owner-contact stack" aria-label="Open house">
+                  <span className="label label--brass">Open house</span>
+                  <p className="heading-3">
+                    <LocalTime iso={openHouse.startsAt.toISOString()} />
+                  </p>
+                  {openHouse.notes ? <p className="body-s muted">{openHouse.notes}</p> : null}
+                </section>
+              ) : null}
               <BookShowing listingId={b.id} signedIn={!!actor} path={path} rent={v.purpose === 'rent'} />
               <Button variant="ghost" icon="chat" href={`/contact?listing=${v.slug}`}>
                 Ask about this listing
               </Button>
-            </>
+            </div>
           ) : null
         }
         similar={

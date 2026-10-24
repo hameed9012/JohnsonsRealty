@@ -78,6 +78,7 @@ export const enquiryTypeEnum = pgEnum('enquiry_type', [
   'general_contact',
   'career_application',
   'listing_question',
+  'discord_ticket',
 ]);
 export const enquiryStatusEnum = pgEnum('enquiry_status', ['new', 'open', 'waiting', 'closed']);
 export const postKindEnum = pgEnum('post_kind', ['guide', 'news']);

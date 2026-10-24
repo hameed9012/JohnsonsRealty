@@ -48,12 +48,12 @@ const click = (custom_id: string, roles: string[] = []) =>
 describe('interaction handlers', () => {
   it('answers Discord’s ping', async () => {
     const { rest } = fakeRest();
-    expect(await handleInteraction({ type: InteractionType.Ping } as APIInteraction, { rest, guildId: G, id: async () => null })).toEqual({ type: InteractionResponseType.Pong });
+    expect((await handleInteraction({ type: InteractionType.Ping } as APIInteraction, { rest, guildId: G, id: async () => null })).response).toEqual({ type: InteractionResponseType.Pong });
   });
 
   it('Verify gives the Verified role and replies privately with links', async () => {
     const { rest, calls } = fakeRest();
-    const r = await handleInteraction(click('jr:verify'), { rest, guildId: G, id: async (k) => ids[k] ?? null });
+    const { response: r } = await handleInteraction(click('jr:verify'), { rest, guildId: G, id: async (k) => ids[k] ?? null });
     expect(calls).toEqual([`PUT /guilds/${G}/members/55/roles/901`]);
     expect(r).toMatchObject({ type: InteractionResponseType.ChannelMessageWithSource, data: { flags: 64 } });
     expect(JSON.stringify(r)).toContain('<#777>');
@@ -62,8 +62,8 @@ describe('interaction handlers', () => {
   it('Get-roles toggles the ping role on and off', async () => {
     const { rest, calls } = fakeRest();
     const deps = { rest, guildId: G, id: async (k: string) => ids[k] ?? null };
-    const on = await handleInteraction(click('jr:role:listings'), deps);
-    const off = await handleInteraction(click('jr:role:listings', ['902']), deps);
+    const on = (await handleInteraction(click('jr:role:listings'), deps)).response;
+    const off = (await handleInteraction(click('jr:role:listings', ['902']), deps)).response;
     expect(calls).toEqual([`PUT /guilds/${G}/members/55/roles/902`, `DELETE /guilds/${G}/members/55/roles/902`]);
     expect(JSON.stringify(on)).toContain('pings are on');
     expect(JSON.stringify(off)).toContain('pings are off');
@@ -71,7 +71,7 @@ describe('interaction handlers', () => {
 
   it('says so politely before setup has run', async () => {
     const { rest, calls } = fakeRest();
-    const r = await handleInteraction(click('jr:verify'), { rest, guildId: G, id: async () => null });
+    const { response: r } = await handleInteraction(click('jr:verify'), { rest, guildId: G, id: async () => null });
     expect(calls).toEqual([]);
     expect(JSON.stringify(r)).toContain('isn’t set up yet');
   });

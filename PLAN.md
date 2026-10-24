@@ -560,3 +560,42 @@ Each step gets its own local branch and commit, with tests passing (unit plus e2
   - **REST:** rate-limit retry.
   - **Interactions:** signature checks, and the Verify and Get-roles toggles.
 - **Not tested against real Discord yet:** that needs the bot token and the server.
+
+### Step 2, Discord live: built (Oct 24, 2026), branch `p2-discord-live`
+
+- **Data** (migration `0002`):
+  - `discord_outbox`, `shifts`, `announcements` and `open_houses`;
+  - `listings.discord_message_id` / `discord_channel_id`;
+  - `enquiries.discord_user_id`, `summary`, `transcript_url` and `decision`, plus the enquiry type `discord_ticket`.
+- **Embeds** (`src/discord/embeds.ts`): every type in the brief, from plain data, colours from tokens. They are JSON-snapshot tested and previewed at **Site settings → Discord server → See how every post looks** (sample data, Discord-styled).
+  - **Listing types:** new listing, rental, business (a withheld name uses the teaser), price reduced (old price struck through), no longer available, sold (no buyer names).
+  - **Everything else:** review pending, deal, application (Accept / Decline), announcement, open house, ticket intake, agent card, compact `/listings` result.
+- **Events** (`src/discord/events.ts`, `src/server/discord-posts.ts`):
+  - **Timing:** posts run after the transaction commits, via `after()`.
+  - **Editing:** each listing's announcement ID is stored, so withdrawal edits it.
+  - **Failures:** a failure goes to the outbox (Retry in the portal), a #bot-log embed and the activity log, and never blocks the website.
+  - **Fallback:** the phase 1 webhooks are used only when the bot isn't configured or the channel doesn't exist.
+- **Interactions:**
+  - **Tickets** (`tickets.ts`):
+    - Opening: a modal per type (the blueprint's fields) creates a private `ticket-{type}-{n}` under HELP DESK. Complaints go to Management and up. Numbers come from `ref_counters` kind `ticket`.
+    - Claim and Close: Claim is staff only and renames the channel with the agent's name. Close (staff or the opener) asks for a summary in a modal.
+    - Records: the HTML transcript (house style, text escaped, type tokens) goes to #ticket-transcripts, an `enquiries` row is written (TK-n), then the channel is deleted. The ticket's identity lives in the channel topic.
+  - **Shifts:** Clock in / Clock out, staff only.
+  - **Applications:** Accept / Decline is Management only. It updates `enquiries.decision`, notifies the applicant on the site, and disables the buttons.
+  - **Slash commands** (registered by setup, bulk overwrite, with area and agent autocomplete): `/listings`, `/listing`, `/agent`, `/map` (links to the map until the map step), `/link` (syncs roles).
+  - **How the endpoint works:** slow work is acknowledged within 3 s and finished in `after()`.
+- **Role sync** (`roles.ts`): Owner → Owner, Admin → Co-Owner, Agent → Agent, Client after a closed deal. It never touches Discord-only ranks and never removes Owner from the server owner. It runs on a role change, deactivation, joining via invite, and a recorded sale, and there's a full **Sync roles now** button.
+- **Portal:**
+  - **Discord page:** Roles, Failed posts with Retry, and Shifts this week.
+  - **Announcements** page (Owner and Admins): write, preview, publish.
+  - **Listing page:** Open houses (schedule, cancel; the Discord post is edited when cancelled) and **Post to Discord**.
+  - **Property page:** shows the next open house. The booking block has the `#book` anchor for the embed button.
+- **Tests:** 16 new unit tests.
+  - **Embeds:** snapshots; withheld business names never leak.
+  - **Posting:** outbox and bot-log on failure; the message ID is remembered on success.
+  - **Tickets:** opening (Complaint visibility) and closing (transcript upload, enquiry record, channel deleted); the transcript escapes typed text; Claim is staff only.
+  - **Shifts:** clock in and out.
+  - **Applications:** the decision is recorded and the applicant notified.
+  - **Role sync:** never removes Owner from the server owner.
+  - **Accessibility audit:** now also covers the Discord pages and Announcements.
+- **Not tested against real Discord yet:** that needs the bot set up on your server.

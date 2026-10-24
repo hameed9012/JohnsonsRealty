@@ -1,10 +1,11 @@
 'use server';
 
 import { and, eq, inArray } from 'drizzle-orm';
+import { after } from 'next/server';
 import { db } from '@/db/client';
+import { postApplication } from '@/server/discord-posts';
 import { areas, careers, enquiries, listings, users } from '@/db/schema';
 import { fieldErrors, formObject, type ActionState } from '@/lib/action-result';
-import { postWebhook, siteUrl } from '@/lib/discord';
 import { MARKET_STATUSES } from '@/lib/listing-status';
 import { nextRef } from '@/lib/refs';
 import { careerApplicationSchema, contactSchema, valuationSchema } from '@/lib/schemas/enquiry';
@@ -80,16 +81,7 @@ export async function applyForRole(_prev: Result, fd: FormData): Promise<Result>
     title: 'Career application',
     body: `${role.title} from ${actor.displayName}`,
   });
-  await postWebhook('career_application', {
-    title: 'Career application',
-    heading: role.title,
-    description: p.data.why?.slice(0, 300) ?? undefined,
-    url: siteUrl('/portal/inbox'),
-    fields: [
-      { name: 'Applicant', value: actor.displayName, inline: true },
-      ...(actor.robloxUsername ? [{ name: 'Roblox', value: actor.robloxUsername, inline: true }] : []),
-      { name: 'Reference', value: refNo, inline: true },
-    ],
-  });
+  const app = await db.query.enquiries.findFirst({ where: eq(enquiries.refNo, refNo), columns: { id: true } });
+  if (app) after(() => postApplication(app.id));
   return { ok: true, message: 'Application sent', data: { refNo } };
 }

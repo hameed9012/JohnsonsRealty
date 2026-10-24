@@ -3,19 +3,19 @@
 import { eq } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { after } from 'next/server';
 import { db } from '@/db/client';
 import { listings } from '@/db/schema';
 import type { ActionState } from '@/lib/action-result';
-import { postWebhook, type WebhookEvent } from '@/lib/discord';
 import { checklist, type ChecklistItem } from '@/lib/listing-checklist';
 import { can } from '@/lib/permissions';
 import { createUploadTarget, destroyUpload, verifyUpload, type UploadTarget } from '@/lib/storage';
 import { TransitionError } from '@/lib/listing-status';
 import { checklistInput, loadBundle } from '@/server/listings/bundle';
-import { webhookMessageFor } from '@/server/listings/present';
 import * as svc from '@/server/listings/service';
 import { actorOrThrow, ForbiddenError } from '@/server/session';
 import { getSettings } from '@/server/settings';
+import { markListingUnavailable, postListing, postReviewPending } from '@/server/discord-posts';
 
 type Result<T = undefined> = NonNullable<ActionState<T>>;
 
@@ -104,10 +104,7 @@ export async function submitListing(id: string): Promise<Result<{ refNo: string;
     const actor = await actorOrThrow();
     const settings = await getSettings();
     const res = await svc.submitForReview(db, actor, settings, id);
-    await postWebhook(
-      'review_pending',
-      webhookMessageFor(res.bundle, res.round > 1 ? 'Listing resubmitted for review' : 'Listing waiting for review', `/portal/review/${id}`, { internal: true }),
-    );
+    after(() => postReviewPending(id, res.round));
     revalidatePath('/portal', 'layout');
     return { ok: true, message: 'Submitted for review', data: { refNo: res.refNo, round: res.round } };
   } catch (e) {
@@ -115,19 +112,14 @@ export async function submitListing(id: string): Promise<Result<{ refNo: string;
   }
 }
 
-const APPROVED_EVENT = (b: { type: string; purpose: string }): WebhookEvent =>
-  b.type === 'business' ? 'new_business' : b.purpose === 'rent' ? 'new_rental' : 'new_listing';
-
 export async function decideListing(id: string, input: { decision: 'approved' | 'changes_requested' | 'rejected'; notes?: string; comingSoon?: boolean; agentId?: string | null }): Promise<Result> {
   try {
     const actor = await actorOrThrow();
     const settings = await getSettings();
     const res = await svc.decideReview(db, actor, settings, id, input);
     if (res.decision === 'approved') {
-      const b = res.bundle;
-      const title = b.type === 'business' ? 'New business listing' : b.purpose === 'rent' ? 'New rental' : 'New listing';
-      await postWebhook(APPROVED_EVENT(b), webhookMessageFor(b, title, `/property/${b.slug}`));
-      revalidateListing(b.slug);
+      after(() => postListing(id));
+      revalidateListing(res.bundle.slug);
     }
     revalidatePath('/portal', 'layout');
     const words = { approved: 'Listing published', changes_requested: 'Changes requested', rejected: 'Listing rejected' };
@@ -141,6 +133,7 @@ export async function withdrawListingAction(id: string): Promise<Result> {
   try {
     const actor = await actorOrThrow();
     await svc.withdrawListing(db, actor, id);
+    after(() => markListingUnavailable(id));
     const l = await db.query.listings.findFirst({ where: eq(listings.id, id), columns: { slug: true } });
     revalidateListing(l?.slug);
     revalidatePath('/portal', 'layout');

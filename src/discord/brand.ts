@@ -39,3 +39,20 @@ export function author(b: BrandContext) {
 export function link(b: BrandContext, path: string): string {
   return b.site + path;
 }
+
+/** A colour token's value as text (for the standalone HTML transcript). */
+export function tokenHex(name: string): string {
+  return '#' + tokenColor(name).toString(16).padStart(6, '0');
+}
+
+type TypeStyle = { name: string; fontSize: string; lineHeight: string; fontWeight: number };
+const typeStyles = new Map<string, TypeStyle>(
+  (tokens as unknown as { type: { groups: { styles: TypeStyle[] }[] } }).type.groups.flatMap((g) => g.styles).map((st) => [st.name, st]),
+);
+
+/** A type token as a CSS `font` shorthand (for the standalone HTML transcript). */
+export function typeFont(name: string, family = 'system-ui, sans-serif'): string {
+  const t = typeStyles.get(name);
+  if (!t) throw new Error(`Unknown type token: ${name}`);
+  return `${t.fontWeight} ${t.fontSize}/${t.lineHeight} ${family}`;
+}
