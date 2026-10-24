@@ -73,6 +73,11 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
             </Button>
           ) : null}
           {data.status === 'pending_review' ? <Button href={`/portal/review/${id}`}>Open review</Button> : null}
+          {data.editable && data.live ? (
+            <Button href={`/portal/listings/${id}/edit`}>
+              Edit everything
+            </Button>
+          ) : null}
           <Button variant="ghost" href={`/portal/studio?listing=${id}`} icon="image">
             Marketing
           </Button>

@@ -20,6 +20,7 @@ import {
   listingTerms,
   media,
   priceHistory,
+  siteSettings,
   users,
 } from '@/db/schema';
 import { fieldErrors } from '@/lib/action-result';
@@ -69,15 +70,29 @@ function parse<T>(schema: { safeParse: (v: unknown) => { success: true; data: T 
   return r.data;
 }
 
+/**
+ * Staff can edit a live listing in full (every step, saved straight to the site): the Owner and Admins
+ * always, the listing's agent unless "live edits need review" is on. Property owners can't.
+ */
+export async function canEditLive(ex: Executor, actor: Actor): Promise<boolean> {
+  if (actor.role === 'owner' || actor.role === 'admin') return true;
+  if (actor.role !== 'agent') return false;
+  const s = await ex.query.siteSettings.findFirst({ where: eq(siteSettings.id, 1), columns: { liveEditsNeedReview: true } });
+  return !s?.liveEditsNeedReview;
+}
+
+export const isLiveStatus = (status: string) => !WIZARD_STATUSES.includes(status);
+
 async function getForEdit(ex: Executor, actor: Actor, id: string, opts: { photos?: boolean } = {}): Promise<Listing> {
   const l = await ex.query.listings.findFirst({ where: eq(listings.id, id) });
   if (!l) throw new ServiceError('That listing doesn’t exist.');
   const manager = actor.role === 'owner' || actor.role === 'admin';
   if (l.status === 'pending_review' && !manager) throw new ServiceError('This listing is waiting for review, so it can’t be edited right now.');
   if (!can(actor, 'listing.edit', subjectOf(l))) throw new ServiceError('You can’t edit this listing.');
-  // The wizard edits submissions. Live listings are edited from the listings manager (price history, revisions).
-  // Imported listings held for photos are live but take photos here until the hold is released.
-  if (!WIZARD_STATUSES.includes(l.status) && !(opts.photos && l.photosHold)) throw new ServiceError('This listing is live. Edit it from the listings manager.');
+  // Live listings: staff edit them in full (see canEditLive). Imported listings held for photos also take photos.
+  if (isLiveStatus(l.status) && !(opts.photos && l.photosHold) && !(await canEditLive(ex, actor))) {
+    throw new ServiceError('Edits to live listings need the Owner’s review. Use the quick edit on the listing page.');
+  }
   return l;
 }
 
@@ -134,6 +149,10 @@ export async function saveProperty(ex: Executor, actor: Actor, id: string, input
   const l = await getForEdit(ex, actor, id);
   const d = parse(propertyStep, input);
   const purpose = d.type === 'rental' ? 'rent' : (d.purpose ?? l.purpose);
+  // Statuses differ for sale and rent (Active vs For lease), so a live listing keeps its purpose.
+  if (isLiveStatus(l.status) && purpose !== l.purpose) {
+    throw new ServiceError('Check the highlighted fields.', { purpose: 'A live listing can’t switch between sale and rent. Withdraw it and start a new one.' });
+  }
   if (d.areaId) {
     const a = await ex.query.areas.findFirst({ where: and(eq(areas.id, d.areaId), eq(areas.selectable, true)) });
     if (!a) throw new ServiceError('Check the highlighted fields.', { areaId: 'Choose the area from the list.' });
@@ -204,10 +223,21 @@ export async function saveProperty(ex: Executor, actor: Actor, id: string, input
   await audit(ex, { actorId: actor.id, action: 'listing.update', entity: 'listing', entityId: id, summary: `Saved property details for ${l.refNo}` });
 }
 
-export async function saveTerms(ex: Executor, actor: Actor, id: string, input: unknown) {
+/** On a live listing a price change lands in price history, as from the listings manager. */
+export type TermsResult = { priceChange?: { from: number; to: number } };
+
+export async function saveTerms(ex: Executor, actor: Actor, id: string, input: unknown): Promise<TermsResult> {
   const l = await getForEdit(ex, actor, id);
   const d = parse(termsStep, input);
-  await ex.update(listings).set({ price: d.price, availableFrom: d.availableFrom, showingInstructions: d.showingInstructions }).where(eq(listings.id, id));
+  const repriced = isLiveStatus(l.status) && l.price != null && d.price != null && d.price !== l.price;
+  await ex
+    .update(listings)
+    .set({ price: d.price, availableFrom: d.availableFrom, showingInstructions: d.showingInstructions, ...(repriced ? { previousPrice: l.price } : {}) })
+    .where(eq(listings.id, id));
+  if (repriced) {
+    await ex.insert(priceHistory).values({ listingId: id, price: d.price!, event: d.price! < l.price! ? 'reduced' : 'increased' });
+    await audit(ex, { actorId: actor.id, action: 'listing.price', entity: 'listing', entityId: id, summary: `${d.price! < l.price! ? 'Reduced' : 'Raised'} ${l.refNo} to $${d.price!.toLocaleString('en-US')}`, diff: { price: { from: l.price, to: d.price } } });
+  }
 
   if (l.purpose === 'rent') {
     await upsert(ex, listingLeaseTerms, {
@@ -286,6 +316,7 @@ export async function saveTerms(ex: Executor, actor: Actor, id: string, input: u
       .where(eq(listingBusiness.listingId, id));
   }
   await audit(ex, { actorId: actor.id, action: 'listing.update', entity: 'listing', entityId: id, summary: `Saved price and terms for ${l.refNo}` });
+  return repriced ? { priceChange: { from: l.price!, to: d.price! } } : {};
 }
 
 // ---------- Seller ----------

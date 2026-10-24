@@ -131,3 +131,17 @@ test('the Owner invites an Admin with a single-use link', async ({ page, browser
   await page.goto('/portal/activity?q=joined');
   await expect(page.getByText('Example Buyer joined as admin')).toBeVisible();
 });
+
+test('the Owner edits a live listing in full and the public page updates', async ({ page }) => {
+  await signInAs(page, 'e2e-owner', '/portal/listings?q=Example Open Home');
+  await page.getByRole('link', { name: 'Example Open Home' }).click();
+  await page.getByRole('link', { name: 'Edit everything' }).click();
+  await expect(page.getByText('Changes save straight to the site')).toBeVisible();
+  await page.getByLabel('Description', { exact: true }).fill('Example description edited on the live listing by the end-to-end test.');
+  await page.getByRole('button', { name: 'Save and continue' }).click();
+  await expect(page.getByRole('heading', { name: 'Price and terms', exact: true })).toBeVisible();
+  await page.goto('/portal/listings?q=Example Open Home');
+  await page.getByRole('link', { name: 'Example Open Home' }).click();
+  await page.getByRole('link', { name: 'View public page' }).click();
+  await expect(page.getByText('Example description edited on the live listing').first()).toBeVisible();
+});

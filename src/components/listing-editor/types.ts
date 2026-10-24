@@ -186,6 +186,8 @@ export interface EditorData {
   checklist: ChecklistItem[];
   preview: PropertyView;
   editable: boolean;
+  /** Already on the site: every save applies straight away, with no review. */
+  live: boolean;
 }
 
 export interface EditorOptions {

@@ -9,7 +9,7 @@ import { checklist } from '@/lib/listing-checklist';
 import { can, type Actor } from '@/lib/permissions';
 import { areaOptions, getAreas } from '@/server/queries/areas';
 import { checklistInput, loadBundle } from './bundle';
-import { WIZARD_STATUSES } from './service';
+import { canEditLive, isLiveStatus } from './service';
 import { toPropertyView } from './view';
 
 const SPARE = 'Spare seller';
@@ -67,8 +67,9 @@ export async function loadEditor(actor: Actor, id: string): Promise<{ data: Edit
   const confidential = can(actor, 'listing.viewConfidential', subject);
   const b = (await loadBundle(db, id, { confidential }))!;
   const manager = actor.role === 'owner' || actor.role === 'admin';
+  const live = isLiveStatus(subjectRow.status) && subjectRow.status !== 'pending_review';
   const editable =
-    can(actor, 'listing.edit', subject) && WIZARD_STATUSES.includes(subjectRow.status) && (subjectRow.status !== 'pending_review' || manager);
+    can(actor, 'listing.edit', subject) && (live ? await canEditLive(db, actor) : subjectRow.status !== 'pending_review' || manager);
 
   const [allAreas, feats, zones] = await Promise.all([
     getAreas(),
@@ -92,6 +93,7 @@ export async function loadEditor(actor: Actor, id: string): Promise<{ data: Edit
     status: b.status,
     round: b.round,
     editable,
+    live,
     property: {
       type: b.type,
       purpose: b.purpose,

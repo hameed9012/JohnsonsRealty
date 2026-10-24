@@ -10,13 +10,13 @@ import type { ActionState } from '@/lib/action-result';
 import { checklist, type ChecklistItem } from '@/lib/listing-checklist';
 import { can } from '@/lib/permissions';
 import { createUploadTarget, destroyUpload, verifyUpload, type UploadTarget } from '@/lib/storage';
-import { TransitionError } from '@/lib/listing-status';
+import { isPublic, TransitionError, type ListingStatus } from '@/lib/listing-status';
 import { checklistInput, loadBundle } from '@/server/listings/bundle';
 import * as svc from '@/server/listings/service';
 import type { SellerValues } from '@/components/listing-editor/types';
 import { actorOrThrow, ForbiddenError } from '@/server/session';
 import { getSettings } from '@/server/settings';
-import { markListingUnavailable, postListing, postReviewPending } from '@/server/discord-posts';
+import { markListingUnavailable, postListing, postPriceReduced, postReviewPending } from '@/server/discord-posts';
 import { notifyUnplacedPostal } from '@/server/map/notify';
 import { updatePropertyMapMessage } from '@/server/map/discord';
 
@@ -49,12 +49,23 @@ export type StepName = 'property' | 'terms' | 'seller' | 'owner';
 export async function saveListingStep(id: string, step: StepName, values: unknown): Promise<Result & { checklist?: ChecklistItem[] }> {
   try {
     const actor = await actorOrThrow();
-    await db.transaction(async (tx) => {
+    const terms = await db.transaction(async (tx) => {
       if (step === 'property') await svc.saveProperty(tx, actor, id, values);
-      else if (step === 'terms') await svc.saveTerms(tx, actor, id, values);
+      else if (step === 'terms') return svc.saveTerms(tx, actor, id, values);
       else if (step === 'seller') await svc.saveSeller(tx, actor, id, values);
       else await svc.saveOwnerDetails(tx, actor, id, values);
+      return null;
     });
+    // Live listings change on the site straight away: refresh the public pages, the map and, for a price cut, Discord.
+    const l = await db.query.listings.findFirst({ where: eq(listings.id, id), columns: { status: true, slug: true } });
+    if (l && svc.isLiveStatus(l.status)) {
+      revalidateListing(l.slug);
+      revalidatePath(`/portal/listings/${id}`);
+      if (step === 'property') after(() => updatePropertyMapMessage(db).then(() => undefined));
+      const change = terms?.priceChange;
+      if (change && change.to < change.from && isPublic(l.status as ListingStatus)) after(() => postPriceReduced(id, change.from));
+      return { ok: true, message: 'Saved. It’s live on the site.' };
+    }
     return { ok: true, message: 'Draft saved' };
   } catch (e) {
     return fail(e);

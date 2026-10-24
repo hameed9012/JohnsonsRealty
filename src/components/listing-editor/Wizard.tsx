@@ -150,6 +150,13 @@ export function Wizard({ data, options, confidential }: { data: EditorData; opti
           </div>
         ) : null}
 
+        {data.live ? (
+          <div className="review-note stack" role="note">
+            <span className="label">Live listing</span>
+            <p className="body">Changes save straight to the site, and the seller file follows. A new price goes into the price history, and a cut is announced in Discord.</p>
+          </div>
+        ) : null}
+
         <h2 className="heading-1" style={{ margin: 'var(--space-6) 0' }}>
           {steps[idx]!.label}
         </h2>
@@ -209,7 +216,7 @@ export function Wizard({ data, options, confidential }: { data: EditorData; opti
                 </ul>
               </section>
             ) : (
-              <p className="body">Everything’s in place. Check the preview, then submit it for review.</p>
+              <p className="body">{data.live ? 'Everything’s saved. Check the preview.' : 'Everything’s in place. Check the preview, then submit it for review.'}</p>
             )}
             <section className="stack">
               <h3 className="heading-2">Listing card</h3>
@@ -238,7 +245,7 @@ export function Wizard({ data, options, confidential }: { data: EditorData; opti
 
         <div className="wizard-foot">
           <span className="wizard-status" data-state={status} role="status" aria-live="polite">
-            {statusText(status)}
+            {data.live && status === 'saved' ? 'Saved. Live on the site.' : statusText(status)}
           </span>
           <div className="row">
             {data.status !== 'draft' && data.status !== 'withdrawn' ? (
@@ -254,6 +261,15 @@ export function Wizard({ data, options, confidential }: { data: EditorData; opti
             {next ? (
               <Button onClick={() => go(next)} iconRight="arrow-right">
                 Save and continue
+              </Button>
+            ) : data.live ? (
+              <Button
+                onClick={async () => {
+                  if (current && !(await current.flush())) return;
+                  router.push(`/portal/listings/${data.id}`);
+                }}
+              >
+                Done
               </Button>
             ) : (
               <Button
