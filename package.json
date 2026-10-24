@@ -20,12 +20,15 @@
     "db:migrate": "tsx src/db/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "seed": "tsx src/db/seed.ts",
-    "seed:dev": "tsx src/db/seed-dev.ts"
+    "seed:dev": "tsx src/db/seed-dev.ts",
+    "discord:setup": "tsx src/discord/cli.ts setup",
+    "discord:invite": "tsx src/discord/cli.ts invite"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
     "@neondatabase/serverless": "^1.2.0",
     "cloudinary": "^2.11.0",
+    "discord-api-types": "^0.38.57",
     "drizzle-orm": "^0.45.4",
     "html-to-image": "^1.11.13",
     "next": "^16.4.3",

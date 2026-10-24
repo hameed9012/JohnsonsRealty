@@ -6,4 +6,5 @@ export * from './clients';
 export * from './listings';
 export * from './deals';
 export * from './ops';
+export * from './discord';
 export * from './relations';

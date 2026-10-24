@@ -68,6 +68,8 @@ All are listed in `.env.example`.
 | `DISCORD_WEBHOOK_SALE_RECORDED` | No | Sale recorded |
 | `DISCORD_WEBHOOK_DEAL_STAGE` | No | Deal moved to a new stage |
 | `DISCORD_WEBHOOK_CAREER_APPLICATION` | No | Career application received |
+| `DISCORD_BOT_TOKEN`, `DISCORD_PUBLIC_KEY`, `DISCORD_GUILD_ID` | For the bot | Developer Portal and your server's ID; see the Discord bot section |
+| `DISCORD_APP_ID` | No | Defaults to `AUTH_DISCORD_ID` |
 
 Each webhook is optional; an empty one is skipped. Posts are embeds with the cover photo, address, area, price, key facts, agent and a "View on website" button.
 
@@ -106,7 +108,37 @@ Each webhook is optional; an empty one is skipped. Posts are embeds with the cov
 
 ### 4. Discord webhooks (optional)
 
-For each channel that should get posts: **Edit channel → Integrations → Webhooks → New Webhook → Copy Webhook URL**, and paste it into the matching `DISCORD_WEBHOOK_*` variable.
+For each channel that should get posts: **Edit channel → Integrations → Webhooks → New Webhook → Copy Webhook URL**, and paste it into the matching `DISCORD_WEBHOOK_*` variable. Once the bot is set up (next section), it takes over these posts.
+
+### 5. The Discord bot (builds the server)
+
+The bot uses the same Discord application as sign-in. It has no always-on process: it changes the server through Discord's REST API, and buttons reach the site through an interactions endpoint, so it runs on Vercel.
+
+1. **Turn the app into a bot.** Developer Portal → your app → **Bot** → **Reset Token**, and copy it into `DISCORD_BOT_TOKEN`. Leave "Public Bot" off.
+2. **Copy the IDs.**
+   - **General Information → Public Key** goes into `DISCORD_PUBLIC_KEY`.
+   - Your server's ID goes into `DISCORD_GUILD_ID`: with Developer Mode on, right-click the server icon → **Copy Server ID**.
+   - `DISCORD_APP_ID` is optional; it defaults to `AUTH_DISCORD_ID`.
+3. **Add the variables in Vercel** (Production), then redeploy.
+4. **Invite the bot** with the link on **Portal → Site settings → Discord server**, or run `npm run discord:invite`. The link asks for exactly what setup needs (permissions integer `1634742038259`), never Administrator. It covers:
+   - posting and managing messages and threads;
+   - managing channels, roles and the server (AutoMod, Community, onboarding, icon);
+   - the moderation permissions the Management role gets (timeout, kick, audit log, nicknames).
+5. **Move the bot's role to the top.** In Discord, **Server Settings → Roles**, drag the bot's role to the very top. A bot can only manage roles below its own.
+6. **Set the Interactions Endpoint URL.** Developer Portal → **General Information**, set it to `https://<your-domain>/api/discord/interactions` and save (Discord sends a test request, which the site answers). The Verify and Get-roles buttons need this.
+7. **Build the server.** On **Portal → Site settings → Discord server**, click **Preview changes**, then **Run setup**. From a terminal with the production `DATABASE_URL`, `npm run discord:setup -- --dry-run`, then `npm run discord:setup`, does the same.
+
+Setup creates the roles in order, with colours from the design tokens. It also creates the categories and channels with their permissions, every panel from `discord/discord-blueprint.md`, the FAQ forum posts and the AutoMod rules, and it applies the server settings. It finishes with a summary in #bot-log.
+
+Running setup again updates by stored ID: it re-orders roles, fixes permissions and edits panels in place, and never creates duplicates.
+
+**What setup can't do, so you do it by hand** (it prints this list):
+- Turn on **Administrator** for the Owner and Co-Owner roles. Bots can't grant it.
+- Require 2FA for moderation (server owner only).
+- Finish **onboarding**. Discord wants more default channels than the blueprint lists, so setup prints the questions to add.
+- Add the server banner. It needs a boost level.
+
+**Not included:** logging message edits, deletions and member joins needs a bot that stays connected, which Vercel can't run. If you want those logs, add a free logging bot alongside this one.
 
 ## The first Owner
 

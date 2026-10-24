@@ -8,6 +8,13 @@
       "when": 1792769533845,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792811243311,
+      "tag": "0001_discord_config",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SettingsForm } from '@/components/portal/SettingsForm';
+import { Button } from '@/components/ui/Button';
 import { ImageField } from '@/components/ui/ImageField';
 import { clearImage, getImageTarget, setImage } from '@/server/actions/images';
 import { mediaSrc } from '@/server/queries/media';
@@ -26,6 +27,9 @@ export default async function SettingsPage() {
           <h1 className="heading-1">Site settings</h1>
           <p className="body muted">Everything the public site says about the brokerage itself.</p>
         </div>
+        <Button variant="secondary" href="/portal/settings/discord">
+          Discord server
+        </Button>
       </div>
       <section className="panel stack">
         <h2 className="panel-title">Images</h2>

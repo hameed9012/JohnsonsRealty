@@ -2,16 +2,17 @@
 
 Oct 14, 2026 · @Hameed
 
-Eleven fictional sellers for your Pennsylvania listings, seven for homes and four for businesses, every property in Dauphin County. Each file has the full data sheet for the forms: who the sellers are, the house, money and ownership, listing terms, showings and disclosures. Street addresses, towns, ZIP codes and parcel IDs are blank for you to choose. Bottom-line prices are for Hameed only. Never tell a buyer.
+Thirteen fictional sellers for your Pennsylvania listings, eight for homes and five for businesses, every property in Dauphin County. Each file has the full data sheet for the forms: who the sellers are, the house, money and ownership, listing terms, showings and disclosures. Street addresses, towns, ZIP codes and parcel IDs are blank for you to choose. Bottom-line prices are for Hameed only. Never tell a buyer.
 
 ## At a glance
 
 | Seller | Selling | Asking | Lowest they'll take | Timeline |
 | --- | --- | --- | --- | --- |
 | Elaine Porter | 7063 Franklin Court (3 bed, 2 bath) | $365,000 | $350,000 | Settle Dec 12, 2026 |
-| Ray Kowalski | The bungalow (1 bed, 1 bath) | $189,000 | $175,000 | Settle by Nov 20, 2026 |
+| Ray Kowalski | 8095 Lakeway Street, Fairview (1 bed, 1 bath) | $189,000 | $175,000 | Settle by Nov 20, 2026 |
 | Priya and Daniel Raman | 601 Cardinal Court, Whispering Pines (4 bed, 1 bath, pool) | $725,000 | $690,000 | Must settle by Dec 15, 2026 |
 | Anthony and Renée Castellano | 601 Cardinal Court, Whispering Pines (6 bed, 2 bath) | $795,000 | $760,000 | Settle around Jan 15, 2027 |
+| Gregory and Lena Hartmann | 6012 Estate Drive, Whispering Pines (4 bed, 1.5 bath, pool, games room) | $760,000 ($795,000 furnished) | $730,000 (furniture $25,000) | Flexible, 45 to 90 days |
 | Victor Hayes (landlord) | The two-bedroom rental | $1,900/month | $1,850/month on an 18-month lease | Lease starts Nov 1, 2026 |
 | Estate of Harold Brennan | Spare: any older home | Set per listing | About 93% of asking | Settle in 60 to 90 days |
 | Jordan and Alexis Whitaker | Spare: any starter home | Set per listing | About 96% of asking | Settle in 30 to 45 days |
@@ -119,7 +120,7 @@ Elaine is 61, a retired school librarian, widowed in 2023. She and her husband G
 - "She'd prefer to give a repair credit rather than have work done before settlement."
 - "She's asked me to pass along her planting notes for the garden. She'd like the new owners to have them."
 
-## Ray Kowalski: the bungalow
+## Ray Kowalski: 8095 Lakeway Street, Fairview
 
 Ray is 74, a retired steelworker who spent 38 years at the Steelton mill. He has lived in the bungalow since 1981, and his wife Dorothy passed away last year. He is moving to Columbus, Ohio to live with his son's family. Ray is gruff but fair, a handshake kind of man, and has no patience for haggling over small things. He wants it sold fast and as-is.
 
@@ -144,7 +145,7 @@ Ray is 74, a retired steelworker who spent 38 years at the Steelton mill. He has
 
 | Field | Value |
 | --- | --- |
-| Street address, town / area, ZIP, parcel ID | You choose |
+| Street address and postal code | 8095 Lakeway Street, Fairview (Susquehanna Township). Postal 809. ZIP and parcel ID: you choose. |
 | County | Dauphin |
 | Property type | Bungalow, one storey |
 | Bedrooms and bathrooms | 1 bedroom, 1 full bathroom with tub and shower |
@@ -153,8 +154,8 @@ Ray is 74, a retired steelworker who spent 38 years at the Steelton mill. He has
 | Lot size | 0.4 acres |
 | Year built | 1956 |
 | Parking | Detached two-car garage, long private driveway |
-| Basement | Partial, unfinished |
-| Heating | Oil-fired furnace. Oil tank in the basement, installed 2015. |
+| Basement | None, slab foundation |
+| Heating | Oil-fired furnace. Indoor oil tank in the utility room, installed 2015. |
 | Cooling | None. Window units only. |
 | Water heater | 40-gallon electric, installed 2018 |
 | Water and sewer | Public water, public sewer |
@@ -202,7 +203,7 @@ Ray is 74, a retired steelworker who spent 38 years at the Steelton mill. He has
 
 - Roof is from 2009.
 - Original wood windows.
-- Oil furnace with a basement oil tank from 2015. No central air.
+- Oil furnace with an indoor oil tank in the utility room, from 2015. No central air.
 - Some older galvanized plumbing. Part of it was replaced in 2012.
 - Never tested for radon.
 - Garage door sticks in cold weather.
@@ -435,6 +436,115 @@ Anthony is 52 and Renée is 49. They own Castellano's, a family restaurant group
 - "The sellers have countered at $775,000. They've told me they're open to continuing the conversation."
 - "They'd like to settle around mid-January, once their new place is ready. If that works for you, it'll help your offer."
 - "They're happy to leave the pool table in the games room for the new owners."
+
+## Gregory and Lena Hartmann: 6012 Estate Drive, Whispering Pines
+
+Gregory is 54 and owns an orthodontics practice in Camp Hill. Lena is 51, an interior designer, and she furnished the house herself. Their youngest left for college this fall, so the house is too big for two. They are retiring to a smaller place on the coast and are in no hurry. They are friendly and proud of the house, and Lena will want to hear what buyers say about the decor. They will sell the furniture with the house if the price is right.
+
+**Sellers**
+
+| Field | Value |
+| --- | --- |
+| Full legal names | Gregory Alan Hartmann and Lena Marie Hartmann |
+| Ages and occupations | Gregory 54, orthodontist (owns his practice). Lena 51, interior designer. |
+| Marital status | Married, two grown children |
+| How title is held | Jointly, as a married couple (tenants by the entirety) |
+| Who signs | Both, on every document |
+| Who decides | Both. Lena decides on the furniture; Gregory on price and dates. |
+| Contact | GregHartmannDDS (Gregory), LenaHartmannDesign (Lena) |
+| Best way to reach them | Messages during the day. Lena replies fastest. |
+| Living in the house now? | Yes, until settlement |
+| Mailing address after the move | 14 Harbour Town Lane, Hilton Head Island, SC 29928 |
+| Reason for selling | Empty nesters, downsizing and retiring to the coast |
+
+**Property**
+
+| Field | Value |
+| --- | --- |
+| Street address | 6012 Estate Drive, Whispering Pines |
+| Postal code | 601 (all Whispering Pines homes share it) |
+| Town / area, ZIP, parcel ID | You choose |
+| County | Dauphin |
+| Community | Whispering Pines, gated |
+| Property type | Single-family detached, modern farmhouse, two storeys |
+| Bedrooms and bathrooms | 4 bedrooms, 1 full bathroom upstairs and a half bathroom downstairs |
+| Other rooms | Open-plan living room and kitchen, separate dining room (seats six), sitting room, games room with pool table, upstairs landing lounge |
+| Kitchen | Marble island, farmhouse sink, French-door refrigerator, stainless range, white shaker cabinets |
+| Living space | About 3,200 sq ft |
+| Lot size | 0.7 acres |
+| Year built | 2018 |
+| Parking | Attached two-car garage, wide driveway |
+| Basement | None, slab foundation |
+| Heating | Natural gas forced air, two zones |
+| Cooling | Central air, two zones |
+| Water heater | 75-gallon gas |
+| Water and sewer | Public water, public sewer |
+| Electrical | 200-amp service |
+| Roof | Architectural shingle, from 2018 |
+| Pool | In-ground, with a stone deck |
+| Outdoor | Covered back porch, fire pit with seating, privacy fence, concrete pad beside the garage (room for a shed or trailer), white fence at the front |
+| Property taxes | About $12,400 per year |
+| HOA | $210 per month. Covers the gate, private roads and snow removal. |
+| Average utilities | About $480 per month |
+
+**Ownership and money**
+
+| Field | Value |
+| --- | --- |
+| Bought | Built new, completed May 2018, for $612,000 |
+| Deed reference | Deed Book 4087, Page 112 |
+| Mortgage | Penn Valley Bank, payoff about $318,000 |
+| Liens | None known |
+| HOA account | Paid up |
+
+**Listing terms**
+
+| Field | Value |
+| --- | --- |
+| Listed | Oct 23, 2026 |
+| Listing agreement ends | Apr 23, 2027 |
+| Asking price | $760,000 unfurnished |
+| Furnished option | All furniture and decor shown in the photos for $35,000 more ($795,000 total) |
+| Commission | 5% total, 2.5% to each side |
+| Earnest money they expect | $25,000 |
+| Settlement date | Flexible, 45 to 90 days after the agreement |
+| Possession | At settlement |
+| Included | Refrigerator, range, dishwasher, washer, dryer, pool table, pool loungers, fire pit chairs, TV wall mounts |
+| Excluded | Indoor furniture, artwork and TVs, unless the buyer takes the furnished option |
+| Leased items | None |
+| Realty transfer tax | Split equally |
+| Title company | Capital Area Settlement Services |
+| Attorney | Rachel Stein, Stein Legal Group |
+| Home warranty | Yes, one year, paid by the sellers |
+| Financing they accept | Any, with a pre-approval letter or proof of funds |
+| Offer replies | Within 24 hours |
+| Showings | Two hours' notice. Lena often stays to answer questions about the house; ask her to step out if the buyer prefers. Hameed meets buyers at the gate. |
+| Yard sign and photos | Photos allowed. The HOA does not allow yard signs. |
+
+**Disclosures**
+
+- One full bathroom for four bedrooms, plus a half bathroom downstairs.
+- The garage walls are taped drywall that was never painted.
+- Pool pump replaced in 2025.
+- The back fence stain is fading and will need redoing within a year or two.
+- Lead paint disclosure not needed, built 2018.
+
+**Negotiation (Hameed only)**
+
+- Lowest price: **$730,000** unfurnished.
+- Under $700,000: they decline.
+- $700,000 to $729,999: they counter at **$745,000**.
+- $730,000 or more: they accept.
+- Furniture: they would like $35,000 but will take **$25,000**. They will not sell the furniture piece by piece.
+- A furnished offer at $780,000 or more is accepted on the spot.
+- Flexible on dates. They will give a buyer up to 90 days to settle.
+- No credit for the garage walls or the fence. They say the price allows for it.
+
+**Lines Hameed can relay**
+
+- "The sellers aren't in a rush, so they'll wait for the right offer rather than take a low one."
+- "Everything you see can stay. Lena designed the interior herself, and she'd love it to go to someone who'll keep it."
+- "They've countered at $745,000. They're flexible on the settlement date if that helps you."
 
 ## Victor Hayes: the two-bedroom rental
 
@@ -687,7 +797,7 @@ Use this couple for any starter home, townhouse or condo. Jordan is 31, an HVAC 
 
 ## Business sellers
 
-These four owners can be attached to any business of their type on the map. A business sale is priced mainly on the owner's yearly profit, plus the building if it is included. On the forms, switch to **Businesses** and use the Business Listing and Business Sale tabs.
+These five owners can be attached to any business of their type on the map. A business sale is priced mainly on the owner's yearly profit, plus the building if it is included. On the forms, switch to **Businesses** and use the Business Listing and Business Sale tabs.
 
 **How a business is priced (RP guide)**
 
@@ -1052,6 +1162,95 @@ Use this seller for any mechanic or auto repair garage. Frank Delgado is 61 and 
 - "The owner wants to tell his mechanics himself, so please keep this between us for now."
 - "The state inspection licence has to be applied for by the new owner, but two of the mechanics already hold inspector certificates and plan to stay."
 - "He'll fix the lift with the worn cylinder before settlement."
+
+## Gary Lindqvist: Common Cents Laundromat (8061, Fairview)
+
+Gary Lindqvist is 63 and has run Common Cents Laundromat since 2009. It is a self-service laundromat with a wash, dry and fold service, in a leased unit next to Sammy's Pizzeria in Fairview. He wants to retire and spend winters with his daughter in Arizona. Gary is easygoing and plain-spoken, knows every machine by its quirks, and keeps tidy books. His one part-time attendant, Rosa, runs the wash-and-fold counter, and he wants her kept on.
+
+**Owner**
+
+| Field | Value |
+| --- | --- |
+| Full legal name | Gary Robert Lindqvist |
+| Age | 63 |
+| Selling company | Common Cents Laundry LLC |
+| Signing as | Sole member of the LLC |
+| Contact | GaryLindqvist |
+| Best way to reach him | Messages in the morning. He checks the store at 7 am every day. |
+| Mailing address after the move | 9120 East Sunridge Drive, Mesa, AZ 85207 |
+| Reason for selling | Retiring |
+
+**Business**
+
+| Field | Value |
+| --- | --- |
+| Business name | Common Cents Laundromat ("Wash · Dry · Fold") |
+| Type | Self-service laundromat with wash-and-fold service |
+| Address | Building 8061, Fairview, next to Sammy's Pizzeria |
+| Postal code | 806 |
+| Town / area, ZIP | Susquehanna Township (Fairview), 17109 |
+| Opened | 2009 |
+| Opening hours | Daily, 6 am to 10 pm |
+| Employees | 1 part-time attendant (wash-and-fold counter) |
+| What is being sold | Business only. The unit is leased. |
+| Unit size | About 1,800 sq ft: machine floor, back room and rear corridor to a back exit |
+| Equipment | 12 commercial front-load machines (6 washers, 6 dryers) from 2016, folding table, two benches, drinks vending machine, outside security camera |
+| Pricing | $2.00 for the first 32 minutes, $0.50 for every 8 minutes after. Coin and card readers on every machine. |
+| Landlord | Fairview Commons Plaza LLC |
+| Rent | $2,600 per month, plus water and sewer |
+| Lease | Runs to June 2031, with one 5-year renewal option. Can be transferred to a buyer with the landlord's approval. |
+
+**Financials**
+
+| Field | Value |
+| --- | --- |
+| Yearly sales | $168,000. About a quarter comes from wash-and-fold. |
+| Yearly owner profit | $61,000 |
+| Inventory on hand | About $2,000 (detergent, bags, vending stock) |
+| Trend | Steady. Busiest on weekends and in winter. |
+
+**Listing terms**
+
+| Field | Value |
+| --- | --- |
+| Asking price | $149,000 |
+| Price split | Machines and equipment $70,000 · Inventory $2,000 · Goodwill and name $77,000 |
+| Commission | 10% |
+| Earnest money he expects | $7,500 |
+| Owner financing | Yes, up to 20% of the price, over three years at 6% |
+| Settlement date | 30 to 60 days after acceptance |
+| Included | All 12 machines, coin and card readers, folding table, benches, vending machine, security camera, the name and sign, wash-and-fold customer list, phone number |
+| Excluded | Cash in the machines and change safe on settlement day |
+| Licenses | No special licences. Local business registration must be updated. |
+| Training | 2 weeks, including machine maintenance and the wash-and-fold routine |
+| Non-compete | Will not open a laundromat within 10 miles for 5 years |
+| Staff | Buyer is asked to keep Rosa, the attendant |
+| Title company | Capital Area Settlement Services |
+| Attorney | None |
+| Confidentiality | Light. Rosa knows he is retiring; customers do not. |
+| Showings | Weekday mornings. Buyers can come in as customers first, then meet Gary in the back room. |
+
+**Disclosures**
+
+- The lease needs the landlord's approval to transfer. The landlord has not been asked yet.
+- The machines are from 2016. Commercial machines usually last 15 to 20 years.
+- One washer needs a new door seal (about $400). Two dryers have sticky coin slots; the card readers work fine.
+- Water and sewer run about $1,400 a month and are already counted in the profit figure.
+
+**Negotiation (Hameed only)**
+
+- Lowest price: **$135,000**.
+- Under $125,000: he declines.
+- $125,000 to $134,999: he counters at **$142,000**.
+- $135,000 or more: he accepts.
+- He will fix the washer seal before settlement at his own cost if asked.
+- A buyer who promises to keep Rosa gets the benefit of the doubt on a close offer.
+
+**Lines Hameed can relay**
+
+- "The machines are on card readers as well as coins, so there's very little cash handling."
+- "Wash-and-fold brings in about a quarter of the sales, and the customer list comes with the business."
+- "He'll finance up to 20% of the price himself over three years."
 
 ## Towns and areas
 

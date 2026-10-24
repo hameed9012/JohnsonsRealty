@@ -360,3 +360,203 @@ Each phase ends with tests passing, a short summary, and this file updated.
 6. **Documents** — 8 typed forms, fill from client file, area picker, signatures, drafts/sent/signed, PNG + print/PDF, attach and share.
 7. **Marketing studio** — brochure, square, banner (+ business card), PNG export, Chirper composer, "Download brochure" on property pages; manual map pin placement and display.
 8. **Polish** — accessibility audit (axe, keyboard, focus, contrast, reduced motion), mobile pass, performance/Lighthouse, Playwright e2e, README (setup, env, Neon, Cloudinary, Discord redirect URLs, migrations, seeding, first Owner, deployment), Vercel deploy.
+
+---
+
+# Phase 2: Discord bot, legacy import, generated sellers, property map
+
+Brief: `docs/CLAUDE_CODE_PROMPT_2.md`. Status: **planned, waiting for go-ahead** (Oct 24, 2026). Same rules as phase 1: tokens only, nothing hard-coded, server-side permissions, Zod everywhere, tests, this file kept current.
+
+## P2.1 Kit files
+
+The kit arrived as `johnsons-realty-phase-2/`. On go-ahead it moves into the repo as the brief lays out:
+
+| From the kit | To |
+| --- | --- |
+| `CLAUDE_CODE_PROMPT_2.md` | `docs/CLAUDE_CODE_PROMPT_2.md` |
+| `discord/discord-blueprint.md` | `discord/discord-blueprint.md` (source of truth; `src/discord/blueprint.ts` is written from it) |
+| `import/seller-files.md` | `import/seller-files.md`, and it **replaces** `reference/seller-files.md` |
+| `import/forms-pa-latest.html` | `import/forms-pa-latest.html` (parsed for `SELLERS` / `EXTRA`) |
+| `map/liberty-county-map.png`, `map/postal-zones.json` | `map/` (seed data) |
+| `photos/6012-estate-drive/01…20` | `photos/6012-estate-drive/` (about 4 MB, committed) |
+
+## P2.2 Data model additions
+
+All of these are named in the brief. Anything beyond them is in **P2.9** as a question.
+
+| Table / column | Purpose |
+| --- | --- |
+| `postal_zones` (code PK, label, x %, y %, updated_at) | The 62 zones, seeded from `map/postal-zones.json`, editable under Settings → Map |
+| `listings.postal` (text) | The **in-game** postal code (6012 → 601). Separate from `listings.postal_code`, which already holds the ZIP (17110). See P2.9 #1. |
+| `listings.map_x` / `map_y` (existing) | Kept as the manual override; empty = use the zone |
+| `listings.photos_hold` (bool) | Imported listings that are Active but hidden until they have 3 photos; cleared automatically, with no new review |
+| `listings.discord_message_id`, `discord_channel_id` | The listing's announcement message, edited later instead of re-posting |
+| `site_settings.sold_on_map_days` (int, default 30) | How long sold listings stay on the map |
+| `discord_config` (key, kind, discord_id, updated_at) | Every role, category, channel, panel message and the map message, by blueprint key. Nothing is looked up by name. |
+| `discord_outbox` (id, event, payload, status, attempts, error, created_at) | Posts that failed. Shown in the portal with **Retry**, and logged to #bot-log and the activity log. |
+| `shifts` (id, discord_user_id, user_id?, started_at, ended_at) | Clock in and out from #shifts; hours per agent this week in the portal |
+| `announcements` (id, title, body, image, published_at, discord_message_id, created_by) | New portal page: write, preview, publish |
+| `open_houses` (id, listing_id, starts_at, ends_at, notes, discord_message_id, created_by) | Created in the portal and posted to #open-houses |
+| `clients.legacy_key` (unique), `clients.tags` (text[]) | Idempotent import (`legacy:kowalski`), and the "Spare seller" tag |
+| `clients.generated_seed` (text, nullable) | Set when a seller was generated. Its presence is the portal-only "Fictional RP seller" mark, and Regenerate changes it. |
+| `listing_terms.furnished_price`, `listing_confidential.furniture_lowest` | The Hartmanns' furnished option, the Marketplace Chirper line and the generator's furniture terms |
+| `enquiries`: type `discord_ticket`, plus `discord_user_id`, `summary`, `transcript_url` | Closed tickets are recorded here (type, opener, linked user, summary, transcript link) |
+| `enquiries.decision` (accepted / declined, nullable) | Set by the Accept / Decline buttons on career applications |
+| `ref_counters` kind `ticket` (existing table) | Ticket numbers |
+
+## P2.3 Property map (order step 1)
+
+- **Postal code:** `postalFromAddress("6012 Estate Drive") = "601"` (the house number without its last digit). The form fills it from the address, and the agent can change it. An unknown code notifies the Owner to place the zone.
+- **Settings → Map** (Owner): the map image with every zone as a draggable dot (keyboard-movable too). Add, rename and delete zones, upload a new map image, and set the days sold listings stay on.
+- **Circles:** one per zone per status group: Available, For lease, Under offer (Under Offer / Under Contract), and Sold (within N days). The count shows inside when it's more than one. A listing with a manual override gets its own circle there. Never an address or price on the map.
+- **`GET /api/map.png`**: `sharp` composites an SVG overlay onto the map at 1500px wide, with a legend panel ("Johnson's Realty · Property map", counts per status, "Updated {date, time}").
+  - **Fonts:** librsvg can't load web fonts, so legend text is converted to SVG paths with `opentype.js` from `@fontsource` font files. That adds two small npm dependencies and no downloaded binaries.
+  - **Cache:** keyed by a hash of zones plus listing statuses, stored in `media` / Cloudinary and regenerated only when the hash changes.
+- **Website:**
+  - The Buy, Rent and Businesses **Map** view becomes an interactive SVG of circles. Clicking a circle lists those listings beside the map.
+  - The property page shows a small map with that listing's zone circled.
+  - This replaces the phase-1 pin views; the per-listing pin picker becomes the "manual override".
+
+## P2.4 Legacy import (order step 2)
+
+- **Parsing.** `src/import/legacy/parse.ts` is pure and unit-tested against the real files:
+  - The markdown parser splits sections at `## {seller}`, then reads each bold sub-heading's table or list (Seller, Property, Ownership and money, Listing terms, Disclosures, Negotiation, Lines … can relay).
+  - The HTML parser extracts the `SELLERS` and `EXTRA` object literals with a small literal parser (no `eval`), giving disclosure answers r1–r20, showing notes, dates, vesting and the yard sign, photo and lockbox choices.
+- **`npm run import:legacy`** writes `import/legacy.json`, prints the preview, and asks before saving (`--yes` to skip).
+- **Portal (Owner): Settings → Import.** The same parse runs in memory and shows a preview table per seller, with flags (missing address, shared address, a postal code with no zone). Fields like the Castellano sale price and date are filled in there, then **Import**.
+- **What it creates:**
+  - **Porter, Kowalski, Raman, Castellano, Hartmann, Hayes, Lindqvist:** a client file (people, handles, confidential motivation and negotiation into the `*_confidential` tables, relay lines), the listing with every detail table, disclosures, price history and a link between them.
+  - **Castellano** → Sold, plus a sale record (Sale No. 001).
+  - **Hayes** → For Lease. **Everyone else** → Active, with `published_at` = the file's "Listed" date.
+  - **Spare sellers** (Brennan, Whitaker, Dee's Diner, Malhotra's, Boyd & Co., Delgado) → client files only, tagged "Spare seller", offered in the wizard's seller picker.
+- **Rules:**
+  - Matching is on `legacy:{key}`, so a second run changes nothing (and reports "already imported").
+  - There is no review queue. Every record gets an activity entry: "Imported from legacy seller files".
+  - Imports are never posted to Discord. Each listing gets a **Post to Discord** button instead.
+- **Photos:** the 20 photos for 6012 Estate Drive upload in order (01 = cover) with their file names as descriptions. Every other imported listing gets `photos_hold` and a **Needs photos** badge. It goes live on its own once it has 3 photos.
+- **On Vercel:** the portal import reads the kit files through `outputFileTracingIncludes` and writes nothing to disk; only the CLI writes `import/legacy.json`.
+
+## P2.5 Generated sellers (order step 3)
+
+- **Where:** in the wizard, the Seller step offers **Pick a client · New client · Generate a seller**. If the step is skipped, a seller is generated when the Owner approves. Owner-submitted listings never get one.
+- **How:** `src/lib/seller-generator/` is pure and seeded by the listing ID with a small PRNG (mulberry32), so the same seed always gives the same seller. **Regenerate** stores a new seed.
+- **Pools** live in code:
+  - **People:** first names and surnames of varied backgrounds, occupations by price band, a handle style like `RayK_Steelton`, and US addresses outside PA.
+  - **Story:** reasons for selling, timelines and personality lines.
+  - **Defects:** small, honest ones.
+  - **Relay lines:** written in the files' voice, naming the listing's agent instead of a hard-coded name.
+- **Derived numbers:**
+  - The year bought is after the year built. The purchase price comes back from the asking price over the years held.
+  - Taxes are 1.4–1.8% of value. Utilities scale by size.
+  - Commission is 5% split. Earnest money is about 3%, rounded.
+  - The lowest price is 92–97% of asking, by motivation. The decline threshold sits below it and the counter between the lowest and asking.
+  - Furniture terms apply when the listing is furnished.
+- **Disclosures follow the facts:** built before 1978 → lead paint required; roof and systems ages from the year built; a pool item if there's a pool; "No basement, slab foundation"; one or two small defects that never contradict the agent's data.
+- **Storage:** the generated seller is saved as ordinary client, confidential and listing-detail rows, so the seller file, confidential panels and Fill from client file all work unchanged. "Fictional RP seller" shows in the portal only.
+- **Tests:** the same seed gives the same seller; lowest < counter < asking; year bought ≥ year built; a pre-1978 home always needs lead paint.
+
+## P2.6 Discord (order steps 4–5)
+
+- **No gateway:**
+  - REST runs through a typed wrapper (`discord-api-types` plus a small `fetch` client) with per-route queues that respect `retry_after`.
+  - The interactions endpoint, `POST /api/discord/interactions`, verifies Ed25519 with Node's built-in `crypto.verify` (no extra dependency) and replies within 3 s. Slow work defers and finishes with a follow-up.
+  - The bot reuses the sign-in Discord app.
+  - New env vars: `DISCORD_BOT_TOKEN`, `DISCORD_APP_ID`, `DISCORD_PUBLIC_KEY`, `DISCORD_GUILD_ID`.
+- **`npm run discord:setup [--dry-run]`** (and an Owner-only button under Settings → Discord) makes the server match `src/discord/blueprint.ts`:
+  - Roles in order, with colours, hoist and permissions; categories and channels with overwrites; FAQ forum posts.
+  - Every panel and message as an embed with its buttons, edited in place on re-runs.
+  - AutoMod rules, then the server settings, with a printed by-hand checklist for anything Discord refuses.
+  - Idempotent by stored ID, with a diff in dry-run, and a summary embed in #bot-log.
+  - The README gets an invite link with exactly the needed permissions (not Administrator).
+- **Embeds** (`src/discord/embeds.ts`): the author line "Johnson's Realty" with `jr-avatar-green.png`, and strip colours read from `design-system/tokens.json` (all six colours in the brief are tokens).
+  - **Listing types:** New listing, Rental, Business (a withheld name uses the teaser), Sold (no buyer names), Price Reduced (old price struck through), No longer available.
+  - **Everything else:** Review pending, Deal, Application (Accept / Decline), Announcement, Open house, Ticket intake, Transcript notice, Map, Agent card, Setup summary.
+  - **Testing:** JSON snapshot tests, plus a `/portal/settings/discord` preview page that renders each one Discord-style with sample data.
+- **Events → Discord**, following the brief's table:
+  - **Timing:** posts run after the database transaction commits, and a failure never blocks the website action (it goes to the outbox).
+  - **Editing:** later changes edit the listing's stored message.
+  - **Fallback:** the phase-1 webhook path stays only for channels with no ID configured.
+- **Interactions:**
+  - **Server panels:** Verify; Get-roles toggles.
+  - **Tickets:** a modal per type creates `ticket-{type}-{n}`, private to the opener plus Staff (a Complaint goes to Management and above). It posts an intake embed with Claim (staff only; renames the channel with the agent's name) and Close.
+  - **Closing a ticket:** a summary modal, then an HTML transcript in the house style posted to #ticket-transcripts, then the `enquiries` row, then the channel is deleted.
+  - **Shifts:** Clock in / Clock out.
+  - **Slash commands** (guild-scoped, with autocomplete): `/listings`, `/listing`, `/agent`, `/map`, `/link`.
+- **Role sync** on site role changes, plus a full-sync button. **Never removes Owner from the server owner.**
+- **Out of scope**, as the brief says: anything needing a live connection (message logs, member joins). The README will suggest a free logging bot.
+
+## P2.7 Chirper
+
+The composer gets the two posts from the brief:
+- **Regular:** "🏡 Just Listed: {address}, {area} (Postal {postal})", the price and "Message me to book a showing."
+- **Marketplace:** no price in the text; "Address: …", the description, "Private showings by appointment.", and the furnished line when there's a furnished price.
+
+Both end with "— {agent}, Johnson's Realty" and hashtags. Each is editable and has its own copy button. The existing template variants stay.
+
+## P2.8 Order, branches and tests
+
+Each step gets its own local branch and commit, with tests passing (unit plus e2e), and is pushed only when you say:
+
+1. `p2-map`: postal zones, map rendering, map views.
+2. `p2-import`: legacy import with preview, and the 6012 photos.
+3. `p2-sellers`: generator in the wizard and on approval.
+4. `p2-discord-setup`: REST wrapper, blueprint, `discord:setup --dry-run`, embeds and the preview page.
+5. `p2-discord-live`: interactions, event posts, the map message, role sync, plus the Chirper posts.
+6. README: creating the bot, the invite link, the interactions URL, env vars, running setup, and the by-hand checklist.
+
+**Testing Discord without a real server:** a fake REST layer in tests records calls, so setup idempotency, embeds and handlers are tested offline. The real dry-run needs your bot token.
+
+## P2.9 Answers (Oct 24, 2026)
+
+1. **Postal:** add `listings.postal` for the in-game code; `postal_code` stays the ZIP.
+2. **Map and areas:** the ER:LC map is split into the site's Pennsylvania areas (PARP jurisdiction map). Fairview JD is the northwest; Springfield JD is the northeast; Harrisburg covers the south (West downtown, East downtown, and North residential above them); the east side and the beach are state parks (nothing for sale). So **each postal zone belongs to one area**: `postal_zones.area_id`, seeded from that map and editable under Settings → Map. Choosing a postal code fills in the area.
+3. **601:** all Whispering Pines homes share postal 601 (Raman and Castellano at 601 Cardinal Court, Hartmann at 6012 Estate Drive). The import sets postal 601 for them directly rather than applying the house-number rule.
+4. **Castellano sale:** prefilled from the file: $795,000 (asking) and Jan 15, 2027 (target settlement), confirmed or changed in the import preview.
+5. **Discord-only ranks** (Management, Senior Agent, Trainee): set by hand in Discord; role sync leaves them alone. (Default; no answer given.)
+6. **Open houses** also show on the property page. (Default; no answer given.)
+7. **Hartmann:** $760,000 unfurnished; furnished +$35,000 = $795,000; the least they'll take for the furniture is $25,000.
+
+**New order:** Discord server setup first (the PARP CivOps application needs the server ready). Then interactions and posts, the map, the import, and the generator:
+
+1. `p2-discord-setup`: REST client, `discord_config`, blueprint, `discord:setup [--dry-run]`, panels, AutoMod, server settings, the Verify and Get-roles buttons, the portal Discord page, the README.
+2. `p2-discord-live`: tickets, shifts, slash commands, event posts, embeds preview, role sync.
+3. `p2-map`, 4. `p2-import`, 5. `p2-sellers`, as planned above.
+
+**Bot permissions (found while planning).** Discord won't let a bot give a role a permission the bot doesn't have. So:
+- The invite asks for the moderation permissions the Management role needs, plus Manage Server (AutoMod, Community, onboarding, icon).
+- It never asks for Administrator. Setup prints a one-line by-hand step: tick Administrator on Owner and Co-Owner, and drag the bot's role to the top.
+
+## P2.10 Progress
+
+### Step 1, Discord server setup: built (Oct 24, 2026), branch `p2-discord-setup`
+
+- **Kit files** are in place (P2.1). `reference/seller-files.md` was replaced with the current version.
+- **`discord_config`** (migration `0001`) stores every created role, category, channel, panel message, FAQ post, AutoMod rule and setting, by blueprint key.
+- **`src/discord/rest.ts`:** a typed REST client with per-route queues, `retry_after` on 429s, backoff on 5xx, multipart uploads, and audit-log reasons.
+- **`src/discord/blueprint.ts`:** the blueprint as data.
+  - 11 roles (colours by token name), 7 categories and 30 channels with who can see and who can post.
+  - Every panel message in the blueprint's words. Brokerage name, Chirper handle and CivOps line come from settings, and links use the site address.
+  - The FAQ, AutoMod, server settings and onboarding.
+- **`src/discord/setup.ts` (`runSetup`):** idempotent by stored ID.
+  - It sets @everyone with no View Channels and creates or updates roles, re-ordering them under the bot.
+  - It creates categories and channels with exact permission overwrites (Senior Agents get Manage Messages in staff-used channels).
+  - It applies server settings and Community, then creates the announcement and forum channels.
+  - It posts panels and edits them in place (re-posting a deleted one only when its text changes), pins the reviews and staff guide, and creates the FAQ forum posts.
+  - It adds three AutoMod rules (mass mentions, Discord's slur preset, invite links outside #partners), all alerting #bot-log, and tries onboarding.
+  - Dry run: reads only, writes nothing. A change Discord refuses is not reported as made; it goes to the by-hand list instead.
+  - Never grants a permission the bot lacks (Discord forbids it); that is reported too.
+- **Interactions endpoint** `POST /api/discord/interactions`:
+  - Ed25519 is verified with Node's `crypto` against `DISCORD_PUBLIC_KEY`.
+  - Verify gives the Verified role; Get-roles toggles the two ping roles. Both reply privately.
+  - Tickets, shifts and commands answer "coming soon" until step 2.
+- **Running it:**
+  - **Portal → Site settings → Discord server** (Owner only): the env var checklist, the invite link (permissions `1634742038259`, no Administrator), the interactions URL, **Preview changes** and **Run setup**, plus an audit entry per run.
+  - **CLI:** `npm run discord:setup [-- --dry-run]` and `npm run discord:invite`.
+- **README:** new "The Discord bot" section with step-by-step setup and the by-hand list. New env vars are in `.env.example`.
+- **Tests:** 20 new unit tests against a simulated Discord guild.
+  - **Setup:** a first run builds everything; a second run changes nothing; panels are edited in place; a dry run writes nothing; the bot's role being too low is caught; permissions the bot lacks are never granted.
+  - **Permissions:** the expected overwrites on #verify, #listing-review, #new-listings, #reviews and #faq.
+  - **Invite:** never asks for Administrator.
+  - **REST:** rate-limit retry.
+  - **Interactions:** signature checks, and the Verify and Get-roles toggles.
+- **Not tested against real Discord yet:** that needs the bot token and the server.
