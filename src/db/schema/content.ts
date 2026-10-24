@@ -1,4 +1,4 @@
-import { boolean, check, integer, pgTable, text, uuid, type AnyPgColumn } from 'drizzle-orm/pg-core';
+import { boolean, check, integer, numeric, pgTable, text, uuid, type AnyPgColumn } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { users } from './auth';
 import { postKindEnum } from './enums';
@@ -36,6 +36,8 @@ export const siteSettings = pgTable(
     mapMediaId: uuid('map_media_id').references(() => media.id, { onDelete: 'set null' }),
     adminsCanApprove: boolean('admins_can_approve').notNull().default(true),
     liveEditsNeedReview: boolean('live_edits_need_review').notNull().default(false),
+    /** Days a sold or leased listing stays on the property map. */
+    soldOnMapDays: integer('sold_on_map_days').notNull().default(30),
     updatedAt: updatedAt(),
   },
   (t) => [check('site_settings_singleton', sql`${t.id} = 1`)],
@@ -91,6 +93,17 @@ export const careers = pgTable('careers', {
   body: text('body').notNull().default(''),
   open: boolean('open').notNull().default(true),
   displayOrder: integer('display_order').notNull().default(0),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+});
+
+/** In-game postal zones on the map image (centre as % of the image). Each belongs to one area (PARP jurisdictions). */
+export const postalZones = pgTable('postal_zones', {
+  code: text('code').primaryKey(),
+  label: text('label').notNull(),
+  x: numeric('x', { precision: 5, scale: 2, mode: 'number' }).notNull(),
+  y: numeric('y', { precision: 5, scale: 2, mode: 'number' }).notNull(),
+  areaId: uuid('area_id').references(() => areas.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 });

@@ -35,7 +35,7 @@ test('staff place a map pin, and it shows on the property page and the Buy map',
 
   await page.getByRole('link', { name: 'View public page' }).click();
   await expect(page.getByRole('heading', { name: 'On the map' })).toBeVisible();
-  await expect(page.getByRole('img', { name: 'Example Open Home' })).toBeVisible();
+  await expect(page.locator('.pmap figcaption')).toContainText('Example Open Home');
 
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download brochure' }).click();
@@ -44,5 +44,21 @@ test('staff place a map pin, and it shows on the property page and the Buy map',
   await page.goto('/buy');
   await page.getByRole('link', { name: 'Map', exact: true }).click();
   await expect(page).toHaveURL(/view=map/);
-  await expect(page.locator('.map').getByRole('link', { name: 'Example Open Home' })).toBeVisible();
+  // A hand-placed listing gets its own circle; choosing it lists the listing.
+  await page.getByRole('button', { name: /1 listing available in Example Open Home/ }).click();
+  await expect(page.locator('.pmap-side').getByRole('link', { name: 'Example Open Home' })).toBeVisible();
+});
+
+test('listings show at their postal zone on the map, and the map PNG renders', async ({ page }) => {
+  await page.goto('/buy?view=map');
+  await page.getByRole('button', { name: '1 listing under offer in Whispering Pines (Postal 601)' }).click();
+  await expect(page.locator('.pmap-side').getByRole('link', { name: 'Example Seed Home' })).toBeVisible();
+
+  await page.goto('/property/example-seed-home-00901');
+  await expect(page.locator('.pmap figcaption')).toContainText('Whispering Pines (Postal 601)');
+
+  const res = await page.request.get('/api/map.png');
+  expect(res.status()).toBe(200);
+  expect(res.headers()['content-type']).toBe('image/png');
+  expect((await res.body()).length).toBeGreaterThan(50_000);
 });

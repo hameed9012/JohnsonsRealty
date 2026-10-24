@@ -18,6 +18,7 @@ import * as listingOps from '@/server/ops/listings';
 import * as showingOps from '@/server/ops/showings';
 import { actorOrThrow, ForbiddenError } from '@/server/session';
 import { getSettings } from '@/server/settings';
+import { updatePropertyMapMessage } from '@/server/map/discord';
 import { dealPartyUserIds, markListingUnavailable, postDealStage, postPriceReduced, postSale, syncDiscordRoles } from '@/server/discord-posts';
 
 export type OpResult<T = undefined> = { ok: true; message?: string; data?: T } | { ok: false; message?: string; fieldErrors?: Record<string, string> };
@@ -49,6 +50,7 @@ export async function setListingStatus(id: string, to: ListingStatus) {
   const r = await run(() => db.transaction((tx) => listingOps.changeListingStatus(tx, actor, id, to)), 'Status updated', ['/portal/listings']);
   revalidateTag('listings', 'max');
   if (r.ok && OFF_MARKET.includes(to)) after(() => markListingUnavailable(id));
+  if (r.ok) after(() => updatePropertyMapMessage(db).then(() => undefined));
   return r;
 }
 

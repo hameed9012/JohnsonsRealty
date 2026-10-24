@@ -1,5 +1,6 @@
 import 'server-only';
 import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { postalFromAddress } from '@/lib/map';
 import type { DB, Executor } from '@/db/client';
 import {
   areas,
@@ -133,6 +134,7 @@ export async function saveProperty(ex: Executor, actor: Actor, id: string, input
       unit: d.unit,
       areaId: d.areaId,
       postalCode: d.postalCode,
+      postal: d.postal ?? postalFromAddress(d.addressLine),
       parcelId: d.parcelId,
       beds: d.beds,
       baths: d.baths,

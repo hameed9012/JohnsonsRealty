@@ -18,6 +18,7 @@ import { can } from '@/lib/permissions';
 import { audit } from '@/server/audit';
 import { postAnnouncement, postListing, postOpenHouse } from '@/server/discord-posts';
 import { actorOrThrow } from '@/server/session';
+import { updatePropertyMapMessage } from '@/server/map/discord';
 
 export type SetupResult = { ok: true; report: SetupReport } | { ok: false; message: string };
 export type SimpleResult = { ok: boolean; message: string; fieldErrors?: Record<string, string> };
@@ -43,6 +44,7 @@ export async function runDiscordSetupAction(dryRun: boolean): Promise<SetupResul
   try {
     const brand = await brandContext(db);
     const report = await runSetup({ rest: discordRest(env.value.token), store: dbConfigStore(db), guildId: env.value.guildId, brand, dryRun, icon: await icon(brand.site), appId: env.value.appId });
+    if (!dryRun) await updatePropertyMapMessage(db, { force: true });
     if (!dryRun) await audit(db, { actorId: actor.id, action: 'discord.setup', entity: 'discord', summary: `Ran Discord server setup (${report.changes.length} changes)`, diff: { changes: report.changes, manual: report.manual } });
     return { ok: true, report };
   } catch (e) {

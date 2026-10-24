@@ -27,9 +27,14 @@ export default async function SettingsPage() {
           <h1 className="heading-1">Site settings</h1>
           <p className="body muted">Everything the public site says about the brokerage itself.</p>
         </div>
-        <Button variant="secondary" href="/portal/settings/discord">
-          Discord server
-        </Button>
+        <div className="row">
+          <Button variant="secondary" href="/portal/settings/map">
+            Property map
+          </Button>
+          <Button variant="secondary" href="/portal/settings/discord">
+            Discord server
+          </Button>
+        </div>
       </div>
       <section className="panel stack">
         <h2 className="panel-title">Images</h2>

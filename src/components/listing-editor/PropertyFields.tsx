@@ -2,6 +2,7 @@
 
 import { Toggle, FeatureChips, RadioGroup } from '@/components/ui/controls';
 import { TextField } from '@/components/ui/fields';
+import { postalFromAddress } from '@/lib/map';
 import { LISTING_TYPES, TYPE_LABELS } from '@/lib/schemas/listing';
 import type { EditorOptions, PropertyValues } from './types';
 import type { useStepForm } from './useStepForm';
@@ -43,7 +44,24 @@ export function PropertyFields({ form, options, simple }: { form: Form; options:
       <fieldset className="jr-fieldset stack">
         <legend>Address</legend>
         <div className="grid-12">
-          <TextField className="span-8" label="Street address" {...bind('addressLine')} placeholder="7063 Franklin Court" autoComplete="off" />
+          <TextField
+            className="span-8"
+            label="Street address"
+            {...bind('addressLine')}
+            onChange={(e) => {
+              const next = e.target.value;
+              // The postal code follows the house number until someone types their own.
+              if (!v.postal || v.postal === postalFromAddress(v.addressLine)) {
+                const p = postalFromAddress(next) ?? '';
+                set('postal', p);
+                const z = options.zones.find((x) => x.code === p);
+                if (z?.areaId && !v.areaId) set('areaId', z.areaId);
+              }
+              set('addressLine', next);
+            }}
+            placeholder="7063 Franklin Court"
+            autoComplete="off"
+          />
           <TextField className="span-4" label="Unit (optional)" {...bind('unit')} />
         </div>
         <fieldset className="jr-fieldset">
@@ -68,8 +86,24 @@ export function PropertyFields({ form, options, simple }: { form: Form; options:
           {errors.areaId ? <p className="jr-field-hint" style={{ color: 'var(--danger)' }}>{errors.areaId}</p> : null}
         </fieldset>
         <div className="grid-12">
-          <TextField className="span-6" label="Postal code" mono {...bind('postalCode')} hint="The in-game postal code." />
-          {!simple ? <TextField className="span-6" label="Parcel ID (optional)" mono {...bind('parcelId')} placeholder="63-018-061" /> : null}
+          <TextField
+            className="span-4"
+            label="Postal (in-game)"
+            mono
+            inputMode="numeric"
+            {...bind('postal')}
+            onChange={(e) => {
+              set('postal', e.target.value);
+              const z = options.zones.find((x) => x.code === e.target.value.trim());
+              if (z?.areaId && !v.areaId) set('areaId', z.areaId);
+            }}
+            hint={(() => {
+              const z = options.zones.find((x) => x.code === v.postal);
+              return z ? `${z.label}. Places it on the map.` : v.postal ? 'Not on the map yet. The Owner will be asked to place it.' : 'The house number without its last digit: 6012 → 601.';
+            })()}
+          />
+          <TextField className="span-4" label="ZIP code" mono {...bind('postalCode')} hint="Filled from the area when it has one ZIP." />
+          {!simple ? <TextField className="span-4" label="Parcel ID (optional)" mono {...bind('parcelId')} placeholder="63-018-061" /> : null}
         </div>
       </fieldset>
 

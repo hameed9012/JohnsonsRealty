@@ -16,6 +16,7 @@ import * as svc from '@/server/listings/service';
 import { actorOrThrow, ForbiddenError } from '@/server/session';
 import { getSettings } from '@/server/settings';
 import { markListingUnavailable, postListing, postReviewPending } from '@/server/discord-posts';
+import { notifyUnplacedPostal } from '@/server/map/notify';
 
 type Result<T = undefined> = NonNullable<ActionState<T>>;
 
@@ -119,6 +120,7 @@ export async function decideListing(id: string, input: { decision: 'approved' | 
     const res = await svc.decideReview(db, actor, settings, id, input);
     if (res.decision === 'approved') {
       after(() => postListing(id));
+      after(() => notifyUnplacedPostal(db, id).then(() => undefined));
       revalidateListing(res.bundle.slug);
     }
     revalidatePath('/portal', 'layout');

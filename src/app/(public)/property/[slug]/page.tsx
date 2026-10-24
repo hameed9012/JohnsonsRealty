@@ -2,7 +2,7 @@ import { and, asc, eq, gte } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { LocalTime } from '@/components/ui/LocalTime';
 import { db } from '@/db/client';
-import { openHouses } from '@/db/schema';
+import { media, openHouses, postalZones } from '@/db/schema';
 import { notFound } from 'next/navigation';
 import { BookShowing, SaveShare } from '@/components/listing/PropertyActions';
 import { PropertyView } from '@/components/listing/PropertyView';
@@ -15,9 +15,9 @@ import { publicImageUrl } from '@/lib/storage';
 import { isSaved, publicListingBySlug, similarListings } from '@/server/queries/public-listings';
 import { getActor } from '@/server/session';
 import { BrochureDownload } from '@/components/studio/BrochureDownload';
-import { MapPin } from '@/components/listing/MapPin';
+import { PropertyMap } from '@/components/listing/PropertyMap';
+import { mapGroup } from '@/lib/map';
 import { studioDataFrom } from '@/server/listings/studio';
-import { mediaSrc } from '@/server/queries/media';
 import { getSettings } from '@/server/settings';
 import { siteUrl } from '@/lib/discord';
 
@@ -47,12 +47,16 @@ export default async function PropertyPage({ params }: Props) {
   const { view: v, bundle: b } = r;
   const actor = await getActor();
   const settings = await getSettings();
-  const [saved, similar, mapSrc, studio] = await Promise.all([
+  const [saved, similar, mapImage, zone, studio] = await Promise.all([
     isSaved(actor?.id, b.id),
     similarListings({ id: b.id, areaId: b.areaId, purpose: b.purpose, type: b.type }),
-    b.mapX !== null && b.mapY !== null ? mediaSrc(settings.mapMediaId) : null,
+    settings.mapMediaId ? db.query.media.findFirst({ where: eq(media.id, settings.mapMediaId), columns: { storageId: true, width: true, height: true } }) : null,
+    b.postal ? db.query.postalZones.findFirst({ where: eq(postalZones.code, b.postal) }) : null,
     studioDataFrom(b, settings),
   ]);
+  // The listing's place on the map: the hand-placed override if there is one, else its postal zone.
+  const spot = b.mapX !== null && b.mapY !== null ? { x: b.mapX, y: b.mapY, label: v.title } : zone ? { x: zone.x, y: zone.y, label: `${zone.label} (Postal ${zone.code})` } : null;
+  const group = mapGroup(b.status);
   const openHouse = await db.query.openHouses.findFirst({ where: and(eq(openHouses.listingId, b.id), eq(openHouses.cancelled, false), gte(openHouses.endsAt, new Date())), orderBy: [asc(openHouses.startsAt)] });
   const onMarket = MARKET_STATUSES.includes(b.status as ListingStatus);
   const path = `/property/${v.slug}`;
@@ -84,7 +88,19 @@ export default async function PropertyPage({ params }: Props) {
             <BrochureDownload data={studio.data} name={v.title} />
           </>
         }
-        map={mapSrc ? <MapPin src={publicImageUrl(mapSrc, { width: 1600 })} pins={[{ x: b.mapX!, y: b.mapY!, label: v.title }]} caption="Placed by hand by the brokerage. Ask the agent for directions in the city." /> : null}
+        map={
+          mapImage && spot && group ? (
+            <PropertyMap
+              highlight
+              src={publicImageUrl(mapImage.storageId, { width: 1200 })}
+              width={mapImage.width}
+              height={mapImage.height}
+              counts={{ available: 0, lease: 0, offer: 0, sold: 0 }}
+              circles={[{ key: 'here', x: spot.x, y: spot.y, group, label: spot.label, listings: [] }]}
+              caption={`${spot.label}. The circle shows the area, not the exact house. Ask the agent for directions in the city.`}
+            />
+          ) : null
+        }
         booking={
           onMarket ? (
             <div id="book" className="stack">

@@ -16,7 +16,8 @@ import { SearchFilters, SortSelect } from './SearchFilters';
 import { SaveSearchButton } from './SavedSearchControls';
 import type { SavedScope } from '@/lib/saved-search';
 import { getActor } from '@/server/session';
-import { MapPin } from '@/components/listing/MapPin';
+import { PropertyMap } from '@/components/listing/PropertyMap';
+import { mapData } from '@/server/map/data';
 import { publicImageUrl } from '@/lib/storage';
 import { mediaSrc } from '@/server/queries/media';
 import { getSettings } from '@/server/settings';
@@ -40,11 +41,12 @@ export async function SearchPage(p: SearchPageProps) {
   // The map view exists only when the Owner has uploaded a map image.
   const mapSrc = await mediaSrc(settings.mapMediaId);
   const mapView = !!mapSrc && p.q.view === 'map';
-  const [actor, allAreas, feats, res] = await Promise.all([
+  const [actor, allAreas, feats, res, map] = await Promise.all([
     getActor(),
     getAreas(),
     db.select().from(features).where(eq(features.active, true)).orderBy(asc(features.displayOrder)),
-    searchCards(p.scope, p.q, { pins: mapView }),
+    searchCards(p.scope, p.q),
+    mapView ? mapData(db, { purpose: p.scope.purpose, business: p.scope.types?.includes('business') ? true : p.scope.excludeTypes?.includes('business') ? false : undefined }) : null,
   ]);
   const byId = new Map(allAreas.map((a) => [a.id, a]));
   const areaOpts = allAreas.map((a) => ({ value: a.slug, label: a.parentId ? `${a.name} · ${byId.get(a.parentId)?.name ?? ''}` : `${a.name} (all)` }));
@@ -97,11 +99,14 @@ export async function SearchPage(p: SearchPageProps) {
               </nav>
             </div>
           </div>
-          {mapView ? (
-            <MapPin
-              src={publicImageUrl(mapSrc!, { width: 1600 })}
-              pins={res.pins}
-              caption={res.pins.length ? `${count(res.pins.length)} of ${count(res.total)} ${noun} have a pin, placed by hand by the brokerage. Choose a pin to open the listing.` : 'None of these listings has a pin on the map yet. Use the grid or list to see them.'}
+          {mapView && map?.image ? (
+            <PropertyMap
+              src={publicImageUrl(map.image.storageId, { width: 1600 })}
+              width={map.image.width}
+              height={map.image.height}
+              counts={map.layout.counts}
+              circles={map.layout.circles.map((c) => ({ key: c.key, x: c.x, y: c.y, group: c.group, label: c.label, listings: c.listings.map((l) => ({ id: l.id, slug: l.slug, title: l.title, price: l.price, purpose: l.purpose })) }))}
+              caption={`Listings are shown at their postal zone, not the exact house. Sold homes stay on the map for ${map.soldDays} days.`}
             />
           ) : null}
           {res.cards.length ? (

@@ -13,6 +13,7 @@ import { publicImageUrl } from '@/lib/storage';
 import { loadBundle } from '@/server/listings/bundle';
 import { agentName, coverOf, priceText, publicTitle, webhookMessageFor } from '@/server/listings/present';
 import { mediaSrc } from '@/server/queries/media';
+import { updatePropertyMapMessage } from '@/server/map/discord';
 
 async function bundle(listingId: string) {
   return loadBundle(db, listingId, { confidential: false });
@@ -27,7 +28,7 @@ export async function postListing(listingId: string): Promise<SendResult> {
   const deps = await discordDeps(db);
   const kind = listingKind(b);
   const title = kind === 'business' ? 'New business listing' : kind === 'rent' ? 'New rental' : 'New listing';
-  return sendToDiscord(
+  const result = await sendToDiscord(
     db,
     {
       event: 'listing_approved',
@@ -38,6 +39,8 @@ export async function postListing(listingId: string): Promise<SendResult> {
     },
     deps,
   );
+  await updatePropertyMapMessage(db);
+  return result;
 }
 
 export async function postReviewPending(listingId: string, round: number): Promise<SendResult> {
@@ -76,7 +79,9 @@ export async function markListingUnavailable(listingId: string): Promise<SendRes
   if (!b?.discordMessageId || !b.discordChannelId) return 'skipped';
   const deps = await discordDeps(db);
   if (!deps) return 'skipped';
-  return sendToDiscord(db, { event: 'listing_unavailable', channel: LISTING_CHANNEL[listingKind(b)], message: noLongerAvailableMessage(deps.brand, listingEmbedData(b)), edit: { channelId: b.discordChannelId, messageId: b.discordMessageId } }, deps);
+  const result = await sendToDiscord(db, { event: 'listing_unavailable', channel: LISTING_CHANNEL[listingKind(b)], message: noLongerAvailableMessage(deps.brand, listingEmbedData(b)), edit: { channelId: b.discordChannelId, messageId: b.discordMessageId } }, deps);
+  await updatePropertyMapMessage(db);
+  return result;
 }
 
 export async function postSale(listingId: string, saleNo: number, price: number): Promise<SendResult> {
@@ -87,7 +92,7 @@ export async function postSale(listingId: string, saleNo: number, price: number)
   const cover = coverOf(b);
   const fallback = webhookMessageFor(b, rent ? 'Lease signed' : 'Sale recorded', '/sold');
   fallback.fields = [{ name: 'Sale', value: saleNoText(saleNo), inline: true }, { name: rent ? 'Rent' : 'Sold for', value: money(price) + (rent ? '/mo' : ''), inline: true }, ...(fallback.fields ?? []).filter((f) => f.name !== 'Price')];
-  return sendToDiscord(
+  const result = await sendToDiscord(
     db,
     {
       event: 'sale_recorded',
@@ -107,6 +112,8 @@ export async function postSale(listingId: string, saleNo: number, price: number)
     },
     deps,
   );
+  await updatePropertyMapMessage(db);
+  return result;
 }
 
 export async function postDealStage(dealId: string, listingId: string, from: string, to: string, toKey: string): Promise<SendResult> {
@@ -116,11 +123,13 @@ export async function postDealStage(dealId: string, listingId: string, from: str
   const fallback = webhookMessageFor(b, `Deal moved to ${to}`, `/portal/deals/${dealId}`, { internal: true });
   fallback.fields = [{ name: 'From', value: from, inline: true }, { name: 'To', value: to, inline: true }, ...(fallback.fields ?? [])];
   const tone = toKey === 'closed' ? 'sold' : ['under_offer', 'under_contract', 'settlement'].includes(toKey) ? 'offer' : 'default';
-  return sendToDiscord(
+  const result = await sendToDiscord(
     db,
     { event: 'deal_stage', channel: 'deal-board', message: dealMessage(deps?.brand ?? (await fallbackBrand()), { title: publicTitle(b), dealId, from, to, agentName: agentName(b), refNo: b.refNo, tone }), fallback: { event: 'deal_stage', message: fallback } },
     deps,
   );
+  await updatePropertyMapMessage(db);
+  return result;
 }
 
 export async function postApplication(enquiryId: string): Promise<SendResult> {

@@ -1,7 +1,7 @@
 import 'server-only';
 import { and, asc, eq, inArray } from 'drizzle-orm';
 import { db } from '@/db/client';
-import { clients, features, users } from '@/db/schema';
+import { clients, features, postalZones, users } from '@/db/schema';
 import { DISCLOSURE_ITEMS } from '@/db/schema/enums';
 import type { ClientConfValues, ClientValues, EditorData, EditorOptions, PersonValues } from '@/components/listing-editor/types';
 import type { IconName } from '@/components/ui/Icon';
@@ -68,7 +68,11 @@ export async function loadEditor(actor: Actor, id: string): Promise<{ data: Edit
   const editable =
     can(actor, 'listing.edit', subject) && WIZARD_STATUSES.includes(subjectRow.status) && (subjectRow.status !== 'pending_review' || manager);
 
-  const [allAreas, feats] = await Promise.all([getAreas(), db.select().from(features).where(eq(features.active, true)).orderBy(asc(features.displayOrder))]);
+  const [allAreas, feats, zones] = await Promise.all([
+    getAreas(),
+    db.select().from(features).where(eq(features.active, true)).orderBy(asc(features.displayOrder)),
+    db.select({ code: postalZones.code, label: postalZones.label, areaId: postalZones.areaId }).from(postalZones).orderBy(asc(postalZones.code)),
+  ]);
 
   const sellerClient = b.seller ? ({ ...b.seller, confidential: (b.seller as ClientRow).confidential ?? null } as ClientRow) : null;
   const terms = b.terms;
@@ -93,6 +97,7 @@ export async function loadEditor(actor: Actor, id: string): Promise<{ data: Edit
       unit: s(b.unit),
       areaId: s(b.areaId),
       postalCode: s(b.postalCode),
+      postal: s(b.postal),
       parcelId: s(b.parcelId),
       beds: s(b.beds),
       baths: s(b.baths),
@@ -260,6 +265,7 @@ export async function loadEditor(actor: Actor, id: string): Promise<{ data: Edit
     confidential,
     options: {
       areas: areaOptions(allAreas).map((o) => ({ value: o.value, label: o.label, postalCodes: o.area.postalCodes })),
+      zones,
       features: feats.map((f) => ({ value: f.id, label: f.label, icon: (f.icon as IconName | null) ?? undefined })),
       clients: clientOptions,
       account: account ? { displayName: account.displayName ?? '', robloxUsername: account.robloxUsername, chirperHandle: account.chirperHandle } : undefined,

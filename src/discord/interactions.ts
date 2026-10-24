@@ -15,6 +15,8 @@ import { agentCommand, autocomplete, listingCommand, listingsCommand } from './c
 import { applicationMessage, TICKET_ID } from './embeds';
 import type { DiscordRest } from './rest';
 import { syncUser } from './roles';
+import { mapData } from '@/server/map/data';
+import { mapMessage } from '@/server/map/discord';
 import { CLOSE_MODAL_ID, closeModal, closeTicket, isTicketType, openTicket, parseTopic, ticketModal } from './tickets';
 
 const ED25519_SPKI_PREFIX = Buffer.from('302a300506032b6570032100', 'hex');
@@ -230,8 +232,11 @@ export async function handleInteraction(i: APIInteraction, d: InteractionDeps): 
         return now(await listingCommand(d.ex, d.brand, chat));
       case 'agent':
         return now(await agentCommand(d.ex, d.brand, chat));
-      case 'map':
-        return now(reply(`The property map: ${link(d.brand, '/buy?view=map')}`));
+      case 'map': {
+        const data = await mapData(d.ex);
+        if (!data.image) return now(reply(`The property map: ${link(d.brand, '/buy?view=map')}`));
+        return now({ type: InteractionResponseType.ChannelMessageWithSource, data: mapMessage(d.brand, data) });
+      }
       case 'link': {
         const discordUserId = i.member?.user.id ?? i.user?.id;
         const u = discordUserId ? await d.ex.query.users.findFirst({ where: eq(users.discordId, discordUserId) }) : null;

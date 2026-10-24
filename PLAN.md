@@ -599,3 +599,39 @@ Each step gets its own local branch and commit, with tests passing (unit plus e2
   - **Role sync:** never removes Owner from the server owner.
   - **Accessibility audit:** now also covers the Discord pages and Announcements.
 - **Not tested against real Discord yet:** that needs the bot set up on your server.
+
+### Step 3, Property map: built (Oct 24, 2026), branch `p2-map`
+
+- **Data** (migration `0003`): `postal_zones` (code, label, x %, y %, area), `listings.postal` (in-game; `postal_code` stays the ZIP), and `site_settings.sold_on_map_days` (default 30).
+- **Seed** (`src/db/seed-zones.ts`, run by the base seed):
+  - **Zones:** all 62 zones from `map/postal-zones.json`, each assigned an area by the PARP jurisdiction map. Fairview is the northwest and Springfield the northeast. In Harrisburg, North Residential is the River City Suburbs, West Downtown is City Hall, Downtown and River City, and East Downtown is the Industrial Zone, Boat Pier and Madison Court. High Rock Park, the beach and the bay are state parks with no area.
+  - **Safe on every deploy:** it only inserts missing zones, so the Owner's edits are never reset. On the first run it points the site at the bundled map (`public/map/liberty-county-map.png`).
+- **Rules** (`src/lib/map.ts`, pure and unit-tested):
+  - `postalFromAddress` (6012 → 601, 10031 → 1003).
+  - Status groups: Available, For lease, Under offer, and Sold for N days.
+  - One circle per zone per status group, side by side in a shared zone, with the count inside. A manual override (the phase 1 pin) gets its own circle.
+  - Listings whose postal code has no zone are reported. A stable hash of everything drawn.
+- **PNG** (`GET /api/map.png`, `src/server/map/render.ts`):
+  - `sharp` composites an SVG overlay at 1500px wide: soft circles with a halo, a brass ring for sold, and counts.
+  - The legend panel sits in the sea corner: "{brokerage} · Property map", counts per status, "Updated …".
+  - Text is SVG paths from the brand fonts (`opentype.js` + `@fontsource`), so no system fonts are needed. It never draws addresses or prices.
+  - `?v=<hash>` responses are immutable; renders are cached in memory by hash.
+  - `outputFileTracingIncludes` bundles the map image and fonts on Vercel. `sharp` is now a direct dependency.
+- **Website:**
+  - The Buy, Rent and Businesses **Map** view is now the interactive zone map: circles are keyboard-operable buttons and list their listings beside the map, with a legend and counts.
+  - The property page shows a small map with the listing's zone (or override) circled, captioned with the zone name.
+- **Listing form:** a new **Postal (in-game)** field fills from the street address until someone types their own. A postal code whose zone has an area fills in the area. The old field is relabelled **ZIP code**. The server derives the postal code from the address if it's left blank.
+- **Owner prompt:** approving a listing whose postal code has no zone notifies the Owner once ("Postal 806 isn't on the map yet") with a link that pre-fills **Add a zone**.
+- **Portal → Site settings → Property map** (Owner only):
+  - Every zone is a draggable dot (arrow keys move the selected one); the panel beside it renames, re-assigns the area, or removes it.
+  - Add a zone, set the days sold listings stay, and see the list of unplaced postal codes.
+  - Every change is audited.
+- **Discord:** the #property-map message (created by setup) is edited in place with the new image and legend counts whenever the hash changes. That happens after:
+  - listing approval, a status change, a sale, a deal stage change or a withdrawal;
+  - zone edits;
+  - every setup run.
+
+  `/map` now replies with the live map embed.
+- **Tests:**
+  - **Unit:** 8 new tests covering postal derivation, zone areas, layout (grouping, sold window, overrides, unplaced), the hash, and a real PNG render at 1500px.
+  - **End-to-end:** the Buy map circle for postal 601, the property page zone caption, `/api/map.png`, and the hand-placed circle. The accessibility audit now covers Settings → Property map.

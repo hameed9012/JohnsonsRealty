@@ -11,6 +11,7 @@ export interface PropertyValues {
   unit: Str;
   areaId: Str;
   postalCode: Str;
+  postal: Str;
   parcelId: Str;
   beds: Str;
   baths: Str;
@@ -189,6 +190,8 @@ export interface EditorData {
 
 export interface EditorOptions {
   areas: { value: string; label: string; postalCodes: string[] }[];
+  /** In-game postal zones; choosing one with an area fills the area. */
+  zones: { code: string; label: string; areaId: string | null }[];
   features: { value: string; label: string; icon?: IconName }[];
   clients: { id: string; label: string; client: ClientValues; confidential: ClientConfValues | null }[];
   account?: { displayName: string; robloxUsername: string | null; chirperHandle: string | null };

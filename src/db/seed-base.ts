@@ -4,6 +4,7 @@
 import { sql } from 'drizzle-orm';
 import type { Executor } from './client';
 import { areas, features, siteSettings } from './schema';
+import { seedZones } from './seed-zones';
 
 type AreaSeed = { name: string; slug: string; city: string; parent?: string; selectable: boolean; order: number };
 
@@ -51,4 +52,5 @@ export async function seedBase(db: Executor) {
   }
 
   await db.insert(features).values(BASE_FEATURES).onConflictDoNothing({ target: features.key });
+  await seedZones(db);
 }

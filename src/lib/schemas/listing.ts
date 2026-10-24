@@ -25,7 +25,13 @@ export const propertyStep = z.object({
   addressLine: text(160, 'The address'),
   unit: text(40, 'The unit'),
   areaId: uuid('Choose the area from the list.'),
-  postalCode: text(20, 'The postal code'),
+  postalCode: text(20, 'The ZIP code'),
+  postal: z
+    .string()
+    .trim()
+    .regex(/^\d{0,6}$/, 'The postal code is numbers only, like 601.')
+    .optional()
+    .transform((v) => v || undefined),
   parcelId: text(40, 'The parcel ID'),
   beds: int('Enter the number of bedrooms, like 3.', 0, 50),
   baths: halves('Enter the number of bathrooms, like 2 or 1.5.'),

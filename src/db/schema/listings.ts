@@ -28,7 +28,10 @@ export const listings = pgTable(
     addressLine: text('address_line').notNull().default(''),
     unit: text('unit'),
     areaId: uuid('area_id').references(() => areas.id, { onDelete: 'set null' }),
+    /** ZIP code (17101…), used by forms and areas. */
     postalCode: text('postal_code'),
+    /** In-game postal code (6012 → 601): places the listing on the property map. */
+    postal: text('postal'),
     parcelId: text('parcel_id'),
     county: text('county').notNull().default('Dauphin'),
     /** Asking price in dollars, or monthly rent for purpose = rent. */
