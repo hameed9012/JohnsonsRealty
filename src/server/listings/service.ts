@@ -42,6 +42,7 @@ import { audit } from '@/server/audit';
 import { notifyUsers, reviewerIds } from '@/server/notify';
 import { alertSavedSearches } from './alerts';
 import { checklistInput, loadBundle, snapshotOf, type ListingBundle } from './bundle';
+import { generatorFacts, sellerFormValues, storeGeneratedSeller } from './generate-seller';
 
 export class ServiceError extends Error {
   constructor(
@@ -305,6 +306,7 @@ async function writeClient(ex: Executor, actor: Actor, clientId: string | null, 
     timeline: input.timeline,
     whoDecides: input.whoDecides,
     background: input.background,
+    generatedSeed: input.generatedSeed,
   };
   let id = clientId;
   if (id) {
@@ -353,7 +355,8 @@ export async function saveSeller(ex: Executor, actor: Actor, id: string, input: 
   let clientId = d.clientId;
   if (clientId) {
     const c = await ex.query.clients.findFirst({ where: eq(clients.id, clientId) });
-    if (!c || !can(actor, 'client.edit', { agentId: c.agentId, userId: c.userId })) {
+    // Imported spare sellers are shared: any agent can put one on a listing.
+    if (!c || (!can(actor, 'client.edit', { agentId: c.agentId, userId: c.userId }) && !c.tags.includes('Spare seller'))) {
       throw new ServiceError('Check the highlighted fields.', { clientId: 'Choose one of your client files.' });
     }
     if (!c.roles.includes('seller') && !c.roles.includes('landlord') && !c.roles.includes('business_owner')) {
@@ -395,6 +398,19 @@ export async function saveSeller(ex: Executor, actor: Actor, id: string, input: 
 }
 
 /** Property owners: their own client file, built from their account and the contact fields they enter. */
+/**
+ * A fictional RP seller for the Seller step, as editable form values. Seeded by the listing ID, so it's the
+ * same seller every time until Regenerate picks a new seed. Owner-submitted listings have a real seller.
+ */
+export async function generatedSellerValues(ex: Executor, actor: Actor, id: string, regenerate: boolean) {
+  const l = await getForEdit(ex, actor, id);
+  if (l.source === 'owner_submitted') throw new ServiceError('Listings by the property owner have a real seller.');
+  const facts = (await generatorFacts(ex, id))!;
+  const { generateSeller } = await import('@/lib/seller-generator');
+  const seed = regenerate ? crypto.randomUUID() : id;
+  return sellerFormValues(generateSeller(seed, facts.input, { agentName: facts.agentName ?? undefined }));
+}
+
 export async function saveOwnerDetails(ex: Executor, actor: Actor, id: string, input: unknown) {
   const l = await getForEdit(ex, actor, id);
   if (l.source !== 'owner_submitted') throw new ServiceError('This listing isn’t an owner listing.');
@@ -588,6 +604,8 @@ export async function decideReview(db: DB, actor: Actor, settings: PermissionSet
       await notifyUsers(tx, [agentId], { kind: `review.${d.decision}`, ...msg, link: `/portal/listings/${id}` });
     }
 
+    // An agent listing approved with the Seller step skipped gets a fictional RP seller.
+    if (d.decision === 'approved' && l.source === 'agent' && !l.sellerClientId) await storeGeneratedSeller(tx, id, id, actor.id);
     if (d.decision === 'approved') await alertSavedSearches(tx, id);
 
     const bundle = (await loadBundle(tx, id, { confidential: false }))!;

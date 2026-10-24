@@ -1,5 +1,6 @@
 'use client';
 
+import { useTransition } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Checkbox, RadioGroup } from '@/components/ui/controls';
 import { Icon } from '@/components/ui/Icon';
@@ -25,6 +26,7 @@ const EMPTY_CLIENT: ClientValues = {
   timeline: '',
   whoDecides: '',
   background: '',
+  generatedSeed: '',
   people: [{ ...EMPTY_PERSON }],
 };
 
@@ -42,8 +44,22 @@ export function ConfidentialFieldset({ title = 'Confidential', note = 'Agents on
   );
 }
 
-export function SellerFields({ form, options, type, confidential }: { form: Form; options: EditorOptions; type: string; confidential: boolean }) {
+export function SellerFields({
+  form,
+  options,
+  type,
+  confidential,
+  generate,
+}: {
+  form: Form;
+  options: EditorOptions;
+  type: string;
+  confidential: boolean;
+  /** Fetches a generated (fictional RP) seller as form values; regenerate picks a new seed. */
+  generate?: (regenerate: boolean) => Promise<SellerValues | null>;
+}) {
   const { values: v, set, bind, errors } = form;
+  const [generating, startGenerate] = useTransition();
   const c = v.client;
   const setClient = (patch: Partial<ClientValues>) => set('client', { ...c, ...patch });
   const setPerson = (i: number, patch: Partial<PersonValues>) => setClient({ people: c.people.map((p, j) => (j === i ? { ...p, ...patch } : p)) });
@@ -70,7 +86,7 @@ export function SellerFields({ form, options, type, confidential }: { form: Form
           options={options.clients.map((x) => ({ value: x.id, label: x.label }))}
           value={v.clientId}
           error={errors.clientId}
-          hint="Pick an existing client file to fill it in, or leave on “New client file”."
+          hint="Pick an existing client file to fill it in, leave on “New client file”, or generate a fictional seller."
           onChange={(e) => {
             const id = e.target.value;
             const found = options.clients.find((x) => x.id === id);
@@ -79,6 +95,30 @@ export function SellerFields({ form, options, type, confidential }: { form: Form
             if (found?.confidential) set('clientConfidential', found.confidential);
           }}
         />
+        {generate ? (
+          <div className="row">
+            <Button
+              variant="secondary"
+              size="sm"
+              icon="user"
+              loading={generating}
+              onClick={() =>
+                startGenerate(async () => {
+                  const again = !!c.generatedSeed;
+                  if (again && !confirm('Replace this generated seller with a new one?')) return;
+                  const g = await generate(again);
+                  if (!g) return;
+                  // Regenerating updates the same client file instead of opening another.
+                  const keep = again ? v.clientId : '';
+                  for (const k of Object.keys(g) as (keyof SellerValues)[]) set(k, k === 'clientId' ? keep : g[k]);
+                })
+              }
+            >
+              {c.generatedSeed ? 'Regenerate seller' : 'Generate a seller'}
+            </Button>
+            {c.generatedSeed ? <span className="label label--brass">Fictional RP seller</span> : <span className="body-s muted">For in-game houses with no real seller. Skip this step and one is generated when the Owner approves.</span>}
+          </div>
+        ) : null}
         <RadioGroup
           legend="Who is selling?"
           name="client.kind"

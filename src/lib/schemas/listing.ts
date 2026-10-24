@@ -168,6 +168,8 @@ export const clientSchema = z.object({
   timeline: text(300),
   whoDecides: text(300),
   background: text(2000),
+  /** Set when the seller was generated (a fictional RP seller). */
+  generatedSeed: text(64),
   people: z.array(personSchema).max(8).default([]),
 });
 export type ClientInput = z.infer<typeof clientSchema>;

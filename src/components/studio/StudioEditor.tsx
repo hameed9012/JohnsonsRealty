@@ -7,7 +7,8 @@ import { Toggle } from '@/components/ui/controls';
 import { FilterChip } from '@/components/ui/FilterChip';
 import { SelectField, TextField } from '@/components/ui/fields';
 import { useToast } from '@/components/ui/Toaster';
-import { CHIRP_LIMIT, draftChirp, type ChirpKind } from '@/lib/chirper';
+import { CHIRP_LIMIT, draftChirp, justListedPost, marketplacePost, type ChirpKind } from '@/lib/chirper';
+import type { StudioChirp } from '@/server/listings/studio';
 import { Artboard, exportPng, FORMATS, STAMPS, type Format, type Stamp, type StudioData } from './Artboards';
 
 type Option = { value: string; label: string };
@@ -19,7 +20,7 @@ export interface StudioEditorProps {
   photos: string[];
   me: StudioData['agent'];
   figures: { value: string; label: string }[];
-  chirp: { kind: ChirpKind; area: string; facts: string[]; url: string } | null;
+  chirp: (StudioChirp & { url: string }) | null;
 }
 
 /** Scales a fixed-size artboard to the stage width, keeping its real layout for export. */
@@ -62,6 +63,13 @@ export function StudioEditor({ listingId, listingOptions, initial, photos, me, f
     [chirp, chirpKind, when, d],
   );
   const [chirpText, setChirpText] = useState<string | null>(null);
+  const post = useMemo(
+    () =>
+      chirp
+        ? { address: d.address, area: chirp.areaName, postal: chirp.postal, price: d.price || null, description: chirp.description, furnishedPrice: chirp.furnishedPrice, agentName: d.agent.name, brokerageName: chirp.brokerageName, purpose: chirp.purpose }
+        : null,
+    [chirp, d],
+  );
   const boardRef = useRef<HTMLDivElement>(null);
   const isCard = format === 'card-front' || format === 'card-back';
   const shown: StudioData = isCard ? { ...d, agent: card } : d;
@@ -221,7 +229,66 @@ export function StudioEditor({ listingId, listingOptions, initial, photos, me, f
             </div>
           </section>
         ) : null}
+        {post && !isCard && format !== 'banner' ? (
+          <>
+            <PostBox id="post-listed" title="Just Listed post" draft={justListedPost(post)} limit={CHIRP_LIMIT} />
+            <PostBox
+              id="post-market"
+              title="Marketplace post"
+              draft={marketplacePost(post)}
+              note={post.price ? `No price in the text: put ${post.price} in Chirper’s price box.` : 'No price in the text: it goes in Chirper’s price box.'}
+              copyExtra={post.price ? { label: 'Copy price', text: post.price.replace(/[^\d.]/g, '') } : undefined}
+            />
+          </>
+        ) : null}
       </div>
     </div>
+  );
+}
+
+/** One ready-made post: editable, with a copy button. Edits stay until "Reset to the draft". */
+function PostBox({ id, title, draft, limit, note, copyExtra }: { id: string; title: string; draft: string; limit?: number; note?: string; copyExtra?: { label: string; text: string } }) {
+  const toast = useToast();
+  const [text, setText] = useState<string | null>(null);
+  const value = text ?? draft;
+  const copy = async (t: string, what: string) => {
+    try {
+      await navigator.clipboard.writeText(t);
+      toast({ message: `Copied ${what}. Paste it into Chirper.`, tone: 'success' });
+    } catch {
+      toast({ message: 'Couldn’t copy. Select the text and copy it instead.', tone: 'danger' });
+    }
+  };
+  return (
+    <section className="panel stack" aria-labelledby={id}>
+      <h2 id={id} className="heading-3">
+        {title}
+      </h2>
+      {note ? <p className="body-s muted">{note}</p> : null}
+      <TextField
+        label={title}
+        multiline
+        rows={8}
+        value={value}
+        onChange={(e) => setText(e.target.value)}
+        hint={limit ? `${value.length} of ${limit} characters` : `${value.length} characters`}
+        error={limit && value.length > limit ? 'Too long for one post.' : undefined}
+      />
+      <div className="row">
+        <Button variant="secondary" onClick={() => copy(value, 'the post')}>
+          Copy post
+        </Button>
+        {copyExtra ? (
+          <Button variant="ghost" onClick={() => copy(copyExtra.text, 'the price')}>
+            {copyExtra.label}
+          </Button>
+        ) : null}
+        {text !== null ? (
+          <Button variant="ghost" onClick={() => setText(null)}>
+            Reset to the draft
+          </Button>
+        ) : null}
+      </div>
+    </section>
   );
 }

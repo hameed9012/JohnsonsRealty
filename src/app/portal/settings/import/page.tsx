@@ -100,7 +100,7 @@ export default async function ImportPage() {
         <h2 className="panel-title" id="imp-clients">
           Client files ({plan.clients.length})
         </h2>
-        <ul className="stack-sm">
+        <ul className="stack">
           {plan.clients.map((c) => (
             <li key={c.key} className="body">
               {imported.has(c.key) ? <Link href={`/portal/clients/${imported.get(c.key)}`}>{c.displayName}</Link> : c.displayName}
@@ -120,7 +120,7 @@ export default async function ImportPage() {
           <h2 className="panel-title" id="imp-flags">
             Check before importing
           </h2>
-          <ul className="stack-sm">
+          <ul className="stack">
             {plan.flags.map((f, i) => (
               <li key={i} className="body">
                 <strong>{plan.clients.find((c) => c.key === f.key)?.displayName ?? f.key}:</strong> {f.message}

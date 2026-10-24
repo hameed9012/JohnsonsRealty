@@ -146,3 +146,28 @@ test('a property owner lists a rental, the Owner requests changes, and they resu
   await expect(visitor.getByText('$1,900').first()).toBeVisible();
   await ownerCtx.close();
 });
+
+test('an agent generates a fictional seller in the Seller step, and regenerates it', async ({ page }) => {
+  await signInAs(page, 'e2e-agent', '/portal/listings/new');
+  await page.getByRole('button', { name: 'Start a listing' }).click();
+  await page.getByLabel('Street address').fill('8095 Example Street');
+  await page.getByLabel('Year built').fill('1956');
+  await nextStep(page, 'Price and terms');
+  await page.getByLabel('Asking price ($)').fill('189000');
+  await nextStep(page, 'Photos');
+  await page.goto(page.url().replace(/\?.*$/, '') + '?step=seller');
+
+  await page.getByRole('button', { name: 'Generate a seller' }).click();
+  await expect(page.getByText('Fictional RP seller')).toBeVisible();
+  const first = await page.getByLabel('Client name').inputValue();
+  expect(first.length).toBeGreaterThan(3);
+  await expect(page.getByLabel('Lead-based paint (homes built before 1978): details')).toHaveValue(/lead-based paint disclosure/);
+
+  page.once('dialog', (d) => d.accept());
+  await page.getByRole('button', { name: 'Regenerate seller' }).click();
+  await expect(page.getByText('New seller generated')).toBeVisible();
+  await nextStep(page, 'Review and submit');
+
+  await page.goto('/portal/clients');
+  await expect(page.getByText('Fictional RP seller').first()).toBeVisible();
+});

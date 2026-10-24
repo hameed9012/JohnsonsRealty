@@ -658,3 +658,33 @@ Each step gets its own local branch and commit, with tests passing (unit plus e2
 - **Tests:**
   - **Unit:** 8 new tests covering the parser, the plan built from the real kit files, import counts, idempotency, photos and cover, the detail tables, activity entries, the release at 3 photos, and the sold-without-price refusal.
   - **End-to-end:** the import runs last, as its own project, then the badge and the public site are checked. The accessibility audit covers the import page.
+
+### Step 5, Generated sellers: built (Oct 24, 2026), branch `p2-sellers`
+
+- **Generator** (`src/lib/seller-generator/`, pure): seeded per listing with FNV-1a and mulberry32. Pools hold names, jobs by price band, handles in the files' style, out-of-state addresses, motives, personality lines, small defects and showing notes.
+- **Who:** a person, couple, estate (only for pre-1970 homes) or LLC (businesses and rentals), with ages and jobs that fit the price.
+- **Ownership and money:** the year bought is never before the year built, and the purchase price is worked back at 4.5% a year. Also a deed book and page, a mortgage (or paid off after 22+ years), taxes of 1.4–1.8% and utilities by size.
+- **Terms:** 5% split commission, earnest money about 3%, and a settlement window from the motive.
+- **Disclosures** follow the facts:
+  - a pre-1978 home always needs the lead paint disclosure;
+  - a home with no basement says "No basement, slab foundation";
+  - there's a pool item only when there's a pool;
+  - one or two defects, chosen only from those that fit the listing.
+- **Negotiation:** decline < lowest < counter < asking. The lowest is 92–97% of asking by motive (90–95% for businesses). There are furniture terms when there's a furnished price, plus 2–3 relay lines that name the listing's agent.
+- **Seller step:** **Generate a seller** fills the step with editable values (seed = listing ID), and **Regenerate** picks a new seed and updates the same client file. "Fictional RP seller" shows beside it, on the client list and on the client file.
+- **Skipping the step:** the checklist no longer requires a seller on agent listings. Approving one with no seller generates and stores it, keeping anything the agent already entered. Owner-submitted listings are refused.
+- **Spare sellers** from the import now appear in every agent's seller picker, labelled "(spare seller)", and any agent can attach one.
+- **Tests:**
+  - **Unit:** 8 tests.
+    - Over 300 seeds × 4 listing kinds: determinism, the number order, the year bought, the lead paint rule, fact-following disclosures, and the price-band jobs.
+    - On listings: same values until Regenerate, generation on approval, and owner-listing refusal.
+  - **End-to-end:** generate, then regenerate, in the wizard.
+
+### Step 6, Chirper posts: built (Oct 24, 2026), branch `p2-sellers`
+
+- `src/lib/chirper.ts` adds `justListedPost` and `marketplacePost` (and `hashtag`) beside the existing typed drafts.
+  - **Just Listed:** "🏡 Just Listed: {address}, {area} (Postal {postal})", the price, "Message me to book a showing."
+  - **Marketplace:** "Address: {address}, {area}", the description, "Private showings by appointment.", and "Available fully furnished for {price}." when the listing has a furnished price. No price in the text.
+  - Both end with "— {agent}, {brokerage}" and hashtags (#JustListed / #HomeForSale, the area, the brokerage); rentals use #ForLease / #ForRent.
+- **Studio:** each post is an editable box with **Copy post** and **Reset to the draft**. The Marketplace box adds **Copy price** for Chirper's price box.
+- **Tests:** 3 unit tests (exact text, furnished line, hashtags). The studio e2e checks both posts.

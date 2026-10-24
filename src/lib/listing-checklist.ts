@@ -62,6 +62,7 @@ export function checklist(l: ChecklistInput): ChecklistItem[] {
   const noAlt = l.photos.filter((p) => !p.alt?.trim()).length;
   if (noAlt) add('photos', 'alt', noAlt === 1 ? 'Describe 1 photo for people using screen readers.' : `Describe ${noAlt} photos for people using screen readers.`);
 
-  if (!l.sellerClientId) add(l.source === 'agent' ? 'seller' : 'owner', 'sellerClientId', l.source === 'agent' ? 'Choose or add the seller’s client file.' : 'Add your details.');
+  // An agent may skip the Seller step: a fictional RP seller is generated when the Owner approves.
+  if (!l.sellerClientId && l.source !== 'agent') add('owner', 'sellerClientId', 'Add your details.');
   return out;
 }

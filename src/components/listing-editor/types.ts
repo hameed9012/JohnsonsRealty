@@ -123,7 +123,7 @@ export interface PersonValues {
 }
 
 export type ClientValues = Record<
-  'kind' | 'displayName' | 'legalNameOnForms' | 'source' | 'bestContact' | 'emergencyContact' | 'businessAddress' | 'currentlyOccupying' | 'mailingAddressAfter' | 'reason' | 'timeline' | 'whoDecides' | 'background',
+  'kind' | 'displayName' | 'legalNameOnForms' | 'source' | 'bestContact' | 'emergencyContact' | 'businessAddress' | 'currentlyOccupying' | 'mailingAddressAfter' | 'reason' | 'timeline' | 'whoDecides' | 'background' | 'generatedSeed',
   Str
 > & { people: PersonValues[] };
 

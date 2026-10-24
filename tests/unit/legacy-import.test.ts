@@ -64,7 +64,7 @@ describe('applying the import', () => {
     db = await testDb();
     await seedBase(db);
     await db.insert(users).values({ id: 'u-owner', role: 'owner', displayName: 'Example Owner' });
-  }, 60_000);
+  });
 
   it('creates every record once, and running it again changes nothing', async () => {
     const plan = await loadPlan();
@@ -131,5 +131,5 @@ describe('applying the import', () => {
     const plan = buildPlan(parseSellerFiles(`## Anthony and Renée Castellano: the six-bedroom mansion\n\n**Sellers**\n\n| Field | Value |\n|---|---|\n| Full legal names | Example One and Example Two |\n`), { sellers: {}, extra: {} });
     await expect(applyPlan(fresh, plan, { actorId: null })).rejects.toThrow(/sale price and date/);
     expect(await fresh.$count(clients)).toBe(0);
-  }, 60_000);
+  });
 });

@@ -1,5 +1,5 @@
 import 'server-only';
-import { and, asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray, or, sql } from 'drizzle-orm';
 import { db } from '@/db/client';
 import { clients, features, postalZones, users } from '@/db/schema';
 import { DISCLOSURE_ITEMS } from '@/db/schema/enums';
@@ -12,6 +12,7 @@ import { checklistInput, loadBundle } from './bundle';
 import { WIZARD_STATUSES } from './service';
 import { toPropertyView } from './view';
 
+const SPARE = 'Spare seller';
 const s = (v: unknown) => (v === null || v === undefined ? '' : String(v));
 const yn = (v: boolean | null | undefined) => (v === true ? 'yes' : v === false ? 'no' : '');
 
@@ -37,6 +38,7 @@ export function clientValues(c: ClientRow | null | undefined): ClientValues {
     timeline: s(c?.timeline),
     whoDecides: s(c?.whoDecides),
     background: s(c?.background),
+    generatedSeed: s(c?.generatedSeed),
     people: c?.people.length
       ? c.people.map((p) => ({
           legalName: p.legalName,
@@ -247,12 +249,13 @@ export async function loadEditor(actor: Actor, id: string): Promise<{ data: Edit
   if (b.source === 'agent') {
     const manager = actor.role === 'owner' || actor.role === 'admin';
     const rows = (await db.query.clients.findMany({
-      where: manager ? eq(clients.archived, false) : and(eq(clients.archived, false), eq(clients.agentId, actor.id)),
+      // Agents see their own clients plus the imported spare sellers, which anyone may use.
+      where: manager ? eq(clients.archived, false) : and(eq(clients.archived, false), or(eq(clients.agentId, actor.id), sql`${SPARE} = any(${clients.tags})`)),
       with: { people: { orderBy: (p, { asc }) => [asc(p.sortOrder)] }, confidential: true },
       orderBy: [asc(clients.displayName)],
       limit: 300,
     })) as ClientRow[];
-    clientOptions = rows.map((c) => ({ id: c.id, label: c.displayName, client: clientValues(c), confidential: confValues(c.confidential) }));
+    clientOptions = rows.map((c) => ({ id: c.id, label: c.tags.includes(SPARE) ? `${c.displayName} (spare seller)` : c.displayName, client: clientValues(c), confidential: confValues(c.confidential) }));
   }
 
   const account =

@@ -48,6 +48,8 @@ Creates "Example …" records only. It refuses to run in production or on Vercel
 | `npm run db:migrate` | Apply migrations and base data |
 | `npm run seed` | Re-apply base data only |
 | `npm run seed:dev` | Fake "Example …" records for development |
+| `npm run discord:setup` / `discord:invite` | Build the Discord server from the blueprint / print the bot's invite link (see below) |
+| `npm run import:legacy` | Preview the legacy seller files import and write `import/legacy.json`; add `-- --yes` to save it |
 
 ## Environment variables
 
@@ -81,8 +83,19 @@ Each webhook is optional; an empty one is skipped. Posts are embeds with the cov
   - Signatures are typed names with dates. Mark a document as sent, then signed; signed documents are locked.
   - **Save as image** makes a PNG. **Print or save as PDF** uses the print layout.
   - **Share with the client** puts a read-only copy (without brokerage-only sections) on their account.
-- **Marketing studio** (`/portal/studio`): pick a listing and the 1080×1350 brochure fills from it. Also a square post, a banner and your business card, each exported as a PNG at its exact size, plus a Chirper post draft built from the listing's fields. Property pages have a public **Download brochure** button.
-- **Map pins (optional)**: upload a map image of the playable area in **Site settings**. Staff can then click it on a listing's page to place a pin. Property pages show the pin, and the search pages gain a **Map** view. Without a map image, none of this appears.
+- **Marketing studio** (`/portal/studio`): pick a listing and the 1080×1350 brochure fills from it. Also a square post, a banner and your business card, each exported as a PNG at its exact size. Property pages have a public **Download brochure** button.
+  - **Chirper:** a post draft by type (just listed, price reduced, open house…), plus the two listing posts: **Just Listed** ("🏡 Just Listed: address, area (Postal …)", the price, "Message me to book a showing.") and **Marketplace** (no price in the text, the description, "Private showings by appointment." and the furnished line if there's a furnished price). Each is editable and has its own copy button.
+- **Property map** (**Site settings → Property map**, Owner): listings appear as circles at their in-game postal zone, one circle per zone and status, on the search pages' **Map** view, the property page and the `#property-map` Discord message (`/api/map.png`).
+  - A listing's postal code is its house number without the last digit (6012 → 601). The listing form fills it in, and the agent can change it.
+  - Zones are draggable dots, each belonging to an area. A postal code with no zone notifies the Owner once.
+  - A hand-placed pin on a listing still overrides its zone.
+- **Generated sellers:** houses on the server have no real seller, so the Seller step can **Generate a seller**. It builds a fictional seller from the listing's facts (people, story, ownership, terms, disclosures and confidential negotiation rules).
+  - Generation is seeded by the listing, so it stays the same until **Regenerate**. Everything is editable.
+  - If an agent skips the step, a seller is generated when the Owner approves.
+  - Generated sellers are marked "Fictional RP seller" in the portal only. Owner-submitted listings never get one.
+- **Legacy import** (**Site settings → Import seller files**, Owner, or `npm run import:legacy`): creates the client files and listings from `import/seller-files.md` and `import/forms-pa-latest.html`.
+  - The preview flags anything to check. Running it again changes nothing.
+  - Imported listings without 3 photos are Active but hidden from the public site with a **Needs photos** badge, and go live once 3 described photos are saved. Use **Post to Discord** on the listing to announce it.
 
 ## Set up the services
 

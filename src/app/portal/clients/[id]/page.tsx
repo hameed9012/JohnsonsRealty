@@ -40,6 +40,8 @@ export default async function ClientFilePage({ params }: { params: Promise<{ id:
             {c.agent?.displayName ? ` · Agent: ${c.agent.displayName}` : ''}
             {c.user ? ` · Has an account (${c.user.displayName})` : ''}
             {c.archived ? ' · Archived' : ''}
+            {c.generatedSeed ? ' · Fictional RP seller' : ''}
+            {c.tags.length ? ` · ${c.tags.join(' · ')}` : ''}
           </p>
         </div>
         <div className="row">

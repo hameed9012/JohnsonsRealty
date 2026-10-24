@@ -13,6 +13,7 @@ import { createUploadTarget, destroyUpload, verifyUpload, type UploadTarget } fr
 import { TransitionError } from '@/lib/listing-status';
 import { checklistInput, loadBundle } from '@/server/listings/bundle';
 import * as svc from '@/server/listings/service';
+import type { SellerValues } from '@/components/listing-editor/types';
 import { actorOrThrow, ForbiddenError } from '@/server/session';
 import { getSettings } from '@/server/settings';
 import { markListingUnavailable, postListing, postReviewPending } from '@/server/discord-posts';
@@ -55,6 +56,16 @@ export async function saveListingStep(id: string, step: StepName, values: unknow
       else await svc.saveOwnerDetails(tx, actor, id, values);
     });
     return { ok: true, message: 'Draft saved' };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function generateSellerAction(id: string, regenerate = false): Promise<Result<{ values: SellerValues }>> {
+  try {
+    const actor = await actorOrThrow();
+    const values = await svc.generatedSellerValues(db, actor, id, regenerate);
+    return { ok: true, message: regenerate ? 'New seller generated. It saves with the step.' : 'Seller generated. Check it over; it saves with the step.', data: { values } };
   } catch (e) {
     return fail(e);
   }

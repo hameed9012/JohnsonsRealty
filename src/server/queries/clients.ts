@@ -19,6 +19,8 @@ export async function clientList(actor: Actor, opts: { q?: string; archived?: bo
       agentId: clients.agentId,
       agent: users.displayName,
       bestContact: clients.bestContact,
+      tags: clients.tags,
+      generated: sql<boolean>`${clients.generatedSeed} is not null`,
       updatedAt: clients.updatedAt,
       hasAccount: sql<boolean>`${clients.userId} is not null`,
       listings: sql<number>`(select count(*)::int from ${listings} l where l.seller_client_id = ${clients.id})`,

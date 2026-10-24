@@ -45,7 +45,13 @@ export default async function ClientsPage({ searchParams }: { searchParams: Prom
         rowKey={(r) => r.id}
         empty={<EmptyState icon="users" title={q ? 'No client files match' : 'No client files yet'} text="Client files are opened from a listing’s seller step, a deal, or here." action={<Button href="/portal/clients/new">New client file</Button>} />}
         columns={[
-          { key: 'name', header: 'Client', cell: (r) => <Link href={`/portal/clients/${r.id}`}>{r.displayName}</Link> },
+          { key: 'name', header: 'Client', cell: (r) => (
+              <span style={{ display: 'block' }}>
+                <Link href={`/portal/clients/${r.id}`}>{r.displayName}</Link>
+                {r.generated || r.tags.length ? <span className="body-s muted" style={{ display: 'block' }}>{[r.generated ? 'Fictional RP seller' : null, ...r.tags].filter(Boolean).join(' · ')}</span> : null}
+              </span>
+            ),
+          },
           { key: 'roles', header: 'Roles', cell: (r) => r.roles.map((x) => ROLE[x]).join(', ') || '—' },
           { key: 'agent', header: 'Agent', cell: (r) => r.agent ?? '—' },
           { key: 'contact', header: 'Contact', cell: (r) => r.bestContact ?? '—' },

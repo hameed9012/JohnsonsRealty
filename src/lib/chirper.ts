@@ -59,3 +59,58 @@ export function draftChirp(i: ChirpInput): string {
   }
   return text;
 }
+
+// ---- The two listing posts: the regular "Just Listed" post and the Marketplace version ----
+
+export interface ListingPostInput {
+  address: string;
+  /** The area name: "Fairview". */
+  area: string;
+  /** In-game postal code: "601". */
+  postal: string | null;
+  /** "$760,000" or "$1,900/month". */
+  price: string | null;
+  description: string;
+  /** "$795,000" when the listing is also offered furnished. */
+  furnishedPrice: string | null;
+  agentName: string;
+  brokerageName: string;
+  purpose: 'sale' | 'rent';
+}
+
+/** "Johnson’s Realty" → "#JohnsonsRealty"; "North Residential" → "#NorthResidential". */
+export function hashtag(s: string): string {
+  const t = s
+    .normalize('NFKD')
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w[0]!.toUpperCase() + w.slice(1))
+    .join('');
+  return t ? `#${t}` : '';
+}
+
+function signOff(i: ListingPostInput, tags: string[]): string {
+  return [`— ${i.agentName}, ${i.brokerageName}`, [...new Set(tags.filter(Boolean))].join(' ')].filter(Boolean).join('\n\n');
+}
+
+/** "🏡 Just Listed: {address}, {area} (Postal {postal})", the price and "Message me to book a showing." */
+export function justListedPost(i: ListingPostInput): string {
+  const where = [i.address, i.area].filter(Boolean).join(', ') + (i.postal ? ` (Postal ${i.postal})` : '');
+  const head = `🏡 ${i.purpose === 'rent' ? 'For Lease' : 'Just Listed'}: ${where}`;
+  return [head, i.price, 'Message me to book a showing.', signOff(i, [i.purpose === 'rent' ? '#ForLease' : '#JustListed', hashtag(i.area), hashtag(i.brokerageName)])].filter(Boolean).join('\n\n');
+}
+
+/** Marketplace: no price in the text (it goes in Chirper's price box), the description, and the furnished line. */
+export function marketplacePost(i: ListingPostInput): string {
+  const where = [i.address, i.area].filter(Boolean).join(', ');
+  return [
+    `Address: ${where}`,
+    i.description.trim(),
+    'Private showings by appointment.',
+    i.furnishedPrice ? `Available fully furnished for ${i.furnishedPrice}.` : null,
+    signOff(i, [i.purpose === 'rent' ? '#ForRent' : '#HomeForSale', hashtag(i.area), hashtag(i.brokerageName)]),
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+}

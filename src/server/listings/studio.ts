@@ -58,7 +58,20 @@ function statsFor(b: ListingBundle): { value: string; label: string }[] {
 }
 
 /** The brochure, square post and Chirper draft for a listing. Public fields only: brochures are shared outside. */
-export async function studioDataFrom(b: ListingBundle, brand: Brand): Promise<{ data: StudioData; chirp: { kind: ChirpKind; area: string; facts: string[] } }> {
+export interface StudioChirp {
+  kind: ChirpKind;
+  area: string;
+  facts: string[];
+  /** For the Just Listed and Marketplace posts. */
+  areaName: string;
+  postal: string | null;
+  description: string;
+  furnishedPrice: string | null;
+  brokerageName: string;
+  purpose: 'sale' | 'rent';
+}
+
+export async function studioDataFrom(b: ListingBundle, brand: Brand): Promise<{ data: StudioData; chirp: StudioChirp }> {
   const stamp = stampFor(b);
   const sale = b.status === 'sold' || b.status === 'leased' ? await db.query.sales.findFirst({ where: eq(sales.listingId, b.id), orderBy: [desc(sales.soldOn)] }) : null;
   const cover = coverOf(b);
@@ -89,6 +102,16 @@ export async function studioDataFrom(b: ListingBundle, brand: Brand): Promise<{ 
           },
       brokerage: { subline: brand.brokerageSubline, tagline: brand.tagline ?? '', chirper: brand.chirperHandle ?? '' },
     },
-    chirp: { kind: stamp === 'bsold' ? 'sold' : stamp, area, facts },
+    chirp: {
+      kind: stamp === 'bsold' ? 'sold' : stamp,
+      area,
+      facts,
+      areaName: b.area?.name ?? '',
+      postal: b.postal,
+      description: b.description ?? '',
+      furnishedPrice: b.terms?.furnishedPrice ? money(b.terms.furnishedPrice) : null,
+      brokerageName: brand.brokerageName,
+      purpose: b.purpose,
+    },
   };
 }

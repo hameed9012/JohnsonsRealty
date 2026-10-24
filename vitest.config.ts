@@ -12,5 +12,7 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     environment: 'node',
     testTimeout: 30000,
+    // Each database test file migrates its own in-memory Postgres; under a full parallel run that can take a while.
+    hookTimeout: 60000,
   },
 });

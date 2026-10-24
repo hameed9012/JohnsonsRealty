@@ -16,6 +16,7 @@ import { statusKey, type ListingStatus } from '@/lib/listing-status';
 import { OWNER_STEPS, STEPS } from '@/lib/schemas/listing';
 import {
   deletePhoto,
+  generateSellerAction,
   getUploadTarget,
   registerPhoto,
   saveListingStep,
@@ -171,7 +172,22 @@ export function Wizard({ data, options, confidential }: { data: EditorData; opti
             }}
           />
         ) : null}
-        {step === 'seller' && !owner ? <SellerFields form={seller} options={options} type={property.values.type} confidential={confidential} /> : null}
+        {step === 'seller' && !owner ? (
+          <SellerFields
+            form={seller}
+            options={options}
+            type={property.values.type}
+            confidential={confidential}
+            generate={async (again) => {
+              // The generator reads the saved property details, so save those first.
+              await property.flush();
+              await terms.flush();
+              const r = await generateSellerAction(data.id, again);
+              toast({ message: r.message ?? (r.ok ? 'Seller generated' : 'Couldn’t generate a seller.'), tone: r.ok ? 'success' : 'danger' });
+              return r.ok ? (r.data?.values ?? null) : null;
+            }}
+          />
+        ) : null}
         {step === 'owner' && owner ? <OwnerFields form={ownerForm} account={options.account} /> : null}
 
         {step === 'review' ? (
