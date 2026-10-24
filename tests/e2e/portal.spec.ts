@@ -65,6 +65,15 @@ test('the seller file is generated from the database', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Seller file' })).toBeVisible();
   await expect(page.getByText('At a glance')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Print or save as PDF' })).toBeVisible();
+
+  // Editing from the seller file opens the listing's Seller step, and Done comes back here.
+  await page.getByRole('link', { name: 'Edit seller file' }).click();
+  await expect(page.getByRole('heading', { name: 'Seller', exact: true })).toBeVisible();
+  await page.getByLabel('Reason for selling').fill('Example reason edited from the seller file');
+  await page.getByRole('button', { name: 'Save and continue' }).click();
+  await page.getByRole('button', { name: 'Done' }).click();
+  await expect(page.getByRole('heading', { name: 'Seller file' })).toBeVisible();
+  await expect(page.getByText('Example reason edited from the seller file')).toBeVisible();
 });
 
 test('an agent confirms a showing and the client is told', async ({ page, browser }) => {

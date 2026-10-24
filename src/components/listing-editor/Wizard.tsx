@@ -266,7 +266,9 @@ export function Wizard({ data, options, confidential }: { data: EditorData; opti
               <Button
                 onClick={async () => {
                   if (current && !(await current.flush())) return;
-                  router.push(`/portal/listings/${data.id}`);
+                  // Back to where the edit started (the seller file), or the listing.
+                  const back = params.get('back');
+                  router.push(back?.startsWith('/portal/') ? back : `/portal/listings/${data.id}`);
                 }}
               >
                 Done

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ConfidentialPanel } from '@/components/ui/documents';
 import { DataSheet } from '@/components/ui/layout';
 import { date, money } from '@/lib/format';
@@ -14,13 +15,36 @@ type ClientConf = { motivation: string | null; negotiationNotes: string | null; 
  * The seller data sheet (reference/seller-files.md), built from the database. `confidential` is null when the
  * viewer may not see it; the panels then render redaction bars and no values exist on the page.
  */
-export function SellerSheet({ b, confidential, clientConfidential }: { b: ListingBundle; confidential: Conf | undefined; clientConfidential: ClientConf | undefined }) {
+export type SheetStep = 'property' | 'terms' | 'seller';
+
+export function SellerSheet({
+  b,
+  confidential,
+  clientConfidential,
+  editHref,
+}: {
+  b: ListingBundle;
+  confidential: Conf | undefined;
+  clientConfidential: ClientConf | undefined;
+  /** Where each section is edited, when the viewer may edit it. Links never print. */
+  editHref?: (step: SheetStep) => string;
+}) {
   const s = b.seller;
   const redacted = confidential === undefined;
+  const head = (title: string, step: SheetStep) => (
+    <div className="row" style={{ justifyContent: 'space-between' }}>
+      <h3 className="heading-2">{title}</h3>
+      {editHref ? (
+        <Link className="no-print body-s" href={editHref(step)}>
+          Edit<span className="sr-only"> {title.toLowerCase()}</span>
+        </Link>
+      ) : null}
+    </div>
+  );
   return (
     <div className="stack-lg">
       <section className="stack">
-        <h3 className="heading-2">{b.purpose === 'rent' ? 'Landlord' : b.type === 'business' ? 'Owner' : 'Sellers'}</h3>
+        {head(b.purpose === 'rent' ? 'Landlord' : b.type === 'business' ? 'Owner' : 'Sellers', 'seller')}
         {s ? (
           <>
             <DataSheet
@@ -60,7 +84,7 @@ export function SellerSheet({ b, confidential, clientConfidential }: { b: Listin
       </section>
 
       <section className="stack">
-        <h3 className="heading-2">Money and ownership</h3>
+        {head('Money and ownership', 'seller')}
         <DataSheet
           rows={[
             { label: 'How title is held', value: b.ownership?.vesting },
@@ -76,7 +100,7 @@ export function SellerSheet({ b, confidential, clientConfidential }: { b: Listin
       </section>
 
       <section className="stack">
-        <h3 className="heading-2">Listing terms and showings</h3>
+        {head('Listing terms and showings', 'terms')}
         <DataSheet
           rows={[
             { label: b.purpose === 'rent' ? 'Monthly rent' : 'Asking price', value: b.price ? money(b.price) : '', mono: true },
@@ -104,7 +128,7 @@ export function SellerSheet({ b, confidential, clientConfidential }: { b: Listin
 
       {b.type !== 'business' ? (
         <section className="stack">
-          <h3 className="heading-2">Disclosures</h3>
+          {head('Disclosures', 'seller')}
           {b.disclosures.length ? (
             <DataSheet
               rows={b.disclosures.map((d) => ({
@@ -118,6 +142,11 @@ export function SellerSheet({ b, confidential, clientConfidential }: { b: Listin
         </section>
       ) : null}
 
+      {editHref && !redacted ? (
+        <Link className="no-print body-s" href={editHref('seller')}>
+          Edit the confidential details
+        </Link>
+      ) : null}
       <ConfidentialPanel
         title="Confidential"
         note={redacted ? 'You don’t have access to these fields' : 'Agents only. Never tell a buyer.'}

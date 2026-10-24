@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SellerSheet } from '@/components/listing/SellerSheet';
 import { PrintButton } from '@/components/portal/PrintButton';
+import { Button } from '@/components/ui/Button';
 import { DocumentHeader } from '@/components/ui/documents';
 import { Breadcrumbs } from '@/components/ui/layout';
 import { db } from '@/db/client';
@@ -11,6 +12,7 @@ import { clients, listings } from '@/db/schema';
 import { docDate, money } from '@/lib/format';
 import { can } from '@/lib/permissions';
 import { loadBundle } from '@/server/listings/bundle';
+import { canEditLive, isLiveStatus } from '@/server/listings/service';
 import { publicTitle } from '@/server/listings/present';
 import { requireStaff } from '@/server/session';
 import { getSettings } from '@/server/settings';
@@ -36,6 +38,14 @@ export default async function SellerFilePage({ params, searchParams }: { params:
   const conf = seeConf ? ((b as typeof b & { confidential?: Parameters<typeof SellerSheet>[0]['confidential'] }).confidential ?? null) : undefined;
   const clientConf = seeConf ? ((b.seller as (typeof b.seller & { confidential?: Parameters<typeof SellerSheet>[0]['clientConfidential'] }) | null)?.confidential ?? null) : undefined;
   const rent = b.purpose === 'rent';
+  // Every part of the seller file is edited where it lives: the listing editor (live or not) and the client file.
+  const subject = { source: b.source, status: b.status, listingAgentId: b.listingAgentId, submittedByUserId: b.submittedByUserId };
+  const manager = actor.role === 'owner' || actor.role === 'admin';
+  const canEdit =
+    can(actor, 'listing.edit', subject) && (isLiveStatus(b.status) ? await canEditLive(db, actor) : b.status !== 'pending_review' || manager);
+  const step = b.source === 'owner_submitted' ? null : canEdit;
+  const editHref = step ? (s: 'property' | 'terms' | 'seller') => `/portal/listings/${chosen.id}/edit?step=${s}&back=${encodeURIComponent(`/portal/clients/${id}/seller-file?listing=${chosen.id}`)}` : undefined;
+  const editClient = can(actor, 'client.edit', { agentId: c.agentId, userId: c.userId });
   const glance = [
     { label: rent ? 'Landlord' : 'Seller', value: c.displayName },
     { label: rent ? 'Letting' : 'Selling', value: `${publicTitle(b)}${b.beds !== null ? ` (${b.beds} bed, ${b.baths} bath)` : ''}` },
@@ -50,6 +60,16 @@ export default async function SellerFilePage({ params, searchParams }: { params:
         <Breadcrumbs items={[{ label: 'Clients', href: '/portal/clients' }, { label: c.displayName, href: `/portal/clients/${id}` }, { label: 'Seller file' }]} />
         <div className="row">
           <PrintButton />
+          {editHref ? (
+            <Button variant="secondary" href={editHref('seller')}>
+              Edit seller file
+            </Button>
+          ) : null}
+          {editClient ? (
+            <Button variant="ghost" href={`/portal/clients/${id}/edit`}>
+              Edit client file
+            </Button>
+          ) : null}
           {all.length > 1
             ? all.map((l) => (
                 <Link key={l.id} href={`?listing=${l.id}`} className="body-s" aria-current={l.id === chosen.id ? 'true' : undefined}>
@@ -78,7 +98,7 @@ export default async function SellerFilePage({ params, searchParams }: { params:
               ))}
             </dl>
           </section>
-          <SellerSheet b={b} confidential={conf} clientConfidential={clientConf} />
+          <SellerSheet b={b} confidential={conf} clientConfidential={clientConf} editHref={editHref} />
         </div>
         <footer className="paper-foot id">
           {settings.brokerageName} · {settings.brokerageSubline} · {b.refNo} · Confidential: for brokerage use only
