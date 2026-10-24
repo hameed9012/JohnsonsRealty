@@ -73,7 +73,7 @@ export default async function SoldPage({ searchParams }: { searchParams: Promise
             {salesOnly.length ? <StatTile label="Average sale" value={money(volume / salesOnly.length)} /> : null}
           </div>
           <SoldCharts volume={charts.volume} areas={charts.areas} />
-          <SalesLedger rows={rows} columns={['no', 'date', 'property', 'agent', 'status', 'price']} caption="Sales ledger" total={volume || undefined} totalLabel="Sales volume" />
+          <SalesLedger rows={rows} columns={['no', 'date', 'brochure', 'property', 'agent', 'status', 'price']} caption="Sales ledger" total={volume || undefined} totalLabel="Sales volume" />
         </>
       ) : (
         <EmptyState

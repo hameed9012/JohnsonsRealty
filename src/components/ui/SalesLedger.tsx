@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type * as React from 'react';
 import { money } from '@/lib/format';
+import { BrochureThumb } from './BrochureThumb';
 import { StatusPill } from './StatusStamp';
 import type { StatusKey } from './status';
 
@@ -14,18 +15,20 @@ export interface SaleRow {
   price: number;
   /** Addition: links the address to the listing. */
   href?: string;
+  /** Addition: cover photo for the brochure thumbnail column. */
+  cover?: string | null;
   [extra: string]: unknown;
 }
 
 export interface SalesLedgerProps {
   rows: SaleRow[];
-  columns?: ('no' | 'date' | 'property' | 'agent' | 'status' | 'price' | string)[];
+  columns?: ('no' | 'date' | 'brochure' | 'property' | 'agent' | 'status' | 'price' | string)[];
   caption?: string;
   total?: number;
   totalLabel?: string;
 }
 
-const HEAD: Record<string, string> = { no: 'No.', date: 'Date', property: 'Property', agent: 'Agent', status: 'Status', price: 'Price' };
+const HEAD: Record<string, string> = { no: 'No.', date: 'Date', brochure: 'Brochure', property: 'Property', agent: 'Agent', status: 'Status', price: 'Price' };
 
 function cell(c: string, r: SaleRow): React.ReactNode {
   if (c === 'no') return <td className="num" key={c}>{r.no}</td>;
@@ -35,6 +38,12 @@ function cell(c: string, r: SaleRow): React.ReactNode {
       <td key={c}>
         <span className="jr-ledger-addr">{r.href ? <Link href={r.href}>{r.address}</Link> : r.address}</span>
         {r.area ? <span className="jr-ledger-area">{r.area}</span> : null}
+      </td>
+    );
+  if (c === 'brochure')
+    return (
+      <td key={c} className="jr-ledger-thumb">
+        {r.href ? <BrochureThumb href={r.href} cover={r.cover ?? null} address={r.address} price={r.price} leased={r.status === 'leased'} /> : null}
       </td>
     );
   if (c === 'agent') return <td key={c}>{r.agent}</td>;

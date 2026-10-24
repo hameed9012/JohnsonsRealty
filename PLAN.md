@@ -237,7 +237,7 @@ Phase 1 and Phase 2 are pushed to GitHub, and `main` is at Phase 2. The Vercel d
 - `Markdown` is a small renderer that never injects HTML: headings, lists, bold, italic and safe links.
 - SEO: metadata and canonical URLs on every page, Open Graph images on listings, `sitemap.xml` and `robots.txt` (portal, account and API disallowed).
 - Fixes: the footer grid overflowed on phones, and the e2e command now clears its own data cache (stale area IDs had survived database wipes).
-- Not yet: the Buy map view (needs the map pins, Phase 7) and brochure thumbnails in the sold ledger (Phase 7). The listing question routes into the Phase 5 support inbox.
+- Added later: the Buy map view (Phase 7) and brochure thumbnails in the sold ledger. Each Sold row has a miniature of the brochure (band, cover photo, Sold or Leased ribbon, price) linking to the listing, where the full PNG downloads. The listing question routes into the Phase 5 support inbox.
 - Tests: 97 unit tests, plus end-to-end tests for every public page (200 status, heading, no sideways scroll at 375px), URL filters, a valuation request, and content publishing with a career application.
 
 Phase 3 is pushed and merged into `main` (`7150ebd`).

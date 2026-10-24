@@ -50,6 +50,10 @@ test('an agent opens a client file, runs a deal and records the sale', async ({ 
   await page.goto('/sold');
   await expect(page.getByText('Example Open Home')).toBeVisible();
   await expect(page.getByText('$272,000').first()).toBeVisible();
+  // The row carries a brochure thumbnail with the listing's cover photo.
+  const thumb = page.locator('tr', { hasText: 'Example Open Home' }).locator('.bthumb');
+  await expect(thumb.locator('img')).toHaveJSProperty('complete', true);
+  await expect(thumb).toContainText('Sold');
   // Commission never reaches the public ledger.
   await expect(page.getByText('$6,800')).toHaveCount(0);
 });

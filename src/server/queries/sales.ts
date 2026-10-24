@@ -2,7 +2,7 @@ import 'server-only';
 import { and, asc, desc, eq, gte, inArray, lt, sql, type SQL } from 'drizzle-orm';
 import type { SaleRow } from '@/components/ui/SalesLedger';
 import { db } from '@/db/client';
-import { agentProfiles, areas, listingBusiness, listings, saleAgents, sales } from '@/db/schema';
+import { agentProfiles, areas, listingBusiness, listingPhotos, listings, media, saleAgents, sales } from '@/db/schema';
 import { date, saleNo } from '@/lib/format';
 import { MARKET_STATUSES } from '@/lib/listing-status';
 
@@ -22,6 +22,8 @@ export interface SaleLedgerRow extends SaleRow {
   price: number;
   href: string;
   purpose: 'sale' | 'rent';
+  /** Cover photo storage ID, for the brochure thumbnail. */
+  cover: string | null;
 }
 
 export interface SalesFilter {
@@ -60,6 +62,7 @@ export async function salesLedger(f: SalesFilter = {}, limit = 200): Promise<Sal
       areaName: areas.name,
       areaSlug: areas.slug,
       agent: sql<string | null>`(select ap.public_name from ${saleAgents} sa join ${agentProfiles} ap on ap.user_id = sa.agent_id where sa.sale_id = ${sales.id} order by sa.side limit 1)`,
+      cover: sql<string | null>`(select ${media.storageId} from ${listingPhotos} join ${media} on ${media.id} = ${listingPhotos.mediaId} where ${listingPhotos.listingId} = ${listings.id} order by ${listingPhotos.isCover} desc, ${listingPhotos.sortOrder} asc limit 1)`,
     })
     .from(sales)
     .innerJoin(listings, eq(listings.id, sales.listingId))
@@ -82,6 +85,7 @@ export async function salesLedger(f: SalesFilter = {}, limit = 200): Promise<Sal
     price: r.price,
     href: `/property/${r.slug}`,
     purpose: r.purpose,
+    cover: r.cover,
   }));
 }
 
