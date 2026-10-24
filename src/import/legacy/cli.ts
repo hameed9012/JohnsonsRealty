@@ -54,10 +54,14 @@ async function main() {
     console.log(`  Created ${c.client}${c.refNo ? `: ${c.refNo}` : ''}${c.saleNo ? `, Sale No. ${String(c.saleNo).padStart(3, '0')}` : ''}${c.photos ? `, ${c.photos} photos` : ''}`);
   }
   if (report.skipped.length) console.log(`  Already imported, skipped: ${report.skipped.join(', ')}`);
+  for (const p of report.photosAdded) console.log(`  ${p.key}: ${p.photos} photos added${p.photoError ? `. ${p.photoError}` : ''}`);
+  for (const c of report.created.filter((x) => x.photoError)) console.log(`  ${c.client}: ${c.photoError}`);
+  for (const f of report.failed) console.log(`  Not imported: ${f.client}. ${f.message}`);
+  if (report.failed.length) process.exitCode = 1;
 }
 
 main()
-  .then(() => process.exit(0))
+  .then(() => process.exit(process.exitCode ?? 0))
   .catch((e) => {
     console.error(e instanceof Error ? e.message : e);
     process.exit(1);

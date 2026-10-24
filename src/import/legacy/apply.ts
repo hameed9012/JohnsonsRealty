@@ -44,8 +44,12 @@ export interface ApplyOptions {
 }
 
 export interface ApplyReport {
-  created: { key: string; client: string; listing?: string; refNo?: string; saleNo?: number; photos?: number }[];
+  created: { key: string; client: string; listing?: string; refNo?: string; saleNo?: number; photos?: number; photoError?: string }[];
   skipped: string[];
+  /** A seller whose import failed. Nothing of theirs was saved; the others carry on. */
+  failed: { key: string; client: string; message: string }[];
+  /** Photos added on a re-run to a listing imported earlier without them. */
+  photosAdded: { key: string; photos: number; photoError?: string }[];
 }
 
 export const legacyKey = (key: string) => `legacy:${key}`;
@@ -98,7 +102,7 @@ export function altFromFilename(name: string): string {
 }
 
 export async function photoFiles(dir: string): Promise<string[]> {
-  const names = await readdir(dir).catch(() => [] as string[]);
+  const names = await readdir(dir);
   return names.filter((n) => MIME[path.extname(n).toLowerCase()]).sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
 }
 
@@ -108,8 +112,8 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
   const area = zone?.areaId ? await ex.query.areas.findFirst({ where: eq(areas.id, zone.areaId) }) : undefined;
   const refNo = await nextRef(ex, now);
   const published = l.listedOn ? new Date(`${l.listedOn}T12:00:00Z`) : now;
-  const files = l.photosDir ? await photoFiles(photosPath(opts.root, l.photosDir)) : [];
-  if (files.length && !opts.upload) throw new Error(`Photo uploads aren’t set up, so ${address}'s photos can’t be imported.`);
+  const listed = l.photosDir ? await listPhotos(opts.root, l.photosDir) : { files: [] as string[] };
+  const files = listed.files;
 
   const [row] = await ex
     .insert(listings)
@@ -156,14 +160,8 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
   if (l.price) await ex.insert(priceHistory).values({ listingId: id, price: l.price, event: 'listed', on: published });
   await log(ex, opts.actorId, 'listing.create', 'listing', id, `${refNo}, ${address}`);
 
-  let photos = 0;
-  for (const [i, name] of files.entries()) {
-    const buf = await readFile(photosPath(opts.root, l.photosDir!, name));
-    const up = await opts.upload!(buf, MIME[path.extname(name).toLowerCase()]!);
-    const [m] = await ex.insert(media).values({ storageId: up.storageId, width: up.width, height: up.height, bytes: up.bytes, format: up.format, uploadedBy: opts.actorId }).returning({ id: media.id });
-    await ex.insert(listingPhotos).values({ listingId: id, mediaId: m!.id, alt: altFromFilename(name), sortOrder: i, isCover: i === 0 });
-    photos++;
-  }
+  const { photos, photoError } = listed.error ? { photos: 0, photoError: listed.error } : l.photosDir ? await addPhotos(ex, id, l, files, opts) : { photos: 0, photoError: undefined };
+  if (photos < 3 && l.status !== 'sold') await ex.update(listings).set({ photosHold: true }).where(eq(listings.id, id));
 
   let saleNo: number | undefined;
   if (l.status === 'sold') {
@@ -176,27 +174,74 @@ async function createListing(ex: Executor, l: ListingPlan, clientId: string, opt
     await ex.insert(priceHistory).values({ listingId: id, price, event: 'sold', on: new Date(`${soldOn}T12:00:00Z`) });
     await log(ex, opts.actorId, 'sale.create', 'sale', s!.id, `Sale No. ${String(saleNo).padStart(3, '0')}, ${address}`);
   }
-  return { id, refNo, saleNo, photos };
+  return { id, refNo, saleNo, photos, photoError };
+}
+
+/** The kit photo files, or why they can't be read (reported, never fatal). */
+async function listPhotos(root: string | undefined, dir: string): Promise<{ files: string[]; error?: string }> {
+  try {
+    const files = await photoFiles(photosPath(root, dir));
+    return files.length ? { files } : { files, error: `No photos found in ${dir}.` };
+  } catch (e) {
+    return { files: [], error: `Couldn’t read the photos in ${dir}: ${e instanceof Error ? e.message : String(e)}` };
+  }
+}
+
+/**
+ * Uploads a listing's kit photos in order (01 = cover). A failed upload never stops the import: the listing
+ * keeps the photos that made it, stays off the public site if it has fewer than 3, and the error is reported.
+ */
+async function addPhotos(ex: Executor, listingId: string, l: ListingPlan, files: string[], opts: ApplyOptions): Promise<{ photos: number; photoError?: string }> {
+  if (!files.length) return { photos: 0 };
+  if (!opts.upload) return { photos: 0, photoError: 'Photo uploads aren’t set up (add the Cloudinary keys).' };
+  let photos = 0;
+  for (const [i, name] of files.entries()) {
+    try {
+      const buf = await readFile(photosPath(opts.root, l.photosDir!, name));
+      const up = await opts.upload(buf, MIME[path.extname(name).toLowerCase()]!);
+      const [m] = await ex.insert(media).values({ storageId: up.storageId, width: up.width, height: up.height, bytes: up.bytes, format: up.format, uploadedBy: opts.actorId }).returning({ id: media.id });
+      await ex.insert(listingPhotos).values({ listingId, mediaId: m!.id, alt: altFromFilename(name), sortOrder: i, isCover: i === 0 });
+      photos++;
+    } catch (e) {
+      return { photos, photoError: `Photo upload failed: ${e instanceof Error ? e.message : String(e)}` };
+    }
+  }
+  return { photos };
 }
 
 export async function applyPlan(db: DB, plan: LegacyPlan, opts: ApplyOptions): Promise<ApplyReport> {
-  const report: ApplyReport = { created: [], skipped: [] };
+  const report: ApplyReport = { created: [], skipped: [], failed: [], photosAdded: [] };
   for (const c of plan.clients) {
+    const l = plan.listings.find((x) => x.key === c.key);
     const existing = await db.query.clients.findFirst({ where: eq(clients.legacyKey, legacyKey(c.key)), columns: { id: true } });
     if (existing) {
       report.skipped.push(c.key);
+      // Imported earlier without its photos (an upload failed): try them again.
+      if (l?.photosDir) {
+        const row = await db.query.listings.findFirst({ where: eq(listings.sellerClientId, existing.id), columns: { id: true, status: true } });
+        if (row && !(await db.$count(listingPhotos, eq(listingPhotos.listingId, row.id)))) {
+          const listed = await listPhotos(opts.root, l.photosDir);
+          const r = listed.error ? { photos: 0, photoError: listed.error } : await db.transaction((tx) => addPhotos(tx, row.id, l, listed.files, opts));
+          if (r.photos >= 3) await db.update(listings).set({ photosHold: false }).where(eq(listings.id, row.id));
+          if (r.photos || r.photoError) report.photosAdded.push({ key: c.key, ...r });
+        }
+      }
       continue;
     }
-    const l = plan.listings.find((x) => x.key === c.key);
-    await db.transaction(async (tx) => {
-      const clientId = await createClient(tx, c, opts.actorId);
-      if (!l) {
-        report.created.push({ key: c.key, client: c.displayName });
-        return;
-      }
-      const made = await createListing(tx, l, clientId, opts, l.addressLine || c.displayName);
-      report.created.push({ key: c.key, client: c.displayName, listing: made.id, refNo: made.refNo, saleNo: made.saleNo, photos: made.photos });
-    });
+    try {
+      await db.transaction(async (tx) => {
+        const clientId = await createClient(tx, c, opts.actorId);
+        if (!l) {
+          report.created.push({ key: c.key, client: c.displayName });
+          return;
+        }
+        const made = await createListing(tx, l, clientId, opts, l.addressLine || c.displayName);
+        report.created.push({ key: c.key, client: c.displayName, listing: made.id, refNo: made.refNo, saleNo: made.saleNo, photos: made.photos, photoError: made.photoError });
+      });
+    } catch (e) {
+      // One seller's problem never stops the rest.
+      report.failed.push({ key: c.key, client: c.displayName, message: e instanceof Error ? e.message : String(e) });
+    }
   }
   return report;
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { inArray } from 'drizzle-orm';
+import { inArray, sql } from 'drizzle-orm';
 import { ImportRunner } from '@/components/portal/ImportRunner';
 import { Breadcrumbs } from '@/components/ui/layout';
 import { db } from '@/db/client';
@@ -28,9 +28,16 @@ export default async function ImportPage() {
     .where(inArray(clients.legacyKey, plan.clients.map((c) => legacyKey(c.key))));
   const imported = new Map(done.map((d) => [d.key!.replace(/^legacy:/, ''), d.id]));
   const made = imported.size
-    ? await db.select({ id: listings.id, seller: listings.sellerClientId }).from(listings).where(inArray(listings.sellerClientId, [...imported.values()]))
+    ? await db
+        .select({ id: listings.id, seller: listings.sellerClientId, photos: sql<number>`(select count(*)::int from listing_photos p where p.listing_id = "listings"."id")` })
+        .from(listings)
+        .where(inArray(listings.sellerClientId, [...imported.values()]))
     : [];
-  const listingOf = (key: string) => made.find((m) => m.seller === imported.get(key))?.id;
+  const madeOf = (key: string) => made.find((m) => m.seller === imported.get(key));
+  const listingOf = (key: string) => madeOf(key)?.id;
+  // A listing imported while photo uploads were failing: Import again adds its photos.
+  const missingPhotos = (key: string) => !!plan.listings.find((l) => l.key === key)?.photosDir && madeOf(key)?.photos === 0;
+  const retryPhotos = plan.listings.some((l) => missingPhotos(l.key));
   const sold = plan.listings.find((l) => l.sale);
   const remaining = plan.clients.filter((c) => !imported.has(c.key)).length;
 
@@ -86,7 +93,7 @@ export default async function ImportPage() {
                         </span>
                       ) : null}
                     </td>
-                    <td data-label="Photos">{l.photosDir ? 'From the kit' : l.sale ? 'Not needed' : 'Needs photos'}</td>
+                    <td data-label="Photos">{missingPhotos(l.key) ? 'Missing: import again' : l.photosDir ? 'From the kit' : l.sale ? 'Not needed' : 'Needs photos'}</td>
                     <td data-label="Imported">{id ? <Link href={`/portal/listings/${id}`}>Open</Link> : imported.has(l.key) ? 'Yes' : 'Not yet'}</td>
                   </tr>
                 );
@@ -131,7 +138,7 @@ export default async function ImportPage() {
         </section>
       ) : null}
 
-      <ImportRunner remaining={remaining} sale={sold && !imported.has(sold.key) ? { label: plan.clients.find((c) => c.key === sold.key)!.displayName, price: sold.sale!.price, soldOn: sold.sale!.soldOn } : null} />
+      <ImportRunner remaining={remaining} retryPhotos={retryPhotos} sale={sold && !imported.has(sold.key) ? { label: plan.clients.find((c) => c.key === sold.key)!.displayName, price: sold.sale!.price, soldOn: sold.sale!.soldOn } : null} />
     </div>
   );
 }

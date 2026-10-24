@@ -8,15 +8,32 @@ import { useToast } from '@/components/ui/Toaster';
 import { runLegacyImportAction } from '@/server/actions/legacy-import';
 
 /** The import button, with the sold listing's price and date (prefilled from the file, editable). */
-export function ImportRunner({ remaining, sale }: { remaining: number; sale: { label: string; price: number | null; soldOn: string | null } | null }) {
+export function ImportRunner({ remaining, retryPhotos, sale }: { remaining: number; retryPhotos: boolean; sale: { label: string; price: number | null; soldOn: string | null } | null }) {
   const [price, setPrice] = useState(sale?.price ? String(sale.price) : '');
   const [soldOn, setSoldOn] = useState(sale?.soldOn ?? '');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [problems, setProblems] = useState<string[]>([]);
   const [pending, start] = useTransition();
   const toast = useToast();
   const router = useRouter();
 
-  if (!remaining) return <p className="body muted">Every seller file has been imported.</p>;
+  const problemList = problems.length ? (
+    <ul className="stack" role="alert">
+      {problems.map((p) => (
+        <li key={p} className="body">
+          {p}
+        </li>
+      ))}
+    </ul>
+  ) : null;
+  if (!remaining && !retryPhotos) {
+    return (
+      <div className="stack">
+        {problemList}
+        <p className="body muted">Every seller file has been imported.</p>
+      </div>
+    );
+  }
   return (
     <section className="panel stack" aria-labelledby="imp-run">
       <h2 className="panel-title" id="imp-run">
@@ -31,6 +48,7 @@ export function ImportRunner({ remaining, sale }: { remaining: number; sale: { l
           </div>
         </div>
       ) : null}
+      {problemList}
       <div className="row">
         <Button
           loading={pending}
@@ -38,12 +56,13 @@ export function ImportRunner({ remaining, sale }: { remaining: number; sale: { l
             start(async () => {
               const r = await runLegacyImportAction({ price: price.replace(/[$,\s]/g, ''), soldOn });
               setErrors(r.fieldErrors ?? {});
+              setProblems(r.problems ?? []);
               toast({ message: r.message, tone: r.ok ? 'success' : 'danger' });
               if (r.ok) router.refresh();
             })
           }
         >
-          Import {remaining} seller files
+          {remaining ? `Import ${remaining} seller files` : 'Add the missing photos'}
         </Button>
         <span className="body-s muted">No review queue and no Discord posts. Listings without photos stay off the public site.</span>
       </div>

@@ -11,7 +11,7 @@ import { uploadFromServer } from '@/lib/storage';
 import { updatePropertyMapMessage } from '@/server/map/discord';
 import { actorOrThrow } from '@/server/session';
 
-export type ImportResult = { ok: boolean; message: string; fieldErrors?: Record<string, string>; created?: string[] };
+export type ImportResult = { ok: boolean; message: string; fieldErrors?: Record<string, string>; created?: string[]; problems?: string[] };
 
 const saleSchema = z.object({
   price: z.coerce.number({ error: 'Enter the sale price.' }).int().min(1, 'Enter the sale price.'),
@@ -40,8 +40,15 @@ export async function runLegacyImportAction(input: unknown): Promise<ImportResul
     revalidatePath('/portal/settings/import');
     revalidateTag('listings', 'max');
     after(() => updatePropertyMapMessage(db).then(() => undefined));
-    if (!report.created.length) return { ok: true, message: 'Everything was already imported. Nothing changed.', created: [] };
-    return { ok: true, message: `Imported ${report.created.length} seller files.`, created: report.created.map((c) => c.client) };
+    const name = (key: string) => plan.clients.find((c) => c.key === key)?.displayName ?? key;
+    const problems = [
+      ...report.failed.map((f) => `${f.client} wasn’t imported: ${f.message}`),
+      ...report.created.filter((c) => c.photoError).map((c) => `${c.client} was imported with ${c.photos ?? 0} photos. ${c.photoError} Fix it, then import again to add the rest.`),
+      ...report.photosAdded.filter((p) => p.photoError).map((p) => `${name(p.key)}: ${p.photoError}`),
+    ];
+    const added = report.photosAdded.filter((p) => p.photos).map((p) => `${p.photos} photos added to ${name(p.key)}.`);
+    const done = report.created.length ? `Imported ${report.created.length} seller files.` : added.length ? '' : 'Everything was already imported. Nothing changed.';
+    return { ok: !report.failed.length, message: [done, ...added, problems.length ? 'Some things need attention: see below.' : ''].filter(Boolean).join(' '), created: report.created.map((c) => c.client), problems };
   } catch (e) {
     return { ok: false, message: e instanceof Error ? e.message : 'The import failed. Nothing was saved for that seller.' };
   }

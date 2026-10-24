@@ -125,11 +125,34 @@ describe('applying the import', () => {
     expect((await db.query.listings.findFirst({ where: eq(listings.id, porter.id) }))!.photosHold).toBe(false);
   });
 
+  it('a failed photo upload never stops the import, and importing again adds the photos', async () => {
+    const fresh = await testDb();
+    await seedBase(fresh);
+    await fresh.insert(users).values({ id: 'u-owner', role: 'owner', displayName: 'Example Owner' });
+    const plan = await loadPlan();
+    const broken = async () => {
+      throw new Error('Invalid cloud_name Root');
+    };
+    const first = await applyPlan(fresh, plan, { actorId: 'u-owner', sale: { price: 795000, soldOn: '2027-01-15' }, upload: broken });
+    expect(first.failed).toEqual([]);
+    expect(first.created).toHaveLength(13);
+    const h = first.created.find((c) => c.key === 'hartmann')!;
+    expect(h).toMatchObject({ photos: 0, photoError: expect.stringMatching(/Invalid cloud_name Root/) });
+    expect((await fresh.query.listings.findFirst({ where: eq(listings.id, h.listing!) }))!.photosHold).toBe(true);
+
+    const second = await applyPlan(fresh, plan, { actorId: 'u-owner', upload });
+    expect(second.created).toHaveLength(0);
+    expect(second.photosAdded).toEqual([{ key: 'hartmann', photos: 20 }]);
+    expect((await fresh.query.listings.findFirst({ where: eq(listings.id, h.listing!) }))!.photosHold).toBe(false);
+    expect((await applyPlan(fresh, plan, { actorId: 'u-owner', upload })).photosAdded).toEqual([]);
+  });
+
   it('refuses a sold listing without a price and date', async () => {
     const fresh = await testDb();
     await seedBase(fresh);
     const plan = buildPlan(parseSellerFiles(`## Anthony and Renée Castellano: the six-bedroom mansion\n\n**Sellers**\n\n| Field | Value |\n|---|---|\n| Full legal names | Example One and Example Two |\n`), { sellers: {}, extra: {} });
-    await expect(applyPlan(fresh, plan, { actorId: null })).rejects.toThrow(/sale price and date/);
+    const r = await applyPlan(fresh, plan, { actorId: null });
+    expect(r.failed).toEqual([{ key: 'castellano', client: 'Anthony and Renée Castellano', message: expect.stringMatching(/sale price and date/) }]);
     expect(await fresh.$count(clients)).toBe(0);
   });
 });
