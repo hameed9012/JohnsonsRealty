@@ -53,3 +53,12 @@ describe('design tokens only', () => {
     expect(bad).toEqual([]);
   });
 });
+
+describe('Discord sign-in callback', () => {
+  it('drops only the iss parameter, and only on the Discord callback', async () => {
+    const { withoutDiscordIssuer } = await import('@/lib/auth-callback');
+    expect(withoutDiscordIssuer('https://example.test/api/auth/callback/discord?code=abc&state=xyz&iss=https%3A%2F%2Fdiscord.com')).toBe('https://example.test/api/auth/callback/discord?code=abc&state=xyz');
+    expect(withoutDiscordIssuer('https://example.test/api/auth/callback/discord?code=abc&state=xyz')).toBeNull();
+    expect(withoutDiscordIssuer('https://example.test/api/auth/session?iss=x')).toBeNull();
+  });
+});
