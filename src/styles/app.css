@@ -145,7 +145,7 @@ img.jr-card-img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ---------- Portal shell ---------- */
 .portal { display: grid; grid-template-columns: auto minmax(0, 1fr); min-height: 100dvh; background: var(--bg); color: var(--ink); }
-.portal > .jr-side { position: sticky; top: 0; height: 100dvh; overflow-y: auto; }
+.portal > .jr-side { position: sticky; top: 0; height: 100dvh; overflow-y: auto; overflow-x: hidden; }
 .portal-main { display: flex; flex-direction: column; min-width: 0; }
 .portal-header { position: sticky; top: 0; z-index: var(--z-header); display: flex; align-items: center; justify-content: flex-end; gap: var(--space-3); min-height: calc(var(--control-height) + var(--space-6)); padding: 0 var(--space-10); background: var(--bg); border-bottom: var(--hairline) solid var(--line); }
 .portal-header .portal-crumb { margin-right: auto; }
