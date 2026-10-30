@@ -19,7 +19,7 @@ test('the seller file renders, then a document fills from the client file and is
   await page.getByRole('button', { name: 'Fill from client file' }).click();
   const dialog = page.getByRole('dialog', { name: 'Fill from client file' });
   await dialog.getByLabel('Seller or owner').selectOption({ label: 'Example Seller' });
-  await dialog.getByLabel('Listing').selectOption({ label: 'Example Seed Home · JR-2000-00901' });
+  await dialog.getByLabel('Listing').selectOption({ label: 'Example Seed Home · Example Seller · JR-2000-00901' });
   await dialog.getByRole('button', { name: 'Fill the form' }).click();
   await expect(page.getByLabel('Seller(s)', { exact: true })).toHaveValue('Example Seller');
   await expect(page.getByLabel('Street Address')).toHaveValue('Example Seed Home');

@@ -23,7 +23,7 @@ export interface DocumentEditorProps extends Omit<DocSheetProps, 'editable' | 'o
   dealId: string | null;
   picks: { sellerClientId: string; buyerClientId: string; listingId: string };
   clientOptions: Option[];
-  listingOptions: Option[];
+  listingOptions: (Option & { sellerId?: string | null })[];
   partyLabels: { seller: string; buyer: string };
 }
 
@@ -188,9 +188,19 @@ export function DocumentEditor(props: DocumentEditorProps) {
       >
         <div className="stack">
           <p className="body-s muted">Fields fill from the client files and listing. Anything the files don’t have keeps what you typed.{dealId ? ' This document is on a deal, so its parties are used unless you choose others.' : ''}</p>
+          <SelectField
+            label="Listing"
+            placeholder={dealId ? 'From the deal' : 'None'}
+            options={listingOptions}
+            value={fill.listingId}
+            onChange={(e) => {
+              const l = listingOptions.find((x) => x.value === e.target.value);
+              // The listing's own seller comes with it.
+              setFill({ ...fill, listingId: e.target.value, sellerClientId: l?.sellerId ?? fill.sellerClientId });
+            }}
+          />
           <SelectField label={partyLabels.seller} placeholder={dealId ? 'From the deal' : 'None'} options={clientOptions} value={fill.sellerClientId} onChange={(e) => setFill({ ...fill, sellerClientId: e.target.value })} />
           <SelectField label={partyLabels.buyer} placeholder={dealId ? 'From the deal' : 'None'} options={clientOptions} value={fill.buyerClientId} onChange={(e) => setFill({ ...fill, buyerClientId: e.target.value })} />
-          <SelectField label="Listing" placeholder={dealId ? 'From the deal' : 'None'} options={listingOptions} value={fill.listingId} onChange={(e) => setFill({ ...fill, listingId: e.target.value })} />
         </div>
       </Modal>
       <span className="sr-only" aria-live="polite">
