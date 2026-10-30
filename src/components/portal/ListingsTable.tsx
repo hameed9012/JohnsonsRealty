@@ -18,6 +18,8 @@ export interface ListingRow {
   status: StatusKey;
   ownerListed: boolean;
   needsPhotos?: boolean;
+  /** Held for photos, but the photos are in: only the address is missing. */
+  needsAddress?: boolean;
   area: string | null;
   agent: string | null;
   price: string;
@@ -111,7 +113,7 @@ export function ListingsTable({ rows }: { rows: ListingRow[] }) {
                   <span className="row">
                     <StatusPill status={r.status} />
                     {r.ownerListed ? <StatusPill status="listed-by-owner" /> : null}
-                    {r.needsPhotos ? <StatusPill status="pending-review" label="Needs photos" /> : null}
+                    {r.needsPhotos ? <StatusPill status="pending-review" label={r.needsAddress ? 'Needs address' : 'Needs photos'} /> : null}
                   </span>
                 </td>
                 <td data-label="Area">{r.area ?? '—'}</td>

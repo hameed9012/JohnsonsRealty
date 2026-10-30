@@ -85,8 +85,8 @@ export async function syncRolesAction(): Promise<SimpleResult> {
 export async function postListingToDiscordAction(listingId: string): Promise<SimpleResult> {
   const actor = await actorOrThrow();
   if (!manager(actor)) return { ok: false, message: 'Only the Owner or an Admin can announce listings.' };
-  const l = await db.query.listings.findFirst({ where: eq(listings.id, listingId), columns: { status: true, addressLine: true } });
-  if (!l || !isPublic(l.status as ListingStatus)) return { ok: false, message: 'Only listings on the public site can be announced.' };
+  const l = await db.query.listings.findFirst({ where: eq(listings.id, listingId), columns: { status: true, addressLine: true, photosHold: true } });
+  if (!l || !isPublic(l.status as ListingStatus) || l.photosHold) return { ok: false, message: 'Only listings on the public site can be announced. Add its photos (and address) first.' };
   const r = await postListing(listingId);
   await audit(db, { actorId: actor.id, action: 'discord.post', entity: 'listing', entityId: listingId, summary: `Posted ${l.addressLine || 'a listing'} to Discord` });
   revalidatePath(`/portal/listings/${listingId}`);

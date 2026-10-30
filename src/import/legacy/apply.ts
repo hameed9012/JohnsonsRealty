@@ -298,7 +298,7 @@ export async function addKitPhoto(
   if (!l) throw new Error('That listing has no photos in the kit.');
   if (!opts.upload) throw new Error('Photo uploads aren’t set up. Add the Cloudinary keys.');
   const c = await db.query.clients.findFirst({ where: eq(clients.legacyKey, legacyKey(key)), columns: { id: true } });
-  const row = c ? await db.query.listings.findFirst({ where: eq(listings.sellerClientId, c.id), columns: { id: true, status: true } }) : undefined;
+  const row = c ? await db.query.listings.findFirst({ where: eq(listings.sellerClientId, c.id), columns: { id: true, status: true, addressLine: true } }) : undefined;
   if (!row) throw new Error('Import the seller first.');
   const listed = await listPhotos(opts.root, l.photosDir!);
   if (listed.error) throw new Error(listed.error);
@@ -320,7 +320,8 @@ export async function addKitPhoto(
   }
   const have = await db.$count(listingPhotos, eq(listingPhotos.listingId, row.id));
   let released = false;
-  if (have >= 3 && row.status !== 'sold') {
+  // It goes live with 3 photos and an address; without the address it waits until one is saved.
+  if (have >= 3 && row.status !== 'sold' && row.addressLine.trim()) {
     const r = await db.update(listings).set({ photosHold: false }).where(and(eq(listings.id, row.id), eq(listings.photosHold, true))).returning({ id: listings.id });
     released = r.length > 0;
   }

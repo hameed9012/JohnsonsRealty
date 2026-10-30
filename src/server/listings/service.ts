@@ -98,8 +98,10 @@ async function getForEdit(ex: Executor, actor: Actor, id: string, opts: { photos
 
 /** A held listing goes live once it has 3 photos, each with a description. No new review (the Owner approved it). */
 export async function releasePhotoHold(ex: Executor, id: string): Promise<boolean> {
-  const l = await ex.query.listings.findFirst({ where: eq(listings.id, id), columns: { photosHold: true, refNo: true } });
+  const l = await ex.query.listings.findFirst({ where: eq(listings.id, id), columns: { photosHold: true, refNo: true, addressLine: true } });
   if (!l?.photosHold) return false;
+  // An imported listing without its address (the seller file said "You choose") waits for one too.
+  if (!l.addressLine.trim()) return false;
   const rows = await ex.select({ alt: listingPhotos.alt }).from(listingPhotos).where(eq(listingPhotos.listingId, id));
   if (rows.length < 3 || rows.some((r) => !r.alt.trim())) return false;
   await ex.update(listings).set({ photosHold: false }).where(eq(listings.id, id));
@@ -221,6 +223,8 @@ export async function saveProperty(ex: Executor, actor: Actor, id: string, input
   if (d.featureIds.length) await ex.insert(listingFeatures).values(d.featureIds.map((featureId) => ({ listingId: id, featureId }))).onConflictDoNothing();
 
   await audit(ex, { actorId: actor.id, action: 'listing.update', entity: 'listing', entityId: id, summary: `Saved property details for ${l.refNo}` });
+  // Adding the address can be the last thing a held listing was waiting for.
+  if (l.photosHold) await releasePhotoHold(ex, id);
 }
 
 /** On a live listing a price change lands in price history, as from the listings manager. */

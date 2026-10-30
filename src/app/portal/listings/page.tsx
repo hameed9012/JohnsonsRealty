@@ -36,12 +36,14 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
   const tableRows: ListingRow[] = rows.map((r) => ({
     id: r.id,
     href: WIZARD_STATUSES.includes(r.status) && r.status !== 'pending_review' ? `/portal/listings/${r.id}/edit` : `/portal/listings/${r.id}`,
-    publicHref: isPublic(r.status as ListingStatus) ? `/property/${r.slug}` : null,
-    title: (r.addressLine || 'Untitled draft') + (r.unit ? `, Unit ${r.unit}` : ''),
+    // Held listings aren't on the public site yet, so there's no public page to link to.
+    publicHref: isPublic(r.status as ListingStatus) && !r.photosHold ? `/property/${r.slug}` : null,
+    title: (r.addressLine || (r.status === 'draft' ? 'Untitled draft' : 'Address not set')) + (r.unit ? `, Unit ${r.unit}` : ''),
     refNo: r.refNo,
     status: displayStatus({ status: r.status as ListingStatus, publishedAt: r.publishedAt, price: r.price, previousPrice: r.previousPrice }),
     ownerListed: r.source === 'owner_submitted',
     needsPhotos: r.photosHold,
+    needsAddress: r.photosHold && !r.addressLine,
     area: r.areaName,
     agent: r.agentName,
     price: r.price ? money(r.price) + (r.purpose === 'rent' ? '/mo' : '') : '—',

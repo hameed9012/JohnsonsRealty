@@ -7,7 +7,7 @@ import { addKitPhoto, altFromFilename, applyPlan, IMPORT_SUMMARY, photoJobs } fr
 import { buildPlan, isoDate, money } from '@/import/legacy/map';
 import { extractConst, parseJsLiteral, parseSellerFiles } from '@/import/legacy/parse';
 import { loadPlan } from '@/import/legacy/source';
-import { releasePhotoHold } from '@/server/listings/service';
+import { releasePhotoHold, saveProperty } from '@/server/listings/service';
 import { testDb } from './helpers/db';
 
 describe('parsing the legacy files', () => {
@@ -183,6 +183,20 @@ describe('applying the import', () => {
     expect(row).toMatchObject({ status: 'draft', publishedAt: null, listingAgentId: 'u-agent', photosHold: false, addressLine: '8095 Lakeway Street' });
     expect((await applyPlan(fresh, plan, { actorId: 'u-agent', only: 'kowalski', skipPhotos: true, asDraft: true })).skipped).toEqual(['kowalski']);
     expect(await fresh.$count(listings)).toBe(1);
+  });
+
+  it('a listing with photos but no address stays off the site until the address is saved', async () => {
+    const fresh = await testDb();
+    await seedBase(fresh);
+    await fresh.insert(users).values({ id: 'u-owner', role: 'owner', displayName: 'Example Owner' });
+    const plan = await loadPlan();
+    await applyPlan(fresh, plan, { actorId: 'u-owner', only: 'novak', skipPhotos: true });
+    for (let i = 0; i < 10; i++) await addKitPhoto(fresh, plan, 'novak', i, { actorId: 'u-owner', upload });
+    const row = (await fresh.query.listings.findFirst())!;
+    expect(row).toMatchObject({ addressLine: '', photosHold: true });
+    const owner = { id: 'u-owner', role: 'owner' as const, status: 'active' as const };
+    await saveProperty(fresh, owner, row.id, { type: 'house', purpose: 'sale', addressLine: '4101 Example Lane', beds: '2', baths: '1' });
+    expect((await fresh.query.listings.findFirst({ where: eq(listings.id, row.id) }))!.photosHold).toBe(false);
   });
 
   it('refuses a sold listing without a price and date', async () => {

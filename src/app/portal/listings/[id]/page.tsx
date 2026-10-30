@@ -38,6 +38,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
   const row = (await db.query.listings.findFirst({ where: eq(listings.id, id) }))!;
   const subject = { source: row.source, status: row.status, listingAgentId: row.listingAgentId, submittedByUserId: row.submittedByUserId };
   const manage = can(actor, 'listing.changeStatus', subject) && !WIZARD_STATUSES.includes(row.status);
+  const editableLive = data.editable && data.live;
   const manager = actor.role === 'owner' || actor.role === 'admin';
   const settings = await getSettings();
   const [upcomingOpenHouses, mapSrc, listingDeals, listingShowings, revision, clientRows] = await Promise.all([
@@ -67,7 +68,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <h1 className="heading-1">{data.preview.title}</h1>
         </div>
         <div className="row">
-          {isPublic(data.status as ListingStatus) ? (
+          {isPublic(data.status as ListingStatus) && !row.photosHold ? (
             <Button variant="secondary" href={`/property/${data.preview.slug}`}>
               View public page
             </Button>
@@ -81,7 +82,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <Button variant="ghost" href={`/portal/studio?listing=${id}`} icon="image">
             Marketing
           </Button>
-          {manager && isPublic(data.status as ListingStatus) ? <PostToDiscordButton listingId={id} posted={!!row.discordMessageId} /> : null}
+          {manager && isPublic(data.status as ListingStatus) && !row.photosHold ? <PostToDiscordButton listingId={id} posted={!!row.discordMessageId} /> : null}
           {row.sellerClientId ? (
             <Button variant="ghost" href={`/portal/clients/${row.sellerClientId}/seller-file`} icon="document">
               Seller file
@@ -106,12 +107,20 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
       {row.photosHold ? (
         <section className="panel stack" aria-labelledby="hold-h">
           <div className="row">
-            <StatusPill status="pending-review" label="Needs photos" />
+            <StatusPill status="pending-review" label={data.photos.length >= 3 ? 'Needs address' : 'Needs photos'} />
           </div>
           <h2 id="hold-h" className="heading-2">
-            Add photos to put it on the site
+            {data.photos.length >= 3 ? 'Add the address to put it on the site' : 'Add photos to put it on the site'}
           </h2>
-          <p className="body-s muted">This listing was imported and is approved, but it stays off the public site until it has at least 3 in-game photos, each with a short description.</p>
+          <p className="body-s muted">
+            This listing was imported and is approved, but it stays off the public site until it has an address and at least 3 in-game photos, each with a short description.
+            {!row.addressLine ? ' The address goes in the Property step of Edit everything.' : ''}
+          </p>
+          {!row.addressLine && editableLive ? (
+            <div>
+              <Button href={`/portal/listings/${id}/edit?step=property`}>Add the address</Button>
+            </div>
+          ) : null}
           {manage ? <HeldPhotos listingId={id} initial={data.photos} /> : null}
         </section>
       ) : null}
