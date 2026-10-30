@@ -47,6 +47,8 @@ export interface ListingPlan {
   addressLine: string;
   postal: string | null;
   postalCode: string | null;
+  /** Town or area named in the file ("Susquehanna Township (Fairview)"), used when the postal code has no zone yet. */
+  areaHint: string | null;
   county: string;
   price: number | null;
   beds: number | null;
@@ -390,6 +392,7 @@ function listingOf(sec: LegacySection, form: FormSeller | undefined, extra: Form
     addressLine,
     postal,
     postalCode,
+    areaHint: clean(pick({ ...p, ...biz }, /town \/ area/i)) ?? clean(pick(p, 'Street address and postal code', 'Street address')?.split(',').slice(1).join(',')) ?? null,
     county: pick(p, 'County') ?? 'Dauphin',
     price,
     beds: isBiz ? null : beds,

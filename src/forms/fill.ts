@@ -56,6 +56,7 @@ export interface FillListing {
     titleCompany: string | null;
     attorney: string | null;
     possession: string | null;
+    earnestMoneyExpected?: string | null;
     yardSign: boolean | null;
     photosAllowed: boolean | null;
     lockbox: boolean | null;
@@ -92,7 +93,7 @@ export interface FillContext {
   buyer?: FillParty | null;
   listing?: FillListing | null;
   /** Only passed when the actor may see the listing's confidential figures. */
-  confidential?: { yearlySales: number | null; yearlyProfit: number | null; inventoryValue: number | null } | null;
+  confidential?: { yearlySales: number | null; yearlyProfit: number | null; inventoryValue: number | null; commissionTerms?: string | null } | null;
   deal?: { settlementDate: string | null; depositMethod?: string | null } | null;
   agentName?: string | null;
   brokerageName?: string | null;
@@ -132,6 +133,35 @@ export function pick(v: string | null | undefined, options: readonly string[]): 
     if (n > score) [best, score] = [o, n];
   }
   return best;
+}
+
+/** The first dollar amount in a line of text: "At least $10,000" → 10000. */
+function firstAmount(v: string | null | undefined): number | null {
+  const m = /\$\s?([\d,]+(?:\.\d+)?)/.exec(v ?? '');
+  return m ? Math.round(Number(m[1]!.replace(/,/g, ''))) : null;
+}
+
+/** "5% total, 2.5% to each side" → 5 / 2.5 / 2.5; "10%" → 10 / 10. */
+function commission(terms: string | null | undefined): DocData {
+  const pcts = [...(terms ?? '').matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map((m) => m[1]!);
+  if (!pcts.length) return {};
+  const [total, side = total] = pcts;
+  return { comm_total: total!, comm_side: side!, comm_coop: pcts.length > 1 ? side! : '' };
+}
+
+/** "Yes, up to 20% of the price, over three years at 6%" → the seller note's amount, term and rate. */
+function sellerFinancing(v: string | null | undefined, price: number | null): DocData {
+  if (!v || /^\s*no/i.test(v)) return {};
+  const share = /up to (\d+(?:\.\d+)?)\s?%/i.exec(v)?.[1];
+  const years = /over (\w+) years?/i.exec(v)?.[1];
+  const rate = /at (\d+(?:\.\d+)?)\s?%/i.exec(v)?.[1];
+  const words: Record<string, string> = { one: '1', two: '2', three: '3', four: '4', five: '5', six: '6', seven: '7', ten: '10' };
+  const n = years ? (words[years.toLowerCase()] ?? years) : null;
+  return {
+    sf_amount: share && price ? String(Math.round((price * Number(share)) / 100)) : '',
+    sf_term: n ? `${n} years, monthly payments` : '',
+    sf_rate: rate ? `${rate}% per year` : '',
+  };
 }
 
 /** "Yes, until settlement" → Owner-occupied; "No. The house is vacant." → Vacant. */
@@ -235,6 +265,8 @@ export function fillFrom(ctx: FillContext): DocData {
         yard_sign: yn(t.yardSign),
         photos_allowed: yn(t.photosAllowed),
         lockbox: yn(t.lockbox),
+        // "At least $10,000" → 10000. The deposit is still the buyer's to offer; this is what the seller expects.
+        deposit: s(firstAmount(t.earnestMoneyExpected)),
       });
     }
     if (!l.disclosures.length) derivedConditions(l, out);
@@ -249,7 +281,7 @@ export function fillFrom(ctx: FillContext): DocData {
         biz_name: s(b.businessName),
         biz_entity: s(b.entity),
         biz_signer: s(b.signerCapacity),
-        biz_type: pick(b.businessType, BUSINESS_TYPES),
+        biz_type: b.businessType ? pick(b.businessType, BUSINESS_TYPES) || 'Other' : '',
         biz_years: b.openedYear ? String(Math.max(year - b.openedYear, 0)) : '',
         biz_emp: s(b.employees),
         biz_hours: s(b.hours),
@@ -267,11 +299,13 @@ export function fillFrom(ctx: FillContext): DocData {
         'alloc.equipment.amt': s(b.priceEquipment),
         'alloc.inventory.amt': s(b.priceInventory),
         'alloc.goodwill.amt': s(b.priceGoodwill),
+        ...sellerFinancing(b.ownerFinancing, l.price),
       });
     }
   }
   if (ctx.confidential) {
     Object.assign(out, { biz_sales: s(ctx.confidential.yearlySales), biz_profit: s(ctx.confidential.yearlyProfit), biz_inv: s(ctx.confidential.inventoryValue) });
+    Object.assign(out, commission(ctx.confidential.commissionTerms));
   }
   return out;
 }

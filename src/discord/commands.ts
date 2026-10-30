@@ -95,7 +95,7 @@ export async function agentCommand(ex: Executor, b: BrandContext, i: APIChatInpu
   const u = await ex.query.users.findFirst({ where: eq(users.id, a.userId), columns: { chirperHandle: true } });
   const [counts] = await ex
     .select({
-      active: sql<number>`(select count(*)::int from ${listings} where ${listings.listingAgentId} = ${a.userId} and ${listings.status} in ('active','for_lease','under_offer','under_contract','coming_soon'))`,
+      active: sql<number>`(select count(*)::int from ${listings} where ${listings.listingAgentId} = ${a.userId} and ${listings.status} in ('active','for_lease','under_offer','under_contract','coming_soon') and ${listings.photosHold} = false)`,
       sales: sql<number>`(select count(*)::int from ${saleAgents} where ${saleAgents.agentId} = ${a.userId})`,
     })
     .from(agentProfiles)

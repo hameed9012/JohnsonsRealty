@@ -115,7 +115,13 @@ export async function photoFiles(dir: string): Promise<string[]> {
 async function createListing(ex: Executor, l: ListingPlan, clientId: string, opts: ApplyOptions, address: string) {
   const now = opts.now ?? new Date();
   const zone = l.postal ? await ex.query.postalZones.findFirst({ where: eq(postalZones.code, l.postal) }) : undefined;
-  const area = zone?.areaId ? await ex.query.areas.findFirst({ where: eq(areas.id, zone.areaId) }) : undefined;
+  // The postal zone's area; failing that, the selectable area the file names ("Susquehanna Township (Fairview)").
+  let area = zone?.areaId ? await ex.query.areas.findFirst({ where: eq(areas.id, zone.areaId) }) : undefined;
+  if (!area && l.areaHint) {
+    const hint = l.areaHint.toLowerCase();
+    const named = (await ex.select().from(areas).where(eq(areas.selectable, true))).filter((a) => hint.includes(a.name.toLowerCase()));
+    area = named.sort((a, b) => b.name.length - a.name.length)[0];
+  }
   const refNo = await nextRef(ex, now);
   const published = l.listedOn ? new Date(`${l.listedOn}T12:00:00Z`) : now;
   const listed = l.photosDir && !opts.skipPhotos ? await listPhotos(opts.root, l.photosDir) : { files: [] as string[] };

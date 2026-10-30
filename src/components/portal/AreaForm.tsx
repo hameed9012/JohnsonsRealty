@@ -37,9 +37,9 @@ export function AreaForm({ values, parents }: { values: AreaFormValues; parents:
       <fieldset className="jr-fieldset">
         <legend>Services</legend>
         <div className="grid-12">
-          <TextField className="span-4" label="Police" name="police" defaultValue={values.police} error={errors.police} />
-          <TextField className="span-4" label="Fire" name="fire" defaultValue={values.fire} error={errors.fire} />
-          <TextField className="span-4" label="School district" name="schoolDistrict" defaultValue={values.schoolDistrict} error={errors.schoolDistrict} />
+          <TextField className="span-4" label="Police department" name="police" defaultValue={values.police} error={errors.police} placeholder="Susquehanna Police" hint="The name shown on property pages." />
+          <TextField className="span-4" label="Fire department" name="fire" defaultValue={values.fire} error={errors.fire} placeholder="Swatara Fire" />
+          <TextField className="span-4" label="School district" name="schoolDistrict" defaultValue={values.schoolDistrict} error={errors.schoolDistrict} placeholder="Susquehanna Township School District" />
         </div>
       </fieldset>
       <Toggle label="Listings can be placed in this area" hint="Turn off for towns that only group neighbourhoods." name="selectable" defaultChecked={values.selectable} />

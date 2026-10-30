@@ -199,3 +199,14 @@ describe('fill from the seller files', () => {
     expect(fillFrom({ seller: { ...seller, kind: 'estate', currentlyOccupying: 'No. The house is vacant.' }, listing: { ...listing, yearBuilt: 1956 } })).toMatchObject({ seller_capacity: 'Executor of an estate', occupancy: 'Vacant', 'cond.lead_paint.a': 'Unknown' });
   });
 });
+
+describe('fill: money terms from the seller file', () => {
+  it('reads commission, the expected deposit and owner financing', () => {
+    const biz = { businessName: 'Example Laundromat', entity: null, signerCapacity: null, businessType: 'Self-service laundromat', openedYear: null, employees: null, hours: null, whatIsSold: null, buildingSize: null, premisesRent: null, premisesLeaseEnd: null, premisesLandlord: null, ownerFinancing: 'Yes, up to 20% of the price, over three years at 6%', priceBuilding: null, priceEquipment: null, priceInventory: null, priceGoodwill: null, included: null, excluded: null, licences: null, training: null };
+    const listing = { addressLine: 'Example', unit: null, postalCode: null, parcelId: null, county: 'Dauphin', price: 149000, beds: null, baths: null, yearBuilt: null, garage: null, showingInstructions: null, area: null, details: null, ownership: null, business: biz, disclosures: [],
+      terms: { agreementStart: null, agreementEnd: null, included: null, excluded: null, leasedItems: null, transferTax: null, titleCompany: null, attorney: null, possession: null, earnestMoneyExpected: 'At least $7,500', yardSign: null, photosAllowed: null, lockbox: null, showingNotice: null } };
+    const out = fillFrom({ listing, confidential: { yearlySales: null, yearlyProfit: null, inventoryValue: null, commissionTerms: '10%' } });
+    expect(out).toMatchObject({ biz_type: 'Other', deposit: '7500', sf_amount: '29800', sf_term: '3 years, monthly payments', sf_rate: '6% per year', comm_total: '10', comm_side: '10' });
+    expect(fillFrom({ listing, confidential: { yearlySales: null, yearlyProfit: null, inventoryValue: null, commissionTerms: '5% total, 2.5% to each side' } })).toMatchObject({ comm_total: '5', comm_side: '2.5', comm_coop: '2.5' });
+  });
+});

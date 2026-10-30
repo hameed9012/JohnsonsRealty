@@ -34,7 +34,8 @@ export default async function HomePage() {
     salesLedger({}, 5),
     activeAgents(),
   ]);
-  const hero = await mediaSrc(s.heroMediaId);
+  // Until a hero photo is set in Site settings, the newest listing's cover photo fills the hero.
+  const hero = (await mediaSrc(s.heroMediaId)) ?? newest.find((c) => c.cover)?.cover?.src ?? null;
   const towns = allAreas.filter((a) => !a.parentId);
   const childrenOf = (id: string) => allAreas.filter((a) => a.parentId === id);
   const townCount = (id: string) => (counts[id] ?? 0) + childrenOf(id).reduce((n, c) => n + (counts[c.id] ?? 0), 0);

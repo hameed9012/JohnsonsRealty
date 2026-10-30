@@ -41,9 +41,10 @@ export function toPropertyView(b: ListingBundle, now = new Date()): PropertyView
   add('Parcel ID', b.parcelId, true);
   add('Postal code', b.postalCode, true);
   add('County', b.county);
-  add('Garage', b.garage);
+  // Parking says the same as Garage, and more, when the seller file has it.
+  if (!b.details?.parking || !b.garage || !b.details.parking.toLowerCase().includes(b.garage.toLowerCase().split(',')[0]!)) add('Garage', b.garage);
   add('Style', b.details?.propertyStyle);
-  add('Other rooms', b.details?.otherRooms);
+  add('Rooms', b.details?.otherRooms);
   add('Parking', b.details?.parking);
   add('Heating', b.details?.heating);
   add('Cooling', b.details?.cooling);

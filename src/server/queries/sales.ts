@@ -138,7 +138,7 @@ export async function activeAgents() {
       photoId: agentProfiles.photoId,
       photo: sql<string | null>`(select storage_id from media m where m.id = ${agentProfiles.photoId})`,
       chirper: sql<string | null>`(select chirper_handle from users u where u.id = ${agentProfiles.userId})`,
-      listings: sql<number>`(select count(*)::int from ${listings} l where l.listing_agent_id = ${agentProfiles.userId} and l.status in ('coming_soon','active','for_lease','under_offer','under_contract'))`,
+      listings: sql<number>`(select count(*)::int from ${listings} l where l.listing_agent_id = ${agentProfiles.userId} and l.status in ('coming_soon','active','for_lease','under_offer','under_contract') and l.photos_hold = false)`,
       sold: sql<number>`(select count(*)::int from ${saleAgents} sa where sa.agent_id = ${agentProfiles.userId})`,
     })
     .from(agentProfiles)
