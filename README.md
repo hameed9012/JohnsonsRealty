@@ -95,7 +95,8 @@ Each webhook is optional; an empty one is skipped. Posts are embeds with the cov
   - Generated sellers are marked "Fictional RP seller" in the portal only. Owner-submitted listings never get one.
 - **Legacy import** (**Site settings → Import seller files**, Owner, or `npm run import:legacy`): creates the client files and listings from `import/johnsons-realty-seller-files.md` (or `import/seller-files.md`) and `import/forms-pa-latest.html`.
   - The preview flags anything to check. Sellers are imported one at a time, so a problem with one never stops the rest; running it again only adds what's missing.
-  - Kit photos (6012 Estate Drive) are a separate step: **Upload … photos** sends them one at a time.
+  - Kit photos (in `photos/`: 6012 Estate Drive, the Novak house, the laundromat) are a separate step: **Upload … photos** sends them one at a time.
+  - A listing imported without an address (the file says "You choose") stays off the site until the address is saved in **Edit everything**.
   - Imported listings without 3 photos are Active but hidden from the public site with a **Needs photos** badge, and go live once 3 described photos are saved. Use **Post to Discord** on the listing to announce it.
   - **Add listing → Start from a seller file** brings in one property from the seller files that isn't on the site yet, with everything filled. Each can be listed once. The Owner and Admins get it live (held until photos); agents get a draft to finish and submit.
 

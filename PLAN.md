@@ -688,3 +688,27 @@ Each step gets its own local branch and commit, with tests passing (unit plus e2
   - Both end with "— {agent}, {brokerage}" and hashtags (#JustListed / #HomeForSale, the area, the brokerage); rentals use #ForLease / #ForRent.
 - **Studio:** each post is an editable box with **Copy post** and **Reset to the draft**. The Marketplace box adds **Copy price** for Chirper's price box.
 - **Tests:** 3 unit tests (exact text, furnished line, hashtags). The studio e2e checks both posts.
+
+### Overnight pass (Oct 31, 2026), branch `p2-overnight`
+
+Tested the live public site (every page and sitemap link) and the full portal locally against the imported seller files, then fixed what broke or read badly.
+
+- **Content:**
+  - **New house:** the Novak two-storey (2 bed + office, 1 bath, $335,000, bottom line $318,000) is in the seller files, with 10 photos in `photos/novak-two-storey-house` and no location. Its import holds it off the site until an address is saved.
+  - **Laundromat photos:** the five Common Cents Laundromat photos are in `photos/common-cents-laundromat`, with the storefront as the cover.
+  - **Improved import:** listings get a fuller description (type, beds, baths, size, year, rooms, kitchen, bathroom, outside, parking). A condition table is built from the property facts when the file has no item-by-item answers. A town named in the file sets the area when the postal code has no zone.
+- **Fill from client file:**
+  - **Filled now:** dropdowns by meaning, Seller is, occupancy, owned since, the seller's Discord handle, the expected earnest money, commission from the file, seller-financing terms, "Other" for unlisted business types, and the seller file's disclosure list in Other disclosures.
+  - **Easier to use:** New document and the fill dialog ask for the listing first and bring its seller with it.
+- **Held listings:**
+  - **Going live:** a held listing goes live with 3 photos and an address, and saving the address releases it.
+  - **On the listing:** it shows Needs address with an Add the address button. There's no public link or Post to Discord until it's live.
+- **Business listings:**
+  - **On the page:** titled by name (not building), with the address under the name, the in-game postal on photo captions, "ZIP code" in key facts, and only businesses under Similar.
+  - **Chirper posts:** "Since 2009", the street address and #BusinessForSale.
+- **Fixes:**
+  - **Counts:** agent profile and `/agent` counts leave out held listings, and Dashboard "Volume this month" leaves out sales dated later.
+  - **Layout:** the homepage hero falls back to the newest listing's cover, the property gallery has previous/next arrows, the portal sidebar no longer scrolls sideways, and property pages drop a duplicate Garage line.
+  - **Seller file:** At a glance shows the furnished price and the furniture bottom line.
+  - **Area form:** the fields read Police department and Fire department.
+- **Spam:** contact, valuation, career and showing requests are limited to 5 per person per 10 minutes (`SEND_LIMIT` overrides it; the e2e config raises it).
