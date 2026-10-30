@@ -26,13 +26,15 @@ export async function portalCounts() {
 
 export async function dashboardTiles() {
   const monthStart = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1));
+  // A sale dated in a later month (a settlement still to come) isn't this month's volume.
+  const nextMonth = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 1));
   const [[active], [underOffer], [volume]] = await Promise.all([
     db.select({ n: count }).from(listings).where(inArray(listings.status, ['active', 'for_lease', 'coming_soon'])),
     db.select({ n: count }).from(listings).where(inArray(listings.status, ['under_offer', 'under_contract'])),
     db
       .select({ total: sql<number>`coalesce(sum(${sales.price}), 0)::int` })
       .from(sales)
-      .where(gte(sales.soldOn, monthStart.toISOString().slice(0, 10))),
+      .where(and(gte(sales.soldOn, monthStart.toISOString().slice(0, 10)), lt(sales.soldOn, nextMonth.toISOString().slice(0, 10)))),
   ]);
   const counts = await portalCounts();
   return {
