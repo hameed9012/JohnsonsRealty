@@ -139,7 +139,7 @@ export default async function ImportPage() {
 
       <ImportRunner
         pending={pending}
-        photoJobs={jobs.map((j) => ({ ...j, label: plan.listings.find((l) => l.key === j.key)?.addressLine || j.key }))}
+        photoJobs={jobs.map((j) => ({ ...j, label: plan.listings.find((l) => l.key === j.key)?.addressLine || plan.clients.find((c) => c.key === j.key)?.displayName || j.key }))}
         sale={sold && !imported.has(sold.key) ? { key: sold.key, label: plan.clients.find((c) => c.key === sold.key)!.displayName, price: sold.sale!.price, soldOn: sold.sale!.soldOn } : null}
       />
     </div>

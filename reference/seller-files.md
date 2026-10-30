@@ -2,7 +2,7 @@
 
 Oct 14, 2026 · @Hameed
 
-Thirteen fictional sellers for your Pennsylvania listings, eight for homes and five for businesses, every property in Dauphin County. Each file has the full data sheet for the forms: who the sellers are, the house, money and ownership, listing terms, showings and disclosures. Street addresses, towns, ZIP codes and parcel IDs are blank for you to choose. Bottom-line prices are for Hameed only. Never tell a buyer.
+Fourteen fictional sellers for your Pennsylvania listings, nine for homes and five for businesses, every property in Dauphin County. Each file has the full data sheet for the forms: who the sellers are, the house, money and ownership, listing terms, showings and disclosures. Street addresses, towns, ZIP codes and parcel IDs are blank for you to choose. Bottom-line prices are for Hameed only. Never tell a buyer.
 
 ## At a glance
 
@@ -14,6 +14,7 @@ Thirteen fictional sellers for your Pennsylvania listings, eight for homes and f
 | Anthony and Renée Castellano | 601 Cardinal Court, Whispering Pines (6 bed, 2 bath) | $795,000 | $760,000 | Settle around Jan 15, 2027 |
 | Gregory and Lena Hartmann | 6012 Estate Drive, Whispering Pines (4 bed, 1.5 bath, pool, games room) | $760,000 ($795,000 furnished) | $730,000 (furniture $25,000) | Flexible, 45 to 90 days |
 | Victor Hayes (landlord) | The two-bedroom rental | $1,900/month | $1,850/month on an 18-month lease | Lease starts Nov 1, 2026 |
+| Thomas and Ingrid Novak | The two-storey with the brick arch (2 bed + office, 1 bath) | $335,000 | $318,000 | Settle in 30 to 45 days |
 | Estate of Harold Brennan | Spare: any older home | Set per listing | About 93% of asking | Settle in 60 to 90 days |
 | Jordan and Alexis Whitaker | Spare: any starter home | Set per listing | About 96% of asking | Settle in 30 to 45 days |
 
@@ -623,6 +624,111 @@ Victor is 48, a former contractor who now runs Hayes Property Holdings LLC, whic
 - "The landlord asks for first month's rent and a one-month security deposit at signing, so $3,800 in total."
 - "If you're open to an 18-month lease, he's willing to bring the rent down to $1,850."
 - "He'll need proof of income of about three times the rent, or a co-signer."
+
+## Thomas and Ingrid Novak: the two-storey with the brick arch
+
+Thomas is 46, a high school chemistry teacher, and Ingrid is 44, a pharmacist at a hospital in Harrisburg. They bought this house in 2016 and spent their weekends on it: Thomas opened up the dining room with the brick arch, and Ingrid redid the bathroom with the big walk-in shower. Ingrid has taken a pharmacy manager job in Richmond, Virginia, that starts in February. They are friendly, organised and proud of the work they did, and they would like a quick, clean sale so they are not paying two mortgages.
+
+**Sellers**
+
+| Field | Value |
+| --- | --- |
+| Full legal names | Thomas Edward Novak and Ingrid Louise Novak |
+| Ages and occupations | Thomas 46, high school chemistry teacher. Ingrid 44, pharmacist. |
+| Marital status | Married, one son (age 12) |
+| How title is held | Jointly, as a married couple (tenants by the entirety) |
+| Who signs | Both, on every document |
+| Who decides | Both. Ingrid handles the dates; Thomas knows every repair and answers questions about the house. |
+| Contact | TomNovak_Chem (Thomas), IngridNovakRx (Ingrid) |
+| Best way to reach them | Text message, evenings after 6 pm |
+| Living in the house now? | Yes, until settlement |
+| Mailing address after the move | 2417 Grove Avenue, Richmond, VA 23220 |
+| Reason for selling | Job relocation to Richmond, Virginia |
+
+**Property**
+
+| Field | Value |
+| --- | --- |
+| Street address, town / area, ZIP, parcel ID | You choose |
+| County | Dauphin |
+| Property type | Single-family detached, two storeys |
+| Bedrooms and bathrooms | 2 bedrooms and a home office, 1 full bathroom. Adjust if the in-game house differs. |
+| Other rooms | Living room with the staircase, dining area with an exposed-brick arch through to the kitchen, home office with an exposed-brick wall, laundry room |
+| Kitchen | White shaker cabinets with two tan accent cabinets and a matching range hood, marble-look counters and backsplash, centre island, range, dishwasher, sink under the window |
+| Bathroom | Large glass walk-in shower with dark marble tile, wood vanity with a wide mirror |
+| Living space | About 1,900 sq ft |
+| Lot size | 0.25 acres |
+| Year built | 2004 |
+| Exterior | Brick centre section with beige siding and black shutters, covered front porch with white columns |
+| Parking | Attached two-car garage, wide driveway |
+| Basement | None, slab foundation |
+| Heating | Natural gas forced air, installed 2019 |
+| Cooling | Central air, installed 2019 |
+| Water heater | 50-gallon gas, installed 2021 |
+| Water and sewer | Public water, public sewer |
+| Electrical | 200-amp service |
+| Roof | Architectural shingle, replaced 2018 |
+| Windows | Double-hung vinyl, from 2004 |
+| Laundry | Front-load washer and dryer under a marble-look counter |
+| Property taxes | About $5,600 per year |
+| HOA | None |
+| Average utilities | About $290 per month |
+
+**Ownership and money**
+
+| Field | Value |
+| --- | --- |
+| Bought | August 2016, for $248,000 |
+| Deed reference | Deed Book 3912, Page 58 |
+| Mortgage | Susquehanna Savings, payoff about $171,000 |
+| Liens | None known |
+
+**Listing terms**
+
+| Field | Value |
+| --- | --- |
+| Listed | Oct 31, 2026 |
+| Listing agreement ends | Apr 30, 2027 |
+| Asking price | $335,000 |
+| Commission | 5% total, 2.5% to each side |
+| Earnest money they expect | At least $10,000 |
+| Settlement date | 30 to 45 days after acceptance, ideally before Jan 31, 2027 |
+| Possession | At settlement |
+| Included | Refrigerator, range, dishwasher, washer, dryer, the living room TV wall mount, the office desk |
+| Excluded | The bedroom TV and the large wall clock in the office |
+| Leased items | None |
+| Realty transfer tax | Split equally |
+| Title company | Keystone Abstract & Title Co. |
+| Attorney | None |
+| Home warranty | Will add a one-year warranty if a buyer asks |
+| Financing they accept | Conventional, FHA, VA or cash, with a pre-approval letter |
+| Offer replies | Within 24 hours |
+| Showings | 24 hours' notice. Lockbox on the front door. The family leaves during showings. |
+| Yard sign and photos | Both allowed |
+
+**Disclosures**
+
+- The garage walls are taped drywall that was never painted.
+- Roof replaced in 2018. Furnace and central air replaced in 2019. Water heater from 2021.
+- The original 2004 windows are sound, but two upstairs windows are stiff to open.
+- Never tested for radon.
+- Lead paint disclosure not needed, built 2004.
+
+**Negotiation (Hameed only)**
+
+- Lowest price: **$318,000**.
+- Under $305,000: they decline.
+- $305,000 to $317,999: they counter at **$326,000**.
+- $318,000 or more, settling by the end of January: they accept.
+- Timing matters more than the last dollar. A buyer who can settle in 30 days wins over a slightly higher offer that settles later.
+- Accept mortgage, inspection and appraisal contingencies. Will not accept a contingency on the sale of the buyer's home.
+- Will give a repair credit of up to $3,000 rather than paint the garage or fix the stiff windows themselves.
+
+**Lines Hameed can relay**
+
+- "The sellers have countered at $326,000. They'd like to settle by the end of January, so a quick settlement helps your offer."
+- "They redid the bathroom and opened up the dining room themselves, and they're happy to walk you through what they changed."
+- "They'd rather give a repair credit than paint the garage walls before settlement."
 
 ## Estate of Harold Brennan (spare seller)
 

@@ -21,18 +21,20 @@ test('an agent starts a listing from a seller file, once', async ({ page }) => {
 test('the Owner imports the rest of the seller files, then the photos', async ({ page }) => {
   await signInAs(page, 'e2e-owner', '/portal/settings/import');
   await expect(page.getByRole('heading', { level: 1, name: 'Import seller files' })).toBeVisible();
-  await expect(page.getByRole('table', { name: 'Listings to import' }).locator('tbody tr')).toHaveCount(7);
+  await expect(page.getByRole('table', { name: 'Listings to import' }).locator('tbody tr')).toHaveCount(8);
   await expect(page.getByText('Two homes share 601 Cardinal Court').first()).toBeVisible();
   await expect(page.getByLabel('Sale price')).toHaveValue('795000');
   await expect(page.getByLabel('Sale date')).toHaveValue('2027-01-15');
 
-  // Porter was started from the seller file above, so 12 are left.
-  await page.getByRole('button', { name: 'Import 12 seller files' }).click();
-  await expect(page.getByText('Imported 12 seller files.')).toBeVisible({ timeout: 90_000 });
+  // Porter was started from the seller file above, so 13 are left.
+  await page.getByRole('button', { name: 'Import 13 seller files' }).click();
+  await expect(page.getByText('Imported 13 seller files.')).toBeVisible({ timeout: 90_000 });
   await expect(page.getByText('Every seller file has been imported.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Upload 6012 Estate Drive’s photos' }).click();
   await expect(page.getByText('Photos added to 6012 Estate Drive.')).toBeVisible({ timeout: 90_000 });
+  await page.getByRole('button', { name: 'Upload Building 8061’s photos' }).click();
+  await expect(page.getByText('Photos added to Building 8061.')).toBeVisible({ timeout: 90_000 });
 
   await page.goto('/portal/listings?q=Lakeway');
   await expect(page.getByText('Needs photos')).toBeVisible();

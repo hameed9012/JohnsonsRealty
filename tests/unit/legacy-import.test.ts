@@ -31,7 +31,7 @@ describe('parsing the legacy files', () => {
 
   it('builds the plan from the real kit files', async () => {
     const plan = await loadPlan();
-    expect(plan.listings.map((l) => l.key)).toEqual(['porter', 'kowalski', 'raman', 'castellano', 'hartmann', 'hayes', 'lindqvist']);
+    expect(plan.listings.map((l) => l.key)).toEqual(['porter', 'kowalski', 'raman', 'castellano', 'hartmann', 'hayes', 'novak', 'lindqvist']);
     expect(plan.clients.filter((c) => c.tags.includes('Spare seller')).map((c) => c.key).sort()).toEqual(['boyd', 'brennan', 'delgado', 'malhotra', 'marchetti', 'whitaker']);
     const by = Object.fromEntries(plan.listings.map((l) => [l.key, l]));
     expect(by.castellano).toMatchObject({ status: 'sold', postal: '601', price: 795000, sale: { price: 795000, soldOn: '2027-01-15' } });
@@ -41,6 +41,11 @@ describe('parsing the legacy files', () => {
     expect(by.hayes).toMatchObject({ type: 'rental', purpose: 'rent', status: 'for_lease', price: 1900, addressLine: '', lease: { deposit: 1900, leaseLengthMonths: 12, maxOccupants: 4 } });
     expect(by.lindqvist).toMatchObject({ type: 'business', postal: '806', postalCode: '17109', business: { priceEquipment: 70000, priceGoodwill: 77000, nameWithheld: false }, confidential: { yearlySales: 168000, yearlyProfit: 61000 } });
     expect(by.porter!.disclosures).toHaveLength(20);
+    // A file without the forms tool's answers gets its condition table from the property facts.
+    expect(by.novak).toMatchObject({ addressLine: '', postal: null, price: 335000, beds: 2, baths: 1, yearBuilt: 2004, photosDir: 'photos/novak-two-storey-house', confidential: { bottomLine: 318000 } });
+    expect(by.novak!.disclosures.find((d) => d.item === 'windows_doors')).toMatchObject({ answer: 'yes' });
+    expect(by.novak!.description).toMatch(/^Single-family detached with 2 bedrooms and 1 bathroom, about 1,900 sq ft, built 2004\./);
+    expect(by.lindqvist!.photosDir).toBe('photos/common-cents-laundromat');
     expect(by.porter!.disclosures[1]).toMatchObject({ item: 'basement_water', answer: 'yes' });
     // "You choose" never becomes a listing value; it becomes a flag. (Spare files keep it in their notes.)
     expect(JSON.stringify(plan.listings)).not.toMatch(/you choose/i);
@@ -70,17 +75,17 @@ describe('applying the import', () => {
     const plan = await loadPlan();
     const opts = { actorId: 'u-owner', sale: { price: 795000, soldOn: '2027-01-15' }, upload };
     const first = await applyPlan(db, plan, opts);
-    expect(first.created).toHaveLength(13);
+    expect(first.created).toHaveLength(14);
     expect(first.created.find((c) => c.key === 'castellano')!.saleNo).toBe(1);
     expect(first.created.find((c) => c.key === 'hartmann')!.photos).toBe(20);
 
     const second = await applyPlan(db, plan, opts);
     expect(second.created).toHaveLength(0);
-    expect(second.skipped).toHaveLength(13);
-    expect(await db.$count(clients)).toBe(13);
-    expect(await db.$count(listings)).toBe(7);
+    expect(second.skipped).toHaveLength(14);
+    expect(await db.$count(clients)).toBe(14);
+    expect(await db.$count(listings)).toBe(8);
     expect(await db.$count(sales)).toBe(1);
-    expect(uploads).toHaveLength(20);
+    expect(uploads).toHaveLength(35); // 6012 Estate Drive 20, the Novak house 10, the laundromat 5
   });
 
   it('fills the details and holds listings without photos off the public site', async () => {
@@ -107,8 +112,8 @@ describe('applying the import', () => {
     expect(await db.$count(clientPeople, eq(clientPeople.clientId, raman!.id))).toBe(2);
     expect((await db.query.clients.findFirst({ where: eq(clients.legacyKey, 'legacy:brennan') }))!.tags).toEqual(['Spare seller']);
     // Every created record has its activity entry.
-    expect(await db.$count(activityLog, and(eq(activityLog.action, 'client.create')))).toBe(13);
-    expect(await db.$count(activityLog, eq(activityLog.action, 'listing.create'))).toBe(7);
+    expect(await db.$count(activityLog, and(eq(activityLog.action, 'client.create')))).toBe(14);
+    expect(await db.$count(activityLog, eq(activityLog.action, 'listing.create'))).toBe(8);
     const logged = await db.select({ s: activityLog.summary }).from(activityLog);
     expect(logged.every((r) => r.s.startsWith(IMPORT_SUMMARY))).toBe(true);
   });
@@ -135,14 +140,18 @@ describe('applying the import', () => {
     };
     const first = await applyPlan(fresh, plan, { actorId: 'u-owner', sale: { price: 795000, soldOn: '2027-01-15' }, upload: broken });
     expect(first.failed).toEqual([]);
-    expect(first.created).toHaveLength(13);
+    expect(first.created).toHaveLength(14);
     const h = first.created.find((c) => c.key === 'hartmann')!;
     expect(h).toMatchObject({ photos: 0, photoError: expect.stringMatching(/Invalid cloud_name Root/) });
     expect((await fresh.query.listings.findFirst({ where: eq(listings.id, h.listing!) }))!.photosHold).toBe(true);
 
     const second = await applyPlan(fresh, plan, { actorId: 'u-owner', upload });
     expect(second.created).toHaveLength(0);
-    expect(second.photosAdded).toEqual([{ key: 'hartmann', photos: 20 }]);
+    expect(second.photosAdded).toEqual([
+      { key: 'hartmann', photos: 20 },
+      { key: 'novak', photos: 10 },
+      { key: 'lindqvist', photos: 5 },
+    ]);
     expect((await fresh.query.listings.findFirst({ where: eq(listings.id, h.listing!) }))!.photosHold).toBe(false);
     expect((await applyPlan(fresh, plan, { actorId: 'u-owner', upload })).photosAdded).toEqual([]);
   });

@@ -50,7 +50,7 @@ export function ImportRunner({ pending, photoJobs, sale }: { pending: ImportPend
       }
       setProgress('');
       setProblems(found);
-      toast({ message: found.length ? `Imported ${done} of ${pending.length}. Some need attention.` : `Imported ${done} seller files.`, tone: found.length ? 'danger' : 'success' });
+      toast({ message: found.length ? `Imported ${done} of ${pending.length}. Some need attention.` : `Imported ${done} seller ${done === 1 ? 'file' : 'files'}.`, tone: found.length ? 'danger' : 'success' });
       router.refresh();
     });
 
@@ -110,7 +110,7 @@ export function ImportRunner({ pending, photoJobs, sale }: { pending: ImportPend
           ) : null}
           <div className="row">
             <Button loading={busy} onClick={runSellers}>
-              Import {pending.length} seller files
+              Import {pending.length} seller {pending.length === 1 ? 'file' : 'files'}
             </Button>
             <span className="body-s muted">One at a time; a problem with one never stops the rest. No review queue and no Discord posts.</span>
           </div>

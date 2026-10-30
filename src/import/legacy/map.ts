@@ -86,11 +86,11 @@ export interface LegacyPlan {
 }
 
 /** Sellers with a real property in the files; everyone else is a spare client file. */
-export const REAL = ['porter', 'kowalski', 'raman', 'castellano', 'hartmann', 'hayes', 'lindqvist'] as const;
+export const REAL = ['porter', 'kowalski', 'raman', 'castellano', 'hartmann', 'hayes', 'novak', 'lindqvist'] as const;
 const SOLD = new Set(['castellano']);
 /** Postal codes the files can't give by the house-number rule (the 601 houses share one postal code). */
 const POSTAL: Record<string, string> = { raman: '601', castellano: '601', hartmann: '601', kowalski: '809' };
-const PHOTOS: Record<string, string> = { hartmann: 'photos/6012-estate-drive' };
+const PHOTOS: Record<string, string> = { hartmann: 'photos/6012-estate-drive', novak: 'photos/novak-two-storey-house', lindqvist: 'photos/common-cents-laundromat' };
 
 // ---- Small readers ----
 
@@ -279,6 +279,41 @@ function bedsBaths(sec: LegacySection, form: FormSeller | undefined): { beds: nu
 }
 
 /** The forms tool's SPDS answers (r1…r20, in DISCLOSURE_ITEMS order). Files without them keep their notes only. */
+const lowerFirst = (x: string) => (/^[A-Z][a-z]/.test(x) ? x[0]!.toLowerCase() + x.slice(1) : x);
+
+/**
+ * Item-by-item answers for a file without the forms tool's SPDS: each system as the file describes it, with
+ * "no" known problem, plus the file's own disclosure notes where they name an item (radon, lead paint).
+ */
+function derivedDisclosures(p: Record<string, string>, notes: string[], yearBuilt: number | null): ListingPlan['disclosures'] {
+  const out: ListingPlan['disclosures'] = [];
+  const add = (item: (typeof DISCLOSURE_ITEMS)[number], answer: Answer, detail: string | null | undefined) => {
+    if (detail) out.push({ item, answer, detail });
+  };
+  const v = (label: string) => clean(pick(p, label));
+  add('roof', 'no', v('Roof'));
+  const basement = v('Basement');
+  if (basement) add('basement_water', /^none|slab/i.test(basement) ? 'na' : 'no', basement);
+  add('heating', 'no', v('Heating') ?? v('Heating and cooling'));
+  const cooling = v('Cooling');
+  if (cooling) add('cooling', /^none/i.test(cooling) ? 'na' : 'no', cooling);
+  add('water_heater', 'no', v('Water heater') ?? v('Water heaters'));
+  add('electrical', 'no', v('Electrical'));
+  add('water_sewer', 'no', v('Water and sewer'));
+  // A disclosure note about the windows ("two upstairs windows are stiff") is a known problem.
+  const windowNote = notes.find((n) => /window/i.test(n) && /stiff|stick|hard to|leak|crack|broken/i.test(n));
+  if (windowNote) add('windows_doors', 'yes', windowNote);
+  else add('windows_doors', 'no', v('Windows'));
+  const pool = v('Pool');
+  add('pool_spa', pool ? 'no' : 'na', pool ?? 'No pool');
+  const hoa = v('HOA');
+  if (hoa) add('hoa', /^none/i.test(hoa) ? 'na' : 'no', hoa);
+  const radon = notes.find((n) => /radon/i.test(n));
+  if (radon) add('radon', /never tested/i.test(radon) ? 'unknown' : 'no', radon);
+  if (yearBuilt) add('lead_paint', yearBuilt < 1978 ? 'unknown' : 'na', yearBuilt < 1978 ? `Built ${yearBuilt}, before 1978: the lead-based paint disclosure is required` : `Built ${yearBuilt}`);
+  return out;
+}
+
 function disclosuresOf(extra: FormExtra | undefined): ListingPlan['disclosures'] {
   const ans = (s: string): Answer | null => ({ yes: 'yes', no: 'no', unknown: 'unknown', 'n/a': 'na' } as Record<string, Answer>)[s.trim().toLowerCase()] ?? null;
   if (!extra?.spds) return [];
@@ -320,15 +355,28 @@ function listingOf(sec: LegacySection, form: FormSeller | undefined, extra: Form
   const sign = pick(terms, 'Yard sign and photos');
   const neg1 = neg.find((x) => /^Lowest price/i.test(x));
 
+  // The public description: what a buyer sees first. Built from the file's own words, never invented.
+  const facts = bedsBaths(sec, form);
+  const kind = clean(pick(p, 'Property type'))?.split(',')[0];
+  const size = int(pick(p, 'Living space'));
+  const year = int(form?.f.prop_year ?? pick(p, 'Year built'));
+  const opener =
+    kind && !isBiz
+      ? `${kind}${facts.beds ? ` with ${facts.beds} bedroom${facts.beds === 1 ? '' : 's'}` : ''}${facts.baths ? ` and ${facts.baths} bathroom${facts.baths === 1 ? '' : 's'}` : ''}${size ? `, about ${size.toLocaleString('en-US')} sq ft` : ''}${year ? `, built ${year}` : ''}.`
+      : null;
   const description =
     [
-      form?.f.prop_legal,
-      pick(p, 'Other rooms') && `Rooms: ${pick(p, 'Other rooms')}.`,
-      pick(p, 'Kitchen'),
+      opener ?? form?.f.prop_legal,
+      pick(p, 'Other rooms') && `Inside: ${lowerFirst(pick(p, 'Other rooms')!)}.`,
+      pick(p, 'Kitchen') && `Kitchen: ${lowerFirst(pick(p, 'Kitchen')!)}.`,
+      pick(p, 'Bathroom') && `Bathroom: ${lowerFirst(pick(p, 'Bathroom')!)}.`,
+      pick(p, 'Laundry'),
+      pick(p, 'Exterior'),
       pick(p, 'Outdoor'),
-      pick(p, 'Pool'),
-      pick(p, 'Community'),
-      isBiz ? [pick(biz, 'Type'), pick(biz, 'Opening hours') && `Open ${pick(biz, 'Opening hours')!.toLowerCase()}.`, pick(biz, 'Equipment') && `Equipment: ${pick(biz, 'Equipment')}.`, pick(biz, 'Pricing')].filter(Boolean).join('. ') : null,
+      pick(p, 'Pool') && `Pool: ${lowerFirst(pick(p, 'Pool')!)}`,
+      clean(pick(p, 'Parking')),
+      pick(p, 'Community') && /gated/i.test(pick(p, 'Community')!) ? 'In a gated community.' : null,
+      ...(isBiz ? [pick(biz, 'Type'), pick(biz, 'Opening hours') && `Open ${pick(biz, 'Opening hours')!.toLowerCase()}`, pick(biz, 'Equipment') && `Equipment: ${lowerFirst(pick(biz, 'Equipment')!)}`, pick(biz, 'Pricing')] : []),
     ]
       .filter(Boolean)
       .map((s) => s!.replace(/\.?$/, '.'))
@@ -435,7 +483,7 @@ function listingOf(sec: LegacySection, form: FormSeller | undefined, extra: Form
         }
       : null,
     business: isBiz ? businessOf(sec, biz, terms) : null,
-    disclosures: disclosuresOf(extra),
+    disclosures: extra?.spds ? disclosuresOf(extra) : isBiz || isRent ? [] : derivedDisclosures(p, discNotes, int(form?.f.prop_year ?? pick(p, 'Year built'))),
     confidential: {
       bottomLine: money(neg1) ?? (isRent ? money(neg.find((x) => /\$/.test(x))) : null),
       negotiationRules: lines(neg),
