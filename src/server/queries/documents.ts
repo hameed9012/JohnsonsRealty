@@ -2,7 +2,7 @@ import 'server-only';
 import { asc, desc, eq, inArray, or } from 'drizzle-orm';
 import type { AreaPick, Signature } from '@/components/documents/DocSheet';
 import { db } from '@/db/client';
-import { deals, documentClients, documentSignatures, documents, listings, users } from '@/db/schema';
+import { clients, deals, documentClients, documentSignatures, documents, listings, users } from '@/db/schema';
 import type { DocData } from '@/forms/types';
 import type { Actor } from '@/lib/permissions';
 import { canSeeDocument } from '@/server/ops/documents';
@@ -43,17 +43,18 @@ export async function areaPicks(): Promise<AreaPick[]> {
 export async function listingOptions(actor: Actor) {
   const wide = actor.role === 'owner' || actor.role === 'admin' || !!actor.wideConfidentialAccess;
   const rows = await db
-    .select({ id: listings.id, addressLine: listings.addressLine, refNo: listings.refNo })
+    .select({ id: listings.id, addressLine: listings.addressLine, refNo: listings.refNo, sellerId: listings.sellerClientId, seller: clients.displayName })
     .from(listings)
+    .leftJoin(clients, eq(clients.id, listings.sellerClientId))
     .where(wide ? undefined : or(eq(listings.listingAgentId, actor.id), eq(listings.submittedByUserId, actor.id)))
     .orderBy(desc(listings.updatedAt))
     .limit(300);
-  return rows.map((r) => ({ value: r.id, label: `${r.addressLine || 'Untitled draft'} · ${r.refNo}` }));
+  return rows.map((r) => ({ value: r.id, label: [r.addressLine || 'Address not set', r.seller, r.refNo].filter(Boolean).join(' · '), sellerId: r.sellerId }));
 }
 
 /** Documents shared with a client, for their account. */
 export async function sharedDocumentsFor(userId: string) {
-  const { clients, dealParties } = await import('@/db/schema');
+  const { dealParties } = await import('@/db/schema');
   const mine = db.select({ id: clients.id }).from(clients).where(eq(clients.userId, userId));
   return db
     .select({ id: documents.id, formType: documents.formType, docNo: documents.docNo, status: documents.status, updatedAt: documents.updatedAt })

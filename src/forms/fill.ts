@@ -93,7 +93,7 @@ export interface FillContext {
   buyer?: FillParty | null;
   listing?: FillListing | null;
   /** Only passed when the actor may see the listing's confidential figures. */
-  confidential?: { yearlySales: number | null; yearlyProfit: number | null; inventoryValue: number | null; commissionTerms?: string | null } | null;
+  confidential?: { yearlySales: number | null; yearlyProfit: number | null; inventoryValue: number | null; commissionTerms?: string | null; disclosureNotes?: string | null } | null;
   deal?: { settlementDate: string | null; depositMethod?: string | null } | null;
   agentName?: string | null;
   brokerageName?: string | null;
@@ -306,6 +306,8 @@ export function fillFrom(ctx: FillContext): DocData {
   if (ctx.confidential) {
     Object.assign(out, { biz_sales: s(ctx.confidential.yearlySales), biz_profit: s(ctx.confidential.yearlyProfit), biz_inv: s(ctx.confidential.inventoryValue) });
     Object.assign(out, commission(ctx.confidential.commissionTerms));
+    // The seller file's own disclosure list ("Pool pump replaced in 2025"), as the form's free-text box.
+    if (ctx.confidential.disclosureNotes) out.other_disclosures = ctx.confidential.disclosureNotes.replace(/^- /gm, '• ');
   }
   return out;
 }
