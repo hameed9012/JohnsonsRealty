@@ -175,3 +175,27 @@ describe('documents', () => {
     expect(n.map((x) => x.link)).toEqual([`/account/documents/${id}`]);
   });
 });
+
+describe('fill from the seller files', () => {
+  const listing = {
+    addressLine: '6012 Estate Drive', unit: null, postalCode: null, parcelId: null, county: 'Dauphin', price: 760000, beds: 4, baths: 1.5, yearBuilt: 2018, garage: null, showingInstructions: null,
+    area: null,
+    details: { propertyStyle: 'Single-family detached, modern farmhouse, two storeys', parking: null, legalDescription: null, zoning: null, occupancy: null, taxes: null, hoa: '$210 per month', roof: 'Architectural shingle, from 2018', basement: 'None, slab foundation', heating: 'Natural gas forced air, two zones', cooling: 'Central air, two zones', waterHeater: '75-gallon gas', waterSewer: 'Public water, public sewer', electrical: '200-amp service' },
+    ownership: { vesting: 'Jointly', ownedSince: null, boughtOn: 'Built new, completed May 2018', mortgage: null },
+    terms: { agreementStart: null, agreementEnd: null, included: null, excluded: null, leasedItems: null, transferTax: 'Split equally', titleCompany: null, attorney: null, possession: 'At settlement', yardSign: null, photosAllowed: null, lockbox: null, showingNotice: null },
+    business: null,
+    disclosures: [],
+  };
+  const seller = { kind: 'couple', displayName: 'Example Sellers', legalNameOnForms: null, bestContact: 'Messages', mailingAddressAfter: null, currentlyOccupying: 'Yes, until settlement', businessAddress: null, people: [{ legalName: 'Example One', signs: true, robloxUsername: null, discord: 'ExampleDiscord' }] };
+
+  it('matches dropdowns by meaning, not exact wording', () => {
+    const out = fillFrom({ seller, listing });
+    expect(out).toMatchObject({ prop_type: 'Single-family detached', transfer_tax: 'Split equally between Buyer and Seller', possession: 'At settlement, by delivery of deed and keys', occupancy: 'Owner-occupied', seller_capacity: 'The owner', owned_since: 'Built new, completed May 2018', seller_contact: 'ExampleDiscord' });
+  });
+
+  it('fills the condition table from the property when there are no item answers', () => {
+    const out = fillFrom({ seller, listing });
+    expect(out).toMatchObject({ 'cond.roof.a': 'No', 'cond.roof.d': 'Architectural shingle, from 2018', 'cond.basement_water.a': 'N/A', 'cond.lead_paint.a': 'N/A', 'cond.lead_paint.d': 'Built 2018', 'cond.hoa.a': 'No' });
+    expect(fillFrom({ seller: { ...seller, kind: 'estate', currentlyOccupying: 'No. The house is vacant.' }, listing: { ...listing, yearBuilt: 1956 } })).toMatchObject({ seller_capacity: 'Executor of an estate', occupancy: 'Vacant', 'cond.lead_paint.a': 'Unknown' });
+  });
+});

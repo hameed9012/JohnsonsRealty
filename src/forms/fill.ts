@@ -4,13 +4,14 @@ import { BUSINESS_TYPES, DEPOSIT_METHODS, OCCUPANCY, PROPERTY_TYPES, WHAT_IS_SOL
 import type { DocData } from './types';
 
 export interface FillParty {
+  kind?: string | null;
   displayName: string;
   legalNameOnForms: string | null;
   bestContact: string | null;
   mailingAddressAfter: string | null;
   currentlyOccupying?: string | null;
   businessAddress: string | null;
-  people: { legalName: string; signs: boolean; robloxUsername: string | null }[];
+  people: { legalName: string; signs: boolean; robloxUsername: string | null; discord?: string | null }[];
 }
 
 export interface FillListing {
@@ -26,8 +27,25 @@ export interface FillListing {
   garage: string | null;
   showingInstructions: string | null;
   area: { name: string; city: string | null; postalCodes: string[]; parent: { name: string } | null } | null;
-  details: { propertyStyle: string | null; parking: string | null; legalDescription: string | null; zoning: string | null; occupancy: string | null; taxes: string | null; hoa: string | null } | null;
-  ownership: { vesting: string | null; ownedSince: string | null; mortgage: string | null } | null;
+  purpose?: string | null;
+  details: {
+    propertyStyle: string | null;
+    parking: string | null;
+    legalDescription: string | null;
+    zoning: string | null;
+    occupancy: string | null;
+    taxes: string | null;
+    hoa: string | null;
+    roof?: string | null;
+    basement?: string | null;
+    heating?: string | null;
+    cooling?: string | null;
+    waterHeater?: string | null;
+    waterSewer?: string | null;
+    electrical?: string | null;
+    windows?: string | null;
+  } | null;
+  ownership: { vesting: string | null; ownedSince: string | null; mortgage: string | null; boughtOn?: string | null } | null;
   terms: {
     agreementStart: string | null;
     agreementEnd: string | null;
@@ -92,14 +110,74 @@ export function partyName(p: FillParty): string {
 
 const s = (v: unknown) => (v === null || v === undefined ? '' : String(v));
 const yn = (v: boolean | null | undefined) => (v === true ? 'Yes' : v === false ? 'No' : '');
-/** Only sets a select when the stored text is one of its options. */
-const pick = (v: string | null | undefined, options: readonly string[]) => (v && options.includes(v) ? v : '');
+const words = (x: string) => new Set(x.toLowerCase().replace(/[^a-z0-9%]+/g, ' ').split(' ').filter((w) => w.length > 2));
+
+/**
+ * Sets a select from free text: an exact match, then an option the text starts with (or that starts with the
+ * text), then the option sharing the most words. "Split equally" → "Split equally between Buyer and Seller";
+ * "Single-family detached, two storeys" → "Single-family detached". Leaves it blank when nothing fits.
+ */
+export function pick(v: string | null | undefined, options: readonly string[]): string {
+  if (!v) return '';
+  const t = v.trim().toLowerCase();
+  const exact = options.find((o) => o.toLowerCase() === t);
+  if (exact) return exact;
+  const prefix = options.find((o) => t.startsWith(o.toLowerCase()) || o.toLowerCase().startsWith(t));
+  if (prefix) return prefix;
+  const w = words(v);
+  let best = '';
+  let score = 0;
+  for (const o of options) {
+    const n = [...words(o)].filter((x) => w.has(x)).length;
+    if (n > score) [best, score] = [o, n];
+  }
+  return best;
+}
+
+/** "Yes, until settlement" → Owner-occupied; "No. The house is vacant." → Vacant. */
+function occupancyOf(l: FillListing, seller: FillParty | null | undefined): string {
+  const stored = l.details?.occupancy;
+  if (stored) {
+    if (/tenant|rent|lease/i.test(stored)) return 'Tenant-occupied';
+    if (/vacant|empty/i.test(stored)) return 'Vacant';
+    if (/owner/i.test(stored)) return 'Owner-occupied';
+  }
+  const living = seller?.currentlyOccupying ?? '';
+  if (/vacant/i.test(living) || /^\s*no\b/i.test(living)) return 'Vacant';
+  if (/^\s*yes\b/i.test(living)) return 'Owner-occupied';
+  return pick(stored, OCCUPANCY);
+}
+
+/**
+ * The condition table from the property's own facts, for listings whose seller file has no item-by-item
+ * answers. Each line says what the file says ("Asphalt shingle, replaced 2017") with "No" known problem.
+ */
+function derivedConditions(l: FillListing, out: DocData) {
+  const d = l.details;
+  const line = (item: string, answer: string, detail: string | null | undefined) => {
+    if (!detail) return;
+    out[`cond.${item}.a`] = answer;
+    out[`cond.${item}.d`] = detail;
+  };
+  line('roof', 'No', d?.roof);
+  if (d?.basement) line('basement_water', /^\s*none|slab/i.test(d.basement) ? 'N/A' : 'No', d.basement);
+  line('heating', 'No', d?.heating);
+  line('cooling', /^\s*none/i.test(d?.cooling ?? '') ? 'N/A' : 'No', d?.cooling);
+  line('water_heater', 'No', d?.waterHeater);
+  line('electrical', 'No', d?.electrical);
+  line('water_sewer', 'No', d?.waterSewer);
+  line('windows_doors', 'No', d?.windows);
+  if (l.yearBuilt) {
+    line('lead_paint', l.yearBuilt < 1978 ? 'Unknown' : 'N/A', l.yearBuilt < 1978 ? `Built ${l.yearBuilt}, before 1978: the lead-based paint disclosure is required` : `Built ${l.yearBuilt}`);
+  }
+  if (d?.hoa) line('hoa', /^\s*none/i.test(d.hoa) ? 'N/A' : 'No', d.hoa);
+}
 const ANSWER = { yes: 'Yes', no: 'No', unknown: 'Unknown', na: 'N/A' } as const;
 
 function party(prefix: 'seller' | 'buyer', p: FillParty | null | undefined, out: DocData) {
   if (!p) return;
   out[`${prefix}_name`] = partyName(p);
-  out[`${prefix}_contact`] = p.people.find((x) => x.robloxUsername)?.robloxUsername ?? p.bestContact ?? '';
+  out[`${prefix}_contact`] = p.people.find((x) => x.robloxUsername)?.robloxUsername ?? p.people.find((x) => x.discord)?.discord ?? p.bestContact ?? '';
   out[`${prefix}_addr`] = s(p.mailingAddressAfter ?? (prefix === 'buyer' ? p.currentlyOccupying : null) ?? p.businessAddress);
 }
 
@@ -133,11 +211,12 @@ export function fillFrom(ctx: FillContext): DocData {
       prop_type: pick(l.details?.propertyStyle, PROPERTY_TYPES),
       prop_legal: s(l.details?.legalDescription),
       prop_zoning: s(l.details?.zoning),
-      occupancy: pick(l.details?.occupancy, OCCUPANCY),
+      occupancy: occupancyOf(l, ctx.seller),
       taxes: s(l.details?.taxes),
       hoa: s(l.details?.hoa),
       seller_vesting: s(l.ownership?.vesting),
-      owned_since: s(l.ownership?.ownedSince),
+      owned_since: s(l.ownership?.ownedSince ?? l.ownership?.boughtOn),
+      seller_capacity: ctx.seller?.kind === 'estate' ? 'Executor of an estate' : ctx.seller ? 'The owner' : '',
       mortgage: s(l.ownership?.mortgage),
       show_notes: s(l.showingInstructions ?? l.terms?.showingNotice),
     });
@@ -158,6 +237,7 @@ export function fillFrom(ctx: FillContext): DocData {
         lockbox: yn(t.lockbox),
       });
     }
+    if (!l.disclosures.length) derivedConditions(l, out);
     for (const d of l.disclosures) {
       if (d.answer) out[`cond.${d.item}.a`] = ANSWER[d.answer];
       if (d.detail) out[`cond.${d.item}.d`] = d.detail;
