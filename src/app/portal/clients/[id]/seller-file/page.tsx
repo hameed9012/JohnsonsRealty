@@ -49,8 +49,11 @@ export default async function SellerFilePage({ params, searchParams }: { params:
   const glance = [
     { label: rent ? 'Landlord' : 'Seller', value: c.displayName },
     { label: rent ? 'Letting' : 'Selling', value: `${publicTitle(b)}${b.beds !== null ? ` (${b.beds} bed, ${b.baths} bath)` : ''}` },
-    { label: rent ? 'Rent' : 'Asking', value: b.price ? money(b.price) + (rent ? '/month' : '') : '—' },
-    { label: rent ? 'Lowest rent' : 'Lowest they’ll take', value: seeConf ? (conf?.bottomLine ? money(conf.bottomLine) : '—') : null },
+    { label: rent ? 'Rent' : 'Asking', value: b.price ? money(b.price) + (rent ? '/month' : '') + (b.terms?.furnishedPrice ? ` (${money(b.terms.furnishedPrice)} furnished)` : '') : '—' },
+    {
+      label: rent ? 'Lowest rent' : 'Lowest they’ll take',
+      value: seeConf ? (conf?.bottomLine ? money(conf.bottomLine) + (conf.furnitureLowest ? ` (furniture ${money(conf.furnitureLowest)})` : '') : '—') : null,
+    },
     { label: 'Timeline', value: c.timeline ?? b.terms?.targetSettlement ?? '—' },
   ];
 
