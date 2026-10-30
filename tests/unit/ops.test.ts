@@ -209,3 +209,16 @@ describe('client files', () => {
     await expect(saveClientFile(db, agent, null, { client: { displayName: '', people: [] } })).rejects.toThrow('Check the highlighted fields.');
   });
 });
+
+describe('sending limits', () => {
+  it('stops one person sending more than 5 messages or showing requests in 10 minutes', async () => {
+    const { sentTooMany } = await import('@/server/rate-limit');
+    const { enquiries, users: u } = await import('@/db/schema');
+    const fresh = await (await import('./helpers/db')).testDb();
+    await fresh.insert(u).values({ id: 'u-spam', role: 'client', displayName: 'Example Spammer' });
+    expect(await sentTooMany(fresh, 'u-spam')).toBe(false);
+    await fresh.insert(enquiries).values(Array.from({ length: 5 }, (_, i) => ({ refNo: `JR-2026-9${String(i).padStart(4, '0')}`, type: 'general_contact' as const, payload: {}, userId: 'u-spam' })));
+    expect(await sentTooMany(fresh, 'u-spam')).toBe(true);
+    expect(await sentTooMany(fresh, 'u-spam', new Date(Date.now() + 11 * 60_000))).toBe(false);
+  });
+});

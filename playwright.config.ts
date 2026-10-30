@@ -9,6 +9,8 @@ const env = {
   AUTH_DISCORD_SECRET: 'e2e',
   NEXT_PUBLIC_SITE_URL: `http://localhost:${PORT}`,
   NEXT_DIST_DIR: '.next-e2e',
+  // The tests send many messages as one user; the real limit is tested in the unit tests.
+  SEND_LIMIT: '1000',
   // Cloudinary stays unset, so uploads use the local driver.
   CLOUDINARY_CLOUD_NAME: '',
   CLOUDINARY_API_KEY: '',

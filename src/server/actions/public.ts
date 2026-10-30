@@ -11,6 +11,7 @@ import { nextRef } from '@/lib/refs';
 import { text } from '@/lib/schemas/fields';
 import { audit } from '@/server/audit';
 import { notifyUsers } from '@/server/notify';
+import { sentTooMany, TOO_MANY } from '@/server/rate-limit';
 import { getActor } from '@/server/session';
 
 type Status = (typeof listings.status.enumValues)[number];
@@ -45,6 +46,7 @@ const showingSchema = z.object({
 export async function requestShowing(listingId: string, _prev: ActionState<{ refNo: string }>, fd: FormData): Promise<ActionState<{ refNo: string }>> {
   const actor = await getActor();
   if (!actor) return { ok: false, message: 'Sign in to book a showing.' };
+  if (await sentTooMany(db, actor.id)) return TOO_MANY;
   const parsed = showingSchema.safeParse({ when: fd.get('when'), note: fd.get('note') });
   if (!parsed.success) return { ok: false, fieldErrors: fieldErrors(parsed.error) };
   const l = await db.query.listings.findFirst({ where: and(eq(listings.id, listingId), inArray(listings.status, MARKET_STATUSES as Status[]), eq(listings.photosHold, false)) });

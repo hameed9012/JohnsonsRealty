@@ -11,6 +11,7 @@ import { nextRef } from '@/lib/refs';
 import { careerApplicationSchema, contactSchema, valuationSchema } from '@/lib/schemas/enquiry';
 import { audit } from '@/server/audit';
 import { notifyUsers } from '@/server/notify';
+import { sentTooMany, TOO_MANY } from '@/server/rate-limit';
 import { getActor, type SessionActor } from '@/server/session';
 
 type Result = ActionState<{ refNo: string }>;
@@ -39,6 +40,7 @@ const SIGN_IN = { ok: false as const, message: 'Sign in with Discord to send thi
 export async function requestValuation(_prev: Result, fd: FormData): Promise<Result> {
   const actor = await getActor();
   if (!actor) return SIGN_IN;
+  if (await sentTooMany(db, actor.id)) return TOO_MANY;
   const p = valuationSchema.safeParse(formObject(fd));
   if (!p.success) return { ok: false, fieldErrors: fieldErrors(p.error) };
   const area = p.data.areaId ? await db.query.areas.findFirst({ where: eq(areas.id, p.data.areaId) }) : null;
@@ -53,6 +55,7 @@ export async function requestValuation(_prev: Result, fd: FormData): Promise<Res
 export async function sendContact(_prev: Result, fd: FormData): Promise<Result> {
   const actor = await getActor();
   if (!actor) return SIGN_IN;
+  if (await sentTooMany(db, actor.id)) return TOO_MANY;
   const p = contactSchema.safeParse(formObject(fd));
   if (!p.success) return { ok: false, fieldErrors: fieldErrors(p.error) };
   let listing: typeof listings.$inferSelect | undefined;
@@ -72,6 +75,7 @@ export async function sendContact(_prev: Result, fd: FormData): Promise<Result> 
 export async function applyForRole(_prev: Result, fd: FormData): Promise<Result> {
   const actor = await getActor();
   if (!actor) return SIGN_IN;
+  if (await sentTooMany(db, actor.id)) return TOO_MANY;
   const p = careerApplicationSchema.safeParse(formObject(fd));
   if (!p.success) return { ok: false, fieldErrors: fieldErrors(p.error) };
   const role = await db.query.careers.findFirst({ where: and(eq(careers.id, p.data.careerId!), eq(careers.open, true)) });
