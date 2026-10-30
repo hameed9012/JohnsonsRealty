@@ -27,6 +27,10 @@ export interface PropertyView {
   areaSlug: string | null;
   areaParentName: string | null;
   postalCode: string | null;
+  /** In-game postal code (601), shown with the photos and the map. */
+  postal: string | null;
+  /** The street address when the title is something else (a business's name). */
+  address: string | null;
   status: StatusKey;
   rawStatus: string;
   purpose: 'sale' | 'rent';

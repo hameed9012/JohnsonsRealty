@@ -50,6 +50,7 @@ const cardColumns = {
   areaSlug: areas.slug,
   nameWithheld: listingBusiness.nameWithheld,
   teaser: listingBusiness.teaser,
+  businessName: listingBusiness.businessName,
   businessType: listingBusiness.businessType,
   leaseMonths: listingLeaseTerms.leaseLengthMonths,
   coverSrc: sql<string | null>`(select ${media.storageId} from ${listingPhotos} join ${media} on ${media.id} = ${listingPhotos.mediaId} where ${listingPhotos.listingId} = ${listings.id} order by ${listingPhotos.isCover} desc, ${listingPhotos.sortOrder} asc limit 1)`,
@@ -65,6 +66,7 @@ function toCard(r: Row, now = new Date()): CardData {
   const biz = type === 'business';
   let title = [r.addressLine, r.unit ? `Unit ${r.unit}` : null].filter(Boolean).join(', ') || 'Address to be confirmed';
   if (biz && r.nameWithheld) title = (r.teaser as string) || `Business, ${(r.areaName as string) ?? 'Dauphin County'}`;
+  else if (biz && r.businessName) title = (r.businessName as string).replace(/\s*\(.*\)\s*$/, '');
   const facts: CardData['facts'] = [];
   if (!biz && r.beds !== null) facts.push({ icon: 'bed', text: `${r.beds} bed` });
   if (!biz && r.baths !== null) facts.push({ icon: 'bath', text: `${r.baths} bath` });

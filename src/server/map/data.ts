@@ -38,6 +38,7 @@ export async function mapData(ex: Executor, scope: { purpose?: 'sale' | 'rent'; 
       type: listings.type,
       nameWithheld: listingBusiness.nameWithheld,
       teaser: listingBusiness.teaser,
+      businessName: listingBusiness.businessName,
       status: listings.status,
       price: listings.price,
       purpose: listings.purpose,
@@ -53,7 +54,7 @@ export async function mapData(ex: Executor, scope: { purpose?: 'sale' | 'rent'; 
     id: r.id,
     slug: r.slug,
     // A withheld business name never reaches the map.
-    title: r.type === 'business' && r.nameWithheld ? r.teaser || 'Business for sale' : [r.addressLine, r.unit ? `Unit ${r.unit}` : null].filter(Boolean).join(', ') || 'Address to be confirmed',
+    title: r.type === 'business' && r.nameWithheld ? r.teaser || 'Business for sale' : r.type === 'business' && r.businessName ? r.businessName.replace(/\s*\(.*\)\s*$/, '') : [r.addressLine, r.unit ? `Unit ${r.unit}` : null].filter(Boolean).join(', ') || 'Address to be confirmed',
     status: r.status,
     price: r.price,
     purpose: r.purpose,

@@ -30,7 +30,7 @@ export function PropertyView({ view: v, actions, booking, similar, map, preview,
   const kind = v.purpose === 'rent' ? 'rent' : v.previousPrice ? 'reduced' : v.rawStatus === 'sold' ? 'sold' : 'sale';
   return (
     <article className="property">
-      <Gallery photos={v.photos} postalCode={v.postalCode} title={v.title} />
+      <Gallery photos={v.photos} postalCode={v.postal} title={v.title} />
 
       <header className="property-head">
         <div className="stack">
@@ -44,6 +44,7 @@ export function PropertyView({ view: v, actions, booking, similar, map, preview,
             {v.areaName ? ` · ${v.areaName}${v.areaParentName ? ', ' + v.areaParentName : ''}` : ''}
           </p>
           <H className="display-l property-title">{v.title}</H>
+          {v.address ? <p className="body-l muted">{v.address}</p> : null}
           {v.areaName ? (
             <div className="row">
               <AreaChip name={v.areaName} zip={v.postalCode ?? undefined} href={preview || !v.areaSlug ? undefined : `/areas/${v.areaSlug}`} />

@@ -39,7 +39,8 @@ export function toPropertyView(b: ListingBundle, now = new Date()): PropertyView
   add('Type', TYPE_LABELS[b.type as ListingType]);
   add('Reference', b.refNo, true);
   add('Parcel ID', b.parcelId, true);
-  add('Postal code', b.postalCode, true);
+  add('ZIP code', b.postalCode, true);
+  add('Postal (in-game)', b.postal, true);
   add('County', b.county);
   // Parking says the same as Garage, and more, when the seller file has it.
   if (!b.details?.parking || !b.garage || !b.details.parking.toLowerCase().includes(b.garage.toLowerCase().split(',')[0]!)) add('Garage', b.garage);
@@ -125,6 +126,11 @@ export function toPropertyView(b: ListingBundle, now = new Date()): PropertyView
     areaSlug: b.area?.slug ?? null,
     areaParentName: b.area?.parent?.name ?? null,
     postalCode: b.postalCode,
+    postal: b.postal,
+    address: (() => {
+      const addr = [b.addressLine, b.unit ? `Unit ${b.unit}` : null].filter(Boolean).join(', ');
+      return addr && addr !== publicTitle(b) && !(b.type === 'business' && b.business?.nameWithheld) ? addr : null;
+    })(),
     status: displayStatus({ status: b.status as ListingStatus, publishedAt: b.publishedAt, price: b.price, previousPrice: b.previousPrice }, now),
     rawStatus: b.status,
     purpose: b.purpose,

@@ -31,6 +31,7 @@ export async function similarListings(b: { id: string; areaId: string | null; pu
         eq(listings.purpose, b.purpose),
         inArray(listings.status, MARKET_STATUSES as Status[]),
         eq(listings.photosHold, false),
+        b.type === 'business' ? eq(listings.type, 'business') : ne(listings.type, 'business'),
         b.areaId ? or(eq(listings.areaId, b.areaId), eq(listings.type, b.type as (typeof listings.type.enumValues)[number])) : undefined,
       ),
     )

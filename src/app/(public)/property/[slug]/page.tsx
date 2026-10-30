@@ -124,7 +124,7 @@ export default async function PropertyPage({ params }: Props) {
           similar.length ? (
             <section className="stack" aria-labelledby="similar-h">
               <h2 id="similar-h" className="heading-1">
-                Similar {v.purpose === 'rent' ? 'rentals' : 'homes'}
+                Similar {v.type === 'business' ? 'businesses' : v.purpose === 'rent' ? 'rentals' : 'homes'}
               </h2>
               <div className="card-grid">
                 {similar.map((s) => (

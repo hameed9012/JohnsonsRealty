@@ -7,6 +7,8 @@ import type { ListingBundle } from './bundle';
 /** The public name of a listing: the teaser when a business name is withheld. */
 export function publicTitle(b: Pick<ListingBundle, 'addressLine' | 'unit' | 'type' | 'business' | 'area'>): string {
   if (b.type === 'business' && b.business?.nameWithheld) return b.business.teaser || `Business, ${b.area?.name ?? 'Dauphin County'}`;
+  // A business that isn't confidential goes by its name ("Common Cents Laundromat"), not its building.
+  if (b.type === 'business' && b.business?.businessName) return b.business.businessName.replace(/\s*\(.*\)\s*$/, '');
   const addr = [b.addressLine, b.unit ? `Unit ${b.unit}` : null].filter(Boolean).join(', ');
   return addr || 'Address to be confirmed';
 }
