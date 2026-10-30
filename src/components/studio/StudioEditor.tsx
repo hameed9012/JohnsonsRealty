@@ -66,7 +66,7 @@ export function StudioEditor({ listingId, listingOptions, initial, photos, me, f
   const post = useMemo(
     () =>
       chirp
-        ? { address: d.address, area: chirp.areaName, postal: chirp.postal, price: d.price || null, description: chirp.description, furnishedPrice: chirp.furnishedPrice, agentName: d.agent.name, brokerageName: chirp.brokerageName, purpose: chirp.purpose }
+        ? { address: d.address, area: chirp.areaName, postal: chirp.postal, price: d.price || null, description: chirp.description, furnishedPrice: chirp.furnishedPrice, agentName: d.agent.name, brokerageName: chirp.brokerageName, purpose: chirp.purpose, street: chirp.street, business: chirp.business }
         : null,
     [chirp, d],
   );

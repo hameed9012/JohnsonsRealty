@@ -8,7 +8,7 @@ import { money, sqft } from '@/lib/format';
 import { displayStatus, type ListingStatus } from '@/lib/listing-status';
 import { publicImageUrl } from '@/lib/storage';
 import type { ListingBundle } from './bundle';
-import { agentName, coverOf, priceText, publicTitle } from './present';
+import { agentName, coverOf, priceText, publicTitle, tidyText } from './present';
 
 interface Brand {
   brokerageSubline: string;
@@ -69,6 +69,9 @@ export interface StudioChirp {
   furnishedPrice: string | null;
   brokerageName: string;
   purpose: 'sale' | 'rent';
+  /** The street address, which differs from the title for a business shown by name. */
+  street: string;
+  business: boolean;
 }
 
 export async function studioDataFrom(b: ListingBundle, brand: Brand): Promise<{ data: StudioData; chirp: StudioChirp }> {
@@ -79,7 +82,7 @@ export async function studioDataFrom(b: ListingBundle, brand: Brand): Promise<{ 
   const area = b.area ? [b.area.name, b.area.parent?.name].filter(Boolean).join(' · ') : '';
   const owner = b.source === 'owner_submitted';
   const price = sale ? money(sale.price) + (b.purpose === 'rent' ? '/mo' : '') : priceText(b);
-  const facts = statsFor(b).map((s) => `${s.value} ${s.label.toLowerCase()}`);
+  const facts = statsFor(b).map((s) => (s.label === 'Since' ? `Since ${s.value}` : `${s.value} ${s.label.toLowerCase()}`));
   return {
     data: {
       stamp,
@@ -108,10 +111,12 @@ export async function studioDataFrom(b: ListingBundle, brand: Brand): Promise<{ 
       facts,
       areaName: b.area?.name ?? '',
       postal: b.postal,
-      description: b.description ?? '',
+      description: tidyText(b.description) ?? '',
       furnishedPrice: b.terms?.furnishedPrice ? money(b.terms.furnishedPrice) : null,
       brokerageName: brand.brokerageName,
       purpose: b.purpose,
+      street: [b.addressLine, b.unit ? `Unit ${b.unit}` : null].filter(Boolean).join(', '),
+      business: b.type === 'business' && !b.business?.nameWithheld,
     },
   };
 }

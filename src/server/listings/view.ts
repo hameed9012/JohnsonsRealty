@@ -5,7 +5,7 @@ import { displayStatus, type ListingStatus } from '@/lib/listing-status';
 import type { FactRow, PhotoView, PropertyView } from '@/lib/listing-view';
 import { TYPE_LABELS, type ListingType } from '@/lib/schemas/listing';
 import type { ListingBundle } from './bundle';
-import { agentName, publicTitle } from './present';
+import { agentName, publicTitle, tidyText } from './present';
 
 const EVENT_LABEL = { listed: 'Listed', reduced: 'Price reduced', increased: 'Price increased', sold: 'Sold', leased: 'Leased' } as const;
 
@@ -142,7 +142,7 @@ export function toPropertyView(b: ListingBundle, now = new Date()): PropertyView
     stats: stats.slice(0, 5),
     facts,
     features: b.features.map((f) => ({ label: f.feature.label, icon: (f.feature.icon as IconName | null) ?? null })),
-    description: b.description,
+    description: tidyText(b.description),
     photos: ordered,
     cover,
     priceHistory: b.priceHistory.map((p) => ({ date: date(p.on), event: EVENT_LABEL[p.event], price: p.price })),

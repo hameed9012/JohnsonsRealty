@@ -76,6 +76,9 @@ export interface ListingPostInput {
   agentName: string;
   brokerageName: string;
   purpose: 'sale' | 'rent';
+  /** A business: its street address (the title is its name) and business hashtags. */
+  street?: string;
+  business?: boolean;
 }
 
 /** "Johnson’s Realty" → "#JohnsonsRealty"; "North Residential" → "#NorthResidential". */
@@ -98,18 +101,19 @@ function signOff(i: ListingPostInput, tags: string[]): string {
 export function justListedPost(i: ListingPostInput): string {
   const where = [i.address, i.area].filter(Boolean).join(', ') + (i.postal ? ` (Postal ${i.postal})` : '');
   const head = `🏡 ${i.purpose === 'rent' ? 'For Lease' : 'Just Listed'}: ${where}`;
-  return [head, i.price, 'Message me to book a showing.', signOff(i, [i.purpose === 'rent' ? '#ForLease' : '#JustListed', hashtag(i.area), hashtag(i.brokerageName)])].filter(Boolean).join('\n\n');
+  return [head, i.price, 'Message me to book a showing.', signOff(i, [i.purpose === 'rent' ? '#ForLease' : '#JustListed', i.business ? '#BusinessForSale' : '', hashtag(i.area), hashtag(i.brokerageName)])].filter(Boolean).join('\n\n');
 }
 
 /** Marketplace: no price in the text (it goes in Chirper's price box), the description, and the furnished line. */
 export function marketplacePost(i: ListingPostInput): string {
-  const where = [i.address, i.area].filter(Boolean).join(', ');
+  const where = [i.street || i.address, i.area].filter(Boolean).join(', ');
   return [
+    i.business && i.street ? `${i.address} is for sale.` : null,
     `Address: ${where}`,
     i.description.trim(),
     'Private showings by appointment.',
     i.furnishedPrice ? `Available fully furnished for ${i.furnishedPrice}.` : null,
-    signOff(i, [i.purpose === 'rent' ? '#ForRent' : '#HomeForSale', hashtag(i.area), hashtag(i.brokerageName)]),
+    signOff(i, [i.purpose === 'rent' ? '#ForRent' : i.business ? '#BusinessForSale' : '#HomeForSale', hashtag(i.area), hashtag(i.brokerageName)]),
   ]
     .filter(Boolean)
     .join('\n\n');
