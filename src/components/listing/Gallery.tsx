@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Icon } from '@/components/ui/Icon';
 import { Mark } from '@/components/ui/Logo';
 import type { PhotoView } from '@/lib/listing-view';
 
@@ -52,6 +53,7 @@ export function Gallery({ photos, postalCode, title }: { photos: PhotoView[]; po
   const current = photos[index]!;
   return (
     <section className="gallery" aria-label={`Photos of ${title}`}>
+      <div className="gallery-stage">
       <div
         className="gallery-track"
         ref={track}
@@ -68,6 +70,17 @@ export function Gallery({ photos, postalCode, title }: { photos: PhotoView[]; po
             </button>
           </figure>
         ))}
+      </div>
+      {photos.length > 1 ? (
+        <>
+          <button type="button" className="gallery-nav gallery-nav--prev" aria-label="Previous photo" onClick={() => go(index - 1)}>
+            <Icon name="arrow-right" size={20} />
+          </button>
+          <button type="button" className="gallery-nav gallery-nav--next" aria-label="Next photo" onClick={() => go(index + 1)}>
+            <Icon name="arrow-right" size={20} />
+          </button>
+        </>
+      ) : null}
       </div>
       <div className="gallery-bar">
         <p className="caption muted">{caption(current)}</p>

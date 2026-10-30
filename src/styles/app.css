@@ -323,6 +323,12 @@ img.jr-card-img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ---------- Gallery and lightbox ---------- */
 .gallery { display: flex; flex-direction: column; gap: var(--space-2); }
+.gallery-stage { position: relative; }
+.gallery-nav { position: absolute; top: 50%; transform: translateY(-50%); display: grid; place-items: center; inline-size: var(--space-10); block-size: var(--space-10); border: 0; border-radius: var(--radius-round); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-overlay); cursor: pointer; opacity: 0.92; }
+.gallery-nav:hover { opacity: 1; }
+.gallery-nav--prev { inset-inline-start: var(--space-3); }
+.gallery-nav--prev svg { transform: scaleX(-1); }
+.gallery-nav--next { inset-inline-end: var(--space-3); }
 .gallery-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--surface-sunken); }
 .gallery-track::-webkit-scrollbar { display: none; }
 .gallery-slide { position: relative; flex: 0 0 100%; aspect-ratio: 3 / 2; margin: 0; scroll-snap-align: start; }
